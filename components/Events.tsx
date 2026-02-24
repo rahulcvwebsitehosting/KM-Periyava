@@ -21,24 +21,22 @@ const Events: React.FC<EventsProps> = ({ t }) => {
     <section id="events" className="py-24 bg-white">
       <div className="container mx-auto px-6 max-w-4xl">
         <div className="text-center mb-16">
-          <span className="text-primary font-bold text-sm uppercase tracking-widest bg-orange-50 px-4 py-1.5 rounded-full">
+          <span className="text-primary font-bold text-sm uppercase tracking-widest bg-orange-50 px-4 py-1.5 rounded-full inline-block">
             {t.badge}
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-text-dark heading-font mt-6">
-            {t.title}
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-text-dark heading-font mt-6" dangerouslySetInnerHTML={{ __html: t.title }} />
         </div>
 
         <div className="flex justify-center mb-12 p-1.5 bg-gray-50 rounded-2xl max-w-xs mx-auto border border-gray-100">
           <button 
             onClick={() => setActiveTab('upcoming')}
-            className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all text-sm ${activeTab === 'upcoming' ? 'bg-white text-primary shadow-md' : 'text-gray-400 hover:text-primary'}`}
+            className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all text-sm uppercase tracking-widest ${activeTab === 'upcoming' ? 'bg-white text-primary shadow-md' : 'text-gray-400 hover:text-primary'}`}
           >
             {t.upcoming}
           </button>
           <button 
             onClick={() => setActiveTab('past')}
-            className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all text-sm ${activeTab === 'past' ? 'bg-white text-primary shadow-md' : 'text-gray-400 hover:text-primary'}`}
+            className={`flex-1 py-3 px-4 rounded-xl font-bold transition-all text-sm uppercase tracking-widest ${activeTab === 'past' ? 'bg-white text-primary shadow-md' : 'text-gray-400 hover:text-primary'}`}
           >
             {t.past}
           </button>
@@ -49,8 +47,8 @@ const Events: React.FC<EventsProps> = ({ t }) => {
             <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-orange-50">
               <span className="text-4xl">🗓️</span>
             </div>
-            <p className="text-xl font-bold text-secondary mb-2">{t.noEvents}</p>
-            <p className="text-gray-400 font-medium">{t.checkBack}</p>
+            <p className="text-xl font-bold text-text-dark mb-2 heading-font">{t.noEvents}</p>
+            <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">{t.checkBack}</p>
           </div>
         ) : (
           <div className="space-y-8">
@@ -60,7 +58,7 @@ const Events: React.FC<EventsProps> = ({ t }) => {
               year="2025"
               title="Anusham Pooja" 
               time="🕐 6:00 AM - 12:00 PM"
-              desc="Monthly observance of Anusham star with special abhishekam and communal prayers."
+              desc="Monthly observance of <strong>Anusham Pooja</strong> with special abhishekam and communal prayers."
               status={t.completed}
               detailsBtn={t.viewDetails}
             />
@@ -90,18 +88,16 @@ const EventCard = ({ day, month, year, title, time, desc, status, detailsBtn }: 
     </div>
     <div className="flex-1 text-center md:text-left">
       <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
-        <h3 className="text-2xl font-bold text-text-dark">{title}</h3>
-        <span className="hidden md:inline-block px-3 py-1 bg-green-50 text-green-600 rounded-full text-[10px] font-bold uppercase tracking-wider border border-green-100">
+        <h3 className="text-2xl font-bold text-text-dark heading-font">{title}</h3>
+        <span className="hidden md:inline-block px-3 py-1 bg-green-50 text-green-600 rounded-full text-[10px] font-bold uppercase tracking-widest border border-green-100">
           {status}
         </span>
       </div>
-      <p className="text-primary font-bold text-sm mb-3 flex items-center justify-center md:justify-start gap-1.5">
+      <p className="text-primary font-bold text-sm mb-3 flex items-center justify-center md:justify-start gap-1.5 uppercase tracking-widest">
         {time}
       </p>
-      <p className="text-gray-600 leading-relaxed mb-6 font-medium">
-        {desc}
-      </p>
-      <button className="bg-gray-50 hover:bg-orange-50 text-secondary font-bold text-sm px-6 py-2.5 rounded-full border border-gray-100 transition-colors">
+      <p className="text-gray-600 leading-relaxed mb-6 font-bold text-lg sacred-bold" dangerouslySetInnerHTML={{ __html: desc }} />
+      <button className="bg-gray-50 hover:bg-orange-50 text-secondary font-bold text-xs px-6 py-2.5 rounded-full border border-gray-100 transition-colors uppercase tracking-widest">
         {detailsBtn} →
       </button>
     </div>

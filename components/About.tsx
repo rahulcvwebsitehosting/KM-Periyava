@@ -22,28 +22,27 @@ const About: React.FC<AboutProps> = ({ t }) => {
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <div className="space-y-8 order-2 lg:order-1">
-            <span className="text-primary font-bold text-sm uppercase tracking-widest">
+            <span className="text-primary font-bold text-sm uppercase tracking-widest bg-orange-50 px-3 py-1 rounded-full inline-block">
               {t.badge}
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-secondary heading-font">
+            <h2 className="text-4xl md:text-5xl font-bold text-text-dark heading-font">
               {t.title}
             </h2>
             
-            <div className="space-y-6 text-lg text-gray-700 leading-relaxed">
-              <p>{t.p1}</p>
-              <p className="font-medium text-secondary">{t.p2}</p>
-              <p>{t.p3}</p>
+            <div className="space-y-6 text-lg md:text-xl text-text-dark leading-relaxed sacred-bold">
+              <p dangerouslySetInnerHTML={{ __html: t.p1 }} />
+              <p className="font-bold text-secondary" dangerouslySetInnerHTML={{ __html: t.p2 }} />
+              <p dangerouslySetInnerHTML={{ __html: t.p3 }} />
             </div>
             
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-orange-100">
-              <h3 className="text-2xl font-bold text-secondary mb-6 flex items-center gap-3">
-                {t.templesTitle}
+              <h3 className="text-2xl font-bold text-text-dark heading-font mb-6 flex items-center gap-3">
+                <span dangerouslySetInnerHTML={{ __html: t.templesTitle }} />
               </h3>
-              <ul className="space-y-4">
+              <ul className="space-y-4 list-disc pl-5">
                 {t.templeList.map((item, idx) => (
-                  <li key={idx} className="flex items-center gap-4 group">
-                    <span className="w-2 h-2 rounded-full bg-primary group-hover:scale-150 transition-transform"></span>
-                    <span className="font-medium text-gray-700">{item}</span>
+                  <li key={idx} className="group transition-all">
+                    <span className="font-bold text-text-dark hover:text-primary transition-colors">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -53,7 +52,7 @@ const About: React.FC<AboutProps> = ({ t }) => {
               href={directionsUrl} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-secondary hover:bg-bg-dark text-white px-8 py-4 rounded-full font-bold shadow-lg transition-all transform hover:-translate-y-1"
+              className="inline-flex items-center gap-2 bg-secondary hover:bg-bg-dark text-white px-8 py-4 rounded-full font-bold shadow-lg transition-all transform hover:-translate-y-1 uppercase tracking-widest text-sm"
             >
               {t.getDirections}
             </a>
@@ -67,8 +66,8 @@ const About: React.FC<AboutProps> = ({ t }) => {
                   <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
                     📍
                   </div>
-                  <p className="text-gray-500 font-bold">Kandhamangalam Sannadhi Location</p>
-                  <p className="text-xs text-gray-400 mt-1">15 km from Mayiladuthurai</p>
+                  <p className="text-text-dark font-bold">Kandhamangalam Sannadhi Location</p>
+                  <p className="text-xs text-gray-400 mt-1 uppercase font-bold tracking-widest">15 km from Mayiladuthurai</p>
                 </div>
               </div>
               <iframe 
@@ -96,8 +95,8 @@ const About: React.FC<AboutProps> = ({ t }) => {
 const StatCard = ({ val, label, sub }: { val: string, label: string, sub: string }) => (
   <div className="bg-white p-6 rounded-3xl shadow-sm border border-orange-100 text-center hover:shadow-md transition">
     <p className="text-2xl font-bold text-primary mb-1">{val}</p>
-    <p className="text-xs font-bold text-secondary uppercase tracking-wider mb-1">{label}</p>
-    <p className="text-[10px] text-gray-400">{sub}</p>
+    <p className="text-xs font-bold text-text-dark uppercase tracking-wider mb-1">{label}</p>
+    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">{sub}</p>
   </div>
 );
 

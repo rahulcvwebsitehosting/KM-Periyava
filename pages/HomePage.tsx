@@ -68,10 +68,10 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
             {[
-              { id: 1, name: 'Lord Ganesha', img: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?auto=format&fit=crop&q=80&w=600' },
-              { id: 2, name: 'Sri Murugan', img: 'https://images.unsplash.com/photo-1621251912644-3d120a178971?auto=format&fit=crop&q=80&w=600' },
-              { id: 3, name: 'Shiva Lingam', img: 'https://images.unsplash.com/photo-1609139006981-d1c140407f5d?auto=format&fit=crop&q=80&w=600' },
-              { id: 4, name: 'Sri Periyava', img: 'https://images.unsplash.com/photo-1505933332464-44802c30034a?auto=format&fit=crop&q=80&w=600' }
+              { id: 1, name: 'Sannadhi View', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0004.jpg' },
+              { id: 2, name: 'Main Temple', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0010.jpg' },
+              { id: 3, name: 'Pooja Rituals', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0015.jpg' },
+              { id: 4, name: 'Devotional Glimpse', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0024.jpg' }
             ].map((deity) => (
               <div key={deity.id} className="group relative bg-white rounded-[2rem] overflow-hidden shadow-xl hover:-translate-y-4 transition-all duration-500">
                 <div className="aspect-[3/4] overflow-hidden">
@@ -112,10 +112,11 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
               </div>
             </div>
             <div className="relative group">
-               <div className="aspect-square rounded-[4rem] overflow-hidden shadow-2xl border-[16px] border-[#FFF9F0]">
+               <div className="aspect-[3/4] rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-[#FFF9F0] bg-white flex items-center justify-center p-8">
                  <img 
-                    src="https://images.unsplash.com/photo-1542614391-424619c9e75a?auto=format&fit=crop&q=80&w=1200" 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[5s]"
+                    src="https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/refs/heads/main/images/81YUD74MkVL._AC_UF894%2C1000_QL80_.jpg" 
+                    className="max-w-full max-h-full object-contain group-hover:scale-[1.03] transition-transform duration-[3s]"
+                    alt="Pidi Arisi Thittam Offering"
                  />
                </div>
                <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-accent/20 rounded-full blur-[60px] -z-10"></div>

@@ -85,7 +85,7 @@ const Footer: React.FC<FooterProps> = ({ lang, t, navigate }) => {
         <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">
           <p>© 2026 kmperiyavasannathi.co.in | All Rights Reserved</p>
           <p className="flex items-center gap-2">
-            DESIGNED BY <a href="#" className="text-primary hover:text-white transition">AJAY MUGILARASAN</a>
+            DESIGNED BY <a href="https://www.linkedin.com/in/rahulshyamcivil/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-white transition">RAHUL SHYAM</a>
           </p>
         </div>
       </div>

@@ -5,6 +5,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KM Periyava Sannadhi - Kandhamangalam</title>
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22 fill=%22%23FF6B35%22>ॐ</text></svg>">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Playfair+Display:italic,wght@400;700&display=swap" rel="stylesheet">
     <script>
@@ -22,7 +25,7 @@
               'bg-primary': '#FFF8F0',
               'bg-secondary': '#F5E6D3',
               'bg-dark': '#2C1810',
-              'text-dark': '#2C1810',
+              'text-dark': '#1A0F0A',
               'saffron-light': '#FFF1E6',
             },
             fontFamily: {
@@ -42,7 +45,7 @@
       body {
         font-family: 'Inter', sans-serif;
         background-color: #FFF8F0;
-        color: #2C1810;
+        color: #1A0F0A;
       }
       .tamil-font {
         font-family: 'Noto Sans Tamil', sans-serif;
@@ -67,6 +70,11 @@
         transform: translateX(-50%);
         top: 1em;
       }
+      /* Automatic bolding for specific terms globally */
+      .sacred-bold strong {
+        color: #8B4513;
+        font-weight: 700;
+      }
     </style>
   <script type="importmap">
 {
@@ -78,9 +86,11 @@
   }
 }
 </script>
+<link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <div id="root"></div>
-  </body>
+  <script type="module" src="/index.tsx"></script>
+</body>
 </html>

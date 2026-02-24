@@ -16,7 +16,7 @@ const EventDetailPage: React.FC<EventDetailPageProps> = ({ id, lang, navigate })
     return (
       <div className="py-32 text-center container mx-auto">
         <h2 className="text-4xl font-bold heading-font text-text-dark mb-4">Event Not Found</h2>
-        <button onClick={() => navigate('events')} className="text-primary font-bold hover:underline">
+        <button onClick={() => navigate('events')} className="text-primary font-bold hover:underline uppercase tracking-widest text-sm">
           Return to Events
         </button>
       </div>
@@ -43,13 +43,13 @@ const EventDetailPage: React.FC<EventDetailPageProps> = ({ id, lang, navigate })
             </h1>
           </div>
 
-          <div className="p-12 md:p-16 space-y-12">
+          <div className="p-12 md:p-16 space-y-12 sacred-bold">
             {/* Description */}
             <div className="space-y-4">
               <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-primary">
                 {lang === 'ta' ? 'விளக்கம்' : 'Description'}
               </h2>
-              <p className="text-xl text-text-dark font-medium leading-relaxed italic border-l-4 border-accent pl-8">
+              <p className="text-xl md:text-2xl text-text-dark font-bold leading-relaxed italic border-l-8 border-accent pl-8 py-2">
                 {event.description}
               </p>
             </div>
@@ -60,13 +60,10 @@ const EventDetailPage: React.FC<EventDetailPageProps> = ({ id, lang, navigate })
                 <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-primary">
                   {lang === 'ta' ? 'திட்டமிடப்பட்ட நிகழ்ச்சிகள்' : 'Programs Scheduled'}
                 </h2>
-                <ul className="grid gap-4">
+                <ul className="grid gap-6 list-disc pl-5">
                   {event.programs.map((prog, i) => (
-                    <li key={i} className="flex items-start gap-4 p-5 bg-orange-50/30 rounded-2xl border border-orange-100/50 group">
-                      <span className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-primary font-bold text-xs shadow-sm group-hover:bg-primary group-hover:text-white transition-all">
-                        {i + 1}
-                      </span>
-                      <span className="text-lg text-secondary font-medium">{prog}</span>
+                    <li key={i} className="group transition-all">
+                      <span className="text-lg md:text-xl text-text-dark font-bold group-hover:text-primary transition-colors">{prog}</span>
                     </li>
                   ))}
                 </ul>
@@ -79,13 +76,13 @@ const EventDetailPage: React.FC<EventDetailPageProps> = ({ id, lang, navigate })
                 <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-primary">
                   {lang === 'ta' ? 'நன்கொடையாளர்கள்' : 'Donors'}
                 </h2>
-                <div className="grid sm:grid-cols-2 gap-4">
+                <div className="grid sm:grid-cols-2 gap-6">
                   {event.donors.map((donor, i) => (
-                    <div key={i} className="p-6 bg-white border border-gray-100 rounded-3xl shadow-sm flex items-center gap-4">
-                      <div className="w-10 h-10 bg-accent/10 text-accent rounded-full flex items-center justify-center font-bold">
+                    <div key={i} className="p-6 bg-orange-50/20 border border-orange-100/50 rounded-3xl shadow-sm flex items-center gap-4 group hover:bg-white hover:shadow-md transition-all">
+                      <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold text-lg group-hover:bg-primary group-hover:text-white transition-all">
                         {donor.charAt(0)}
                       </div>
-                      <span className="text-secondary font-bold text-sm">{donor}</span>
+                      <span className="text-text-dark font-bold text-base">{donor}</span>
                     </div>
                   ))}
                 </div>
@@ -103,7 +100,7 @@ const EventDetailPage: React.FC<EventDetailPageProps> = ({ id, lang, navigate })
                 <span>📸</span>
                 {lang === 'ta' ? 'புகைப்படங்கள் & வீடியோக்கள்' : 'View Photos & Videos'}
               </a>
-              <p className="mt-6 text-gray-400 text-xs font-bold uppercase tracking-widest">
+              <p className="mt-6 text-gray-400 text-[10px] font-bold uppercase tracking-[0.3em]">
                 {lang === 'ta' ? 'கூகுள் புகைப்படங்களுக்கு (Google Photos) உங்களை அழைத்துச் செல்லும்' : 'Redirects to Google Photos'}
               </p>
             </div>

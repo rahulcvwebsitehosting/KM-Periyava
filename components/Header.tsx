@@ -50,7 +50,7 @@ const Header: React.FC<HeaderProps> = ({
           </div>
         </button>
 
-        {/* Desktop Nav - GENEROUS 48px Gaps */}
+        {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-12">
           <ul className="flex gap-12 items-center font-bold text-gray-500 text-xs tracking-widest uppercase">
             {menuItems.map((item) => (
@@ -67,18 +67,32 @@ const Header: React.FC<HeaderProps> = ({
           </ul>
           
           <div className="flex items-center gap-6 ml-4">
-            {/* Music Toggle */}
-            <button 
-              onClick={toggleMusic}
-              className={`p-2 rounded-full transition-all ${isMusicPlaying ? 'text-primary bg-orange-50' : 'text-gray-300'}`}
-              title={isMusicPlaying ? 'Mute' : 'Play Chant'}
-            >
-              {isMusicPlaying ? (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" /></svg>
-              ) : (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" /></svg>
-              )}
-            </button>
+            {/* Music Toggle - Redesigned */}
+            <div className="flex items-center gap-3">
+              <span className={`text-[9px] font-bold uppercase tracking-widest transition-opacity duration-500 ${isMusicPlaying ? 'text-primary opacity-100' : 'text-gray-300 opacity-40'}`}>
+                {lang === 'ta' ? 'திவ்ய நாம சங்கீர்த்தனம்' : 'Divine Chant'}
+              </span>
+              <button 
+                onClick={toggleMusic}
+                className={`relative group w-11 h-11 rounded-full flex items-center justify-center transition-all duration-500 ${isMusicPlaying ? 'bg-primary shadow-[0_0_20px_rgba(255,107,53,0.4)]' : 'bg-gray-100 hover:bg-gray-200'}`}
+                title={isMusicPlaying ? 'Mute Chant' : 'Play Divine Chant'}
+              >
+                {/* Pulsing ring when playing */}
+                {isMusicPlaying && (
+                  <span className="absolute inset-0 rounded-full bg-primary/40 animate-ping"></span>
+                )}
+                
+                {isMusicPlaying ? (
+                  <svg className="w-5 h-5 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5 text-gray-400 group-hover:text-primary relative z-10" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                )}
+              </button>
+            </div>
 
             {/* Language */}
             <div className="flex bg-gray-50 rounded-xl p-1 border border-gray-100">
@@ -97,11 +111,17 @@ const Header: React.FC<HeaderProps> = ({
 
         {/* Mobile Actions */}
         <div className="flex items-center gap-4 lg:hidden">
-          <button onClick={toggleMusic} className={isMusicPlaying ? 'text-primary' : 'text-gray-300'}>
-            <span className="text-xl">{isMusicPlaying ? '🔊' : '🔇'}</span>
+          <button 
+            onClick={toggleMusic} 
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isMusicPlaying ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-gray-100 text-gray-400'}`}
+          >
+            {isMusicPlaying && <span className="absolute w-10 h-10 rounded-full bg-primary/30 animate-ping"></span>}
+            <span className="text-lg relative z-10">{isMusicPlaying ? '🔊' : '🔇'}</span>
           </button>
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-secondary">
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6" : "M4 6h16M4 12h16M4 18h16"} /></svg>
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-secondary p-1">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6" : "M4 6h16M4 12h16M4 18h16"} />
+            </svg>
           </button>
         </div>
       </div>
@@ -115,12 +135,12 @@ const Header: React.FC<HeaderProps> = ({
                 <button onClick={() => handleNav(item.id)} className={`w-full text-left pb-2 border-b border-orange-50 ${currentPath === item.id ? 'text-primary' : ''}`}>{item.name}</button>
               </li>
             ))}
-            <li className="pt-4 flex justify-between items-center">
-              <div className="flex bg-gray-100 rounded-xl p-1">
-                <button onClick={() => setLang('ta')} className={`px-6 py-2 rounded-lg text-xs font-bold ${lang === 'ta' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>தமிழ்</button>
-                <button onClick={() => setLang('en')} className={`px-6 py-2 rounded-lg text-xs font-bold ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>English</button>
+            <li className="pt-4 flex flex-col gap-6">
+              <div className="flex bg-gray-100 rounded-xl p-1 w-full">
+                <button onClick={() => setLang('ta')} className={`flex-1 py-3 rounded-lg text-xs font-bold ${lang === 'ta' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>தமிழ்</button>
+                <button onClick={() => setLang('en')} className={`flex-1 py-3 rounded-lg text-xs font-bold ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>English</button>
               </div>
-              <button onClick={() => handleNav('donate')} className="bg-primary text-white px-10 py-4 rounded-2xl font-bold shadow-lg uppercase text-xs tracking-widest">{t.donate}</button>
+              <button onClick={() => handleNav('donate')} className="w-full bg-primary text-white py-5 rounded-2xl font-bold shadow-lg uppercase text-xs tracking-widest">{t.donate}</button>
             </li>
           </ul>
         </div>

@@ -10,15 +10,13 @@ interface EventsPageProps {
 
 const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
   return (
-    <section className="py-24 bg-white animate-in fade-in duration-500">
+    <section className="py-24 bg-white animate-in fade-in duration-500 sacred-bold">
       <div className="container mx-auto px-6 max-w-[1400px]">
         <div className="text-center mb-16">
           <span className="text-primary font-bold text-sm uppercase tracking-widest bg-orange-50 px-4 py-1.5 rounded-full">
             {t.badge}
           </span>
-          <h2 className="text-5xl font-bold text-text-dark heading-font mt-6 mb-4">
-            {t.title}
-          </h2>
+          <h2 className="text-5xl font-bold text-text-dark heading-font mt-6 mb-4" dangerouslySetInnerHTML={{ __html: t.title }} />
           <p className="text-secondary tracking-widest uppercase text-sm font-bold">
             {lang === 'ta' ? 'கடந்த கால மற்றும் வரவிருக்கும் புனித நிகழ்வுகள்' : 'Sacred Past & Upcoming Events'}
           </p>
@@ -43,7 +41,7 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
                 {event.title}
               </h3>
               
-              <p className="text-gray-600 line-clamp-3 text-sm mb-8 leading-relaxed font-medium">
+              <p className="text-gray-600 line-clamp-3 text-sm mb-8 leading-relaxed font-bold">
                 {event.description}
               </p>
               

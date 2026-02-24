@@ -16,27 +16,25 @@ const PidiArisi: React.FC<PidiArisiProps> = ({ t, lang, onDonate }) => {
           <span className="inline-block px-4 py-1 rounded-full bg-orange-100 text-primary font-bold text-xs uppercase tracking-widest mb-4">
             {t.badge}
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-secondary heading-font mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-text-dark heading-font mb-4">
             {t.title}
           </h2>
-          <h3 className="text-xl md:text-2xl text-gray-500 font-medium">
+          <h3 className="text-xl md:text-2xl text-secondary font-bold uppercase tracking-widest">
             {t.subtitle}
           </h3>
         </div>
 
         <div className="grid md:grid-cols-12 gap-12 items-start">
           <div className="md:col-span-7 space-y-8">
-            <div className="p-8 bg-amber-50 rounded-3xl border-l-8 border-primary shadow-sm">
-              <p className="text-xl leading-relaxed text-secondary italic mb-4 font-medium" lang="ta">
+            <div className="p-8 bg-amber-50 rounded-3xl border-l-8 border-primary shadow-sm sacred-bold">
+              <p className="text-xl md:text-2xl leading-relaxed text-text-dark italic mb-4 font-bold" lang="ta">
                 {t.verse}
               </p>
-              <p className="text-gray-600 leading-relaxed font-inter">
-                {t.verseEn}
-              </p>
+              <p className="text-gray-600 leading-relaxed font-bold text-lg" dangerouslySetInnerHTML={{ __html: t.verseEn }} />
             </div>
 
             <div className="bg-gradient-to-br from-orange-50 to-white p-8 rounded-3xl shadow-sm border border-orange-100">
-              <h3 className="text-2xl font-bold text-secondary mb-8 flex items-center gap-3">
+              <h3 className="text-2xl font-bold text-text-dark heading-font mb-8 flex items-center gap-3">
                 {t.howTitle}
               </h3>
               
@@ -50,36 +48,38 @@ const PidiArisi: React.FC<PidiArisiProps> = ({ t, lang, onDonate }) => {
           </div>
 
           <div className="md:col-span-5 space-y-6">
-            <div className="rounded-3xl overflow-hidden shadow-xl aspect-square bg-gray-100 relative group">
-              {/* Intentional Placeholder for Devotees at Pidi Arisi Thittam - using saffron/grains context */}
-              <img 
-                src="https://images.unsplash.com/photo-1542614391-424619c9e75a?auto=format&fit=crop&q=80&w=800" 
-                alt="Devotees at Pidi Arisi Thittam"
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
-              <div className="absolute bottom-6 left-6 right-6">
-                 <p className="text-white text-xs font-bold uppercase tracking-widest bg-primary/80 backdrop-blur-sm px-4 py-2 rounded-full inline-block">
+            <div className="rounded-[2.5rem] overflow-hidden shadow-2xl bg-[#FFF9F0] border-[12px] border-white relative group">
+              {/* Full Image Container - Ensuring no cropping with object-contain and defined aspect */}
+              <div className="relative aspect-[3/4] md:min-h-[500px] flex items-center justify-center p-6 bg-white shadow-inner">
+                <img 
+                  src="https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/refs/heads/main/images/81YUD74MkVL._AC_UF894%2C1000_QL80_.jpg" 
+                  alt="Pidi Arisi Thittam - Sacred Offering"
+                  className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-[1.03]"
+                />
+              </div>
+              
+              <div className="absolute inset-0 bg-primary/5 group-hover:bg-transparent transition-colors pointer-events-none"></div>
+              
+              <div className="absolute top-4 left-4">
+                 <p className="text-white text-[10px] font-bold uppercase tracking-widest bg-primary/90 backdrop-blur-sm px-4 py-1.5 rounded-full inline-block shadow-lg">
                     {lang === 'ta' ? 'அன்னதான சேவை' : 'Annadhanam Seva'}
                  </p>
               </div>
             </div>
 
-            <div className="bg-bg-dark p-8 rounded-3xl text-white shadow-xl relative">
+            <div className="bg-bg-dark p-8 rounded-3xl text-white shadow-xl relative sacred-bold">
               <div className="absolute top-0 right-0 p-4 opacity-10">
                 <span className="text-6xl">❝</span>
               </div>
               <p className="text-accent text-sm font-bold uppercase tracking-widest mb-3">{t.blessing}</p>
-              <p className="text-lg leading-relaxed mb-6 italic" lang="ta">
+              <p className="text-lg md:text-xl leading-relaxed mb-6 italic font-bold" lang="ta">
                 {t.periyavaWords}
               </p>
-              <p className="text-gray-300 leading-relaxed text-sm">
-                {t.periyavaWordsEn}
-              </p>
+              <p className="text-gray-300 leading-relaxed text-sm md:text-base font-bold" dangerouslySetInnerHTML={{ __html: t.periyavaWordsEn }} />
               <div className="mt-8 border-t border-white/10 pt-6">
                 <button 
                   onClick={onDonate}
-                  className="w-full py-4 px-6 bg-primary hover:bg-primary-dark text-white rounded-2xl font-bold transition-all transform hover:-translate-y-1 shadow-lg"
+                  className="w-full py-4 px-6 bg-primary hover:bg-primary-dark text-white rounded-2xl font-bold transition-all transform hover:-translate-y-1 shadow-lg uppercase tracking-widest text-sm"
                 >
                   {t.cta}
                 </button>
@@ -98,12 +98,10 @@ const Step = ({ num, title, desc, lang }: { num: number, title: string, desc: st
       {num}
     </div>
     <div>
-      <h4 className="font-bold text-xl text-secondary mb-2" lang={lang === 'ta' ? 'ta' : 'en'}>
+      <h4 className="font-bold text-xl text-text-dark heading-font mb-2" lang={lang === 'ta' ? 'ta' : 'en'}>
         {title}
       </h4>
-      <p className="text-gray-600 leading-relaxed font-medium">
-        {desc}
-      </p>
+      <p className="text-gray-600 leading-relaxed font-bold sacred-bold" dangerouslySetInnerHTML={{ __html: desc }} />
     </div>
   </div>
 );
