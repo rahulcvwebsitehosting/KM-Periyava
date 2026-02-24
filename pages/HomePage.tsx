@@ -68,10 +68,10 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
             {[
-              { id: 1, name: 'Sannadhi View', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0004.jpg' },
-              { id: 2, name: 'Main Temple', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0010.jpg' },
-              { id: 3, name: 'Pooja Rituals', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0015.jpg' },
-              { id: 4, name: 'Devotional Glimpse', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0024.jpg' }
+              { id: 1, name: 'Divine Darshan', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0024.jpg' },
+              { id: 2, name: 'Sacred Rituals', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0015.jpg' },
+              { id: 3, name: 'Holy Presence', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0019.jpg' },
+              { id: 4, name: 'Temple Sanctum', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0010.jpg' }
             ].map((deity) => (
               <div key={deity.id} className="group relative bg-white rounded-[2rem] overflow-hidden shadow-xl hover:-translate-y-4 transition-all duration-500">
                 <div className="aspect-[3/4] overflow-hidden">
@@ -114,7 +114,7 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
             <div className="relative group">
                <div className="aspect-[3/4] rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-[#FFF9F0] bg-white flex items-center justify-center p-8">
                  <img 
-                    src="https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/refs/heads/main/images/81YUD74MkVL._AC_UF894%2C1000_QL80_.jpg" 
+                    src="https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Main/71BsL6V3l6S.jpg" 
                     className="max-w-full max-h-full object-contain group-hover:scale-[1.03] transition-transform duration-[3s]"
                     alt="Pidi Arisi Thittam Offering"
                  />

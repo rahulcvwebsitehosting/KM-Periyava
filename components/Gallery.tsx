@@ -16,81 +16,63 @@ const Gallery: React.FC<GalleryProps> = ({ lang, navigate, fullMode = false }) =
   const allImages = [
     {
       id: 1,
-      category: lang === 'ta' ? 'பெரியவா திருவுருவம்' : 'Periyava Portrait',
-      caption: lang === 'ta' ? 'அருள்மிகு மஹா பெரியவா' : 'Divine Grace of Maha Periyava',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/periyava.jpg'
+      category: lang === 'ta' ? 'ஆராதனை' : 'Aradhana',
+      caption: lang === 'ta' ? 'மங்கள ஒளி' : 'The Spiritual Aura of Worship',
+      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0028.jpg'
     },
     {
       id: 2,
-      category: lang === 'ta' ? 'சந்நிதி தோற்றம்' : 'Sannadhi View',
-      caption: lang === 'ta' ? 'கந்தமங்கலம் சந்நிதி' : 'Interior of Kandhamangalam Sannadhi',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/MahaPeriyavaWeb.jpg'
+      category: lang === 'ta' ? 'ஞானத் தோற்றம்' : 'Wisdom Glimpse',
+      caption: lang === 'ta' ? 'அருள் பார்வை' : 'The Compassionate Gaze',
+      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/cropped-periyava_slider-3-1024x4201.png'
     },
     {
       id: 3,
-      category: lang === 'ta' ? 'அனுஷ பூஜை' : 'Rituals',
-      caption: lang === 'ta' ? 'புனித வழிபாட்டு முறைகள்' : 'Sacred Poojas at the Temple',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0018.jpg'
+      category: lang === 'ta' ? 'பெரியவா திருவுருவம்' : 'Periyava Portrait',
+      caption: lang === 'ta' ? 'அருள்மிகு மஹா பெரியவா' : 'Divine Grace of Maha Periyava',
+      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/Kanchi-Maha-Periyava.jpg'
     },
     {
       id: 4,
-      category: lang === 'ta' ? 'விக்கிரகத் தோற்றம்' : 'Holy Idols',
-      caption: lang === 'ta' ? 'சந்நிதியில் உள்ள விக்கிரகங்கள்' : 'Consecrated Idols at the Sannadhi',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/combined-1.jpg'
+      category: lang === 'ta' ? 'உற்சவம்' : 'Utsavam',
+      caption: lang === 'ta' ? 'திருவிழா காட்சிகள்' : 'Festivities at Kandhamangalam',
+      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0026.jpg'
     },
     {
       id: 5,
-      category: lang === 'ta' ? 'ஆராதனை' : 'Aradhana',
-      caption: lang === 'ta' ? 'மங்கள ஒளி' : 'The Spiritual Aura of Worship',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0028.jpg'
+      category: lang === 'ta' ? 'பக்தி பரவசம்' : 'Devotional Bliss',
+      caption: lang === 'ta' ? 'மஹாபெரியவா அருளாசி' : 'Receiving Divine Blessings',
+      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0024.jpg'
     },
     {
       id: 6,
-      category: lang === 'ta' ? 'கோவில் தோற்றம்' : 'Temple Glimpse',
-      caption: lang === 'ta' ? 'கோவிலின் வெளிப்புறத் தோற்றம்' : 'A Glimpse of the Temple Premises',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0010.jpg'
+      category: lang === 'ta' ? 'அனுஷ பூஜை' : 'Rituals',
+      caption: lang === 'ta' ? 'புனித வழிபாட்டு முறைகள்' : 'Sacred Poojas at the Temple',
+      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0019.jpg'
     },
     {
       id: 7,
-      category: lang === 'ta' ? 'வழிபாடு' : 'Worship',
-      caption: lang === 'ta' ? 'சந்நிதி தரிசனம்' : 'A Moment of Deep Devotion',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0004.jpg'
+      category: lang === 'ta' ? 'தீப ஆராதனை' : 'Deeparadhana',
+      caption: lang === 'ta' ? 'மங்கள ஆர்த்தி' : 'Offerings of Light',
+      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0017.jpg'
     },
     {
       id: 8,
       category: lang === 'ta' ? 'அபிஷேகம்' : 'Abhishekam',
       caption: lang === 'ta' ? 'புனித நீர் ஆராதனை' : 'The Sacred Bathing Ritual',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0015.jpg'
+      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0015.jpg'
     },
     {
       id: 9,
-      category: lang === 'ta' ? 'தீப ஆராதனை' : 'Deeparadhana',
-      caption: lang === 'ta' ? 'மங்கள ஆர்த்தி' : 'Offerings of Light',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0017.jpg'
+      category: lang === 'ta' ? 'கோவில் தோற்றம்' : 'Temple Glimpse',
+      caption: lang === 'ta' ? 'கோவிலின் வெளிப்புறத் தோற்றம்' : 'A Glimpse of the Temple Premises',
+      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0010.jpg'
     },
     {
       id: 10,
-      category: lang === 'ta' ? 'பக்தி பரவசம்' : 'Devotional Bliss',
-      caption: lang === 'ta' ? 'மஹாபெரியவா அருளாசி' : 'Receiving Divine Blessings',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0024.jpg'
-    },
-    {
-      id: 11,
-      category: lang === 'ta' ? 'உற்சவம்' : 'Utsavam',
-      caption: lang === 'ta' ? 'திருவிழா காட்சிகள்' : 'Festivities at Kandhamangalam',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/DSC_0026.jpg'
-    },
-    {
-      id: 12,
-      category: lang === 'ta' ? 'குரு தரிசனம்' : 'Guru Darshan',
-      caption: lang === 'ta' ? 'பெரியவா திருவடி' : 'Surrender at the Holy Feet',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/combined-2.jpg'
-    },
-    {
-      id: 13,
-      category: lang === 'ta' ? 'ஞானத் தோற்றம்' : 'Wisdom Glimpse',
-      caption: lang === 'ta' ? 'அருள் பார்வை' : 'The Compassionate Gaze',
-      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/cropped-periyava_slider-3-1024x4201.png'
+      category: lang === 'ta' ? 'வழிபாடு' : 'Worship',
+      caption: lang === 'ta' ? 'சந்நிதி தரிசனம்' : 'A Moment of Deep Devotion',
+      src: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0004.jpg'
     }
   ];
 

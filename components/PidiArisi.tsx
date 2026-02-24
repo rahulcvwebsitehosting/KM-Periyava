@@ -52,7 +52,7 @@ const PidiArisi: React.FC<PidiArisiProps> = ({ t, lang, onDonate }) => {
               {/* Full Image Container - Ensuring no cropping with object-contain and defined aspect */}
               <div className="relative aspect-[3/4] md:min-h-[500px] flex items-center justify-center p-6 bg-white shadow-inner">
                 <img 
-                  src="https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/refs/heads/main/images/81YUD74MkVL._AC_UF894%2C1000_QL80_.jpg" 
+                  src="https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Main/71BsL6V3l6S.jpg" 
                   alt="Pidi Arisi Thittam - Sacred Offering"
                   className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-[1.03]"
                 />

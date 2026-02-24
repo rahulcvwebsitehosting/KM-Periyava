@@ -42,7 +42,7 @@ const Hero: React.FC<HeroProps> = ({ lang, t }) => {
               {/* Manual Arch Masking with border-radius */}
               <div className="absolute inset-0 z-0 bg-white rounded-t-[50%] rounded-b-2xl overflow-hidden shadow-inner">
                 <img 
-                  src="https://raw.githubusercontent.com/rahulcvwebsitehosting/KM-Periyava/main/images/MahaPeriyavaWeb.jpg" 
+                  src="https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Main/Periyava%20Main.jpg" 
                   alt="Sri Kanchi Maha Periyava"
                   className="w-full h-full object-cover object-center transition-transform duration-[8s] group-hover:scale-105"
                 />
