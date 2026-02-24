@@ -72,7 +72,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const systemInstruction = `
         You are a divine, holy, and respectful assistant for the KM Periyava Sannadhi temple in Kandhamangalam. 
         Your tone is peaceful, brief, and deeply respectful (Satvic). You serve the devotees of Sri Kanchi Mahaperiyava.
@@ -88,13 +88,13 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
         - wisdom: Daily quotes and teachings of Periyava.
         - donate: Support Annadhanam and Pidi Arisi Thittam.
         - contact: Location, directions, and contact details.
-
+ 
         TOPICS & CONTENT:
         - Temple: Located in Kandhamangalam, Kuttalam Taluk. It's a sacred place dedicated to Sri Kanchi Mahaperiyava.
         - Pidi Arisi Thittam: A unique initiative where devotees set aside a handful of rice daily for Annadhanam.
         - Anusham Pooja: Special pooja performed on the Anusham star day every month.
         - Annadhanam: Daily feeding of devotees and the needy.
-
+ 
         FORMATTING RULES:
         - Use **bold** for ALL sacred terms and key nouns.
         - Use bullet points (using -) for all lists.
@@ -105,9 +105,9 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
         - Always start or end with a holy greeting like 'Pranam' or 'Jaya Jaya Shankara'.
         - If the user speaks Tamil, respond in Tamil but keep the [[NAV:page_id|Label]] format in English for the page_id part.
       `;
-
+ 
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-flash-latest',
         contents: [
           ...messages.slice(-6).map(m => ({ role: m.role, parts: [{ text: m.text }] })),
           { role: 'user', parts: [{ text: userMessage }] }

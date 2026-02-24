@@ -16,10 +16,10 @@ const PidiArisi: React.FC<PidiArisiProps> = ({ t, lang, onDonate }) => {
           <span className="inline-block px-4 py-1 rounded-full bg-orange-100 text-primary font-bold text-xs uppercase tracking-widest mb-4">
             {t.badge}
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-text-dark heading-font mb-4">
+          <h2 className={`font-bold text-text-dark heading-font mb-4 ${lang === 'ta' ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl'}`}>
             {t.title}
           </h2>
-          <h3 className="text-xl md:text-2xl text-secondary font-bold uppercase tracking-widest">
+          <h3 className={`text-secondary font-bold uppercase tracking-widest ${lang === 'ta' ? 'text-lg md:text-xl' : 'text-xl md:text-2xl'}`}>
             {t.subtitle}
           </h3>
         </div>
@@ -27,7 +27,7 @@ const PidiArisi: React.FC<PidiArisiProps> = ({ t, lang, onDonate }) => {
         <div className="grid md:grid-cols-12 gap-12 items-start">
           <div className="md:col-span-7 space-y-8">
             <div className="p-8 bg-amber-50 rounded-3xl border-l-8 border-primary shadow-sm sacred-bold">
-              <p className="text-xl md:text-2xl leading-relaxed text-text-dark italic mb-4 font-bold" lang="ta">
+              <p className="text-xl md:text-2xl text-text-dark italic mb-4 font-bold" lang="ta">
                 {t.verse}
               </p>
               <p className="text-gray-600 leading-relaxed font-bold text-lg" dangerouslySetInnerHTML={{ __html: t.verseEn }} />
@@ -72,7 +72,7 @@ const PidiArisi: React.FC<PidiArisiProps> = ({ t, lang, onDonate }) => {
                 <span className="text-6xl">❝</span>
               </div>
               <p className="text-accent text-sm font-bold uppercase tracking-widest mb-3">{t.blessing}</p>
-              <p className="text-lg md:text-xl leading-relaxed mb-6 italic font-bold" lang="ta">
+              <p className="text-lg md:text-xl mb-6 italic font-bold" lang="ta">
                 {t.periyavaWords}
               </p>
               <p className="text-gray-300 leading-relaxed text-sm md:text-base font-bold" dangerouslySetInnerHTML={{ __html: t.periyavaWordsEn }} />
@@ -101,7 +101,7 @@ const Step = ({ num, title, desc, lang }: { num: number, title: string, desc: st
       <h4 className="font-bold text-xl text-text-dark heading-font mb-2" lang={lang === 'ta' ? 'ta' : 'en'}>
         {title}
       </h4>
-      <p className="text-gray-600 leading-relaxed font-bold sacred-bold" dangerouslySetInnerHTML={{ __html: desc }} />
+      <p className="text-gray-600 font-bold sacred-bold" dangerouslySetInnerHTML={{ __html: desc }} />
     </div>
   </div>
 );

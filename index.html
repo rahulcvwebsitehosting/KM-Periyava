@@ -49,6 +49,26 @@
       }
       .tamil-font {
         font-family: 'Noto Sans Tamil', sans-serif;
+        line-height: 1.6;
+        letter-spacing: 0.01em;
+      }
+      /* Ensure Tamil text in other components also gets better formatting */
+      [lang="ta"] {
+        line-height: 1.6;
+      }
+      /* Specific adjustments for Tamil text blocks */
+      .tamil-font p, [lang="ta"] p {
+        margin-bottom: 1rem;
+      }
+      /* Ensure headings use Tamil font in Tamil mode */
+      [lang="ta"] .heading-font {
+        font-family: 'Noto Sans Tamil', sans-serif;
+        font-weight: 700;
+      }
+      /* Adjust small text for Tamil as it can be hard to read */
+      [lang="ta"] .text-\[9px\], [lang="ta"] .text-xs {
+        font-size: 0.8rem;
+        line-height: 1.3;
       }
       .heading-font {
         font-family: 'Cinzel', serif;

@@ -71,14 +71,14 @@ const Hero: React.FC<HeroProps> = ({ lang, t }) => {
         
         {/* Temple Branding Title */}
         <div className="space-y-6 mb-16 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
-          <h1 className="text-4xl md:text-7xl font-bold text-text-dark heading-font leading-[1.1] tracking-tight">
+          <h1 className={`font-bold text-text-dark heading-font leading-[1.1] tracking-tight ${lang === 'ta' ? 'text-3xl md:text-6xl' : 'text-4xl md:text-7xl'}`}>
             {t.title} <br className="hidden md:block"/> 
             <span className="text-secondary font-bold">{t.sannadhi}</span>
           </h1>
           
           <div className="flex items-center justify-center gap-4 md:gap-8">
             <span className="h-px w-16 md:w-32 bg-gradient-to-r from-transparent to-accent/40"></span>
-            <p className="text-base md:text-2xl text-secondary font-bold tracking-[0.5em] uppercase">
+            <p className={`text-secondary font-bold uppercase ${lang === 'ta' ? 'text-sm md:text-xl tracking-[0.3em]' : 'text-base md:text-2xl tracking-[0.5em]'}`}>
               K A N D H A M A N G A L A M
             </p>
             <span className="h-px w-16 md:w-32 bg-gradient-to-l from-transparent to-accent/40"></span>
@@ -93,14 +93,14 @@ const Hero: React.FC<HeroProps> = ({ lang, t }) => {
         <div className="flex flex-wrap justify-center gap-6 md:gap-8 animate-in fade-in duration-1000 delay-700">
           <a 
             href="#about" 
-            className="flex items-center gap-3 bg-gradient-to-br from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white px-10 md:px-14 py-4 md:py-6 rounded-full shadow-[0_15px_40px_rgba(210,105,30,0.3)] transition-all font-bold text-sm md:text-xl transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest"
+            className={`flex items-center gap-3 bg-gradient-to-br from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white rounded-full shadow-[0_15px_40px_rgba(210,105,30,0.3)] transition-all font-bold transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest ${lang === 'ta' ? 'px-8 md:px-12 py-4 md:py-5 text-xs md:text-lg' : 'px-10 md:px-14 py-4 md:py-6 text-sm md:text-xl'}`}
           >
             🙏 {t.planVisit}
           </a>
           
           <a 
             href="#donate" 
-            className="flex items-center gap-3 bg-white border-2 border-primary text-primary hover:bg-orange-50 px-10 md:px-14 py-4 md:py-6 rounded-full shadow-lg transition-all font-bold text-sm md:text-xl transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest"
+            className={`flex items-center gap-3 bg-white border-2 border-primary text-primary hover:bg-orange-50 rounded-full shadow-lg transition-all font-bold transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest ${lang === 'ta' ? 'px-8 md:px-12 py-4 md:py-5 text-xs md:text-lg' : 'px-10 md:px-14 py-4 md:py-6 text-sm md:text-xl'}`}
           >
             🌸 {lang === 'ta' ? 'அன்னதான சேவை' : 'Seva & Donation'}
           </a>

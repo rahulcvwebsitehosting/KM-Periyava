@@ -1,6 +1,8 @@
 
 import React from 'react';
 
+import { Language } from '../types';
+
 interface AboutProps {
   t: {
     badge: string;
@@ -12,9 +14,10 @@ interface AboutProps {
     templeList: string[];
     getDirections: string;
   };
+  lang: Language;
 }
 
-const About: React.FC<AboutProps> = ({ t }) => {
+const About: React.FC<AboutProps> = ({ t, lang }) => {
   const directionsUrl = "https://www.google.com/maps/dir//Kandhamangalam,+Komal+-+East,+Tamil+Nadu+609805/@11.0234307,79.6038842,18z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3a552501876a9e1f:0xbf1e786d3668c84f!2m2!1d79.6038842!2d11.0234307?entry=ttu&g_ep=EgoyMDI2MDEyOC4wIKXMDSoASAFQAw%3D%3D";
 
   return (
@@ -25,11 +28,11 @@ const About: React.FC<AboutProps> = ({ t }) => {
             <span className="text-primary font-bold text-sm uppercase tracking-widest bg-orange-50 px-3 py-1 rounded-full inline-block">
               {t.badge}
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-text-dark heading-font">
+            <h2 className={`font-bold text-text-dark heading-font ${lang === 'ta' ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl'}`}>
               {t.title}
             </h2>
             
-            <div className="space-y-6 text-lg md:text-xl text-text-dark leading-relaxed sacred-bold">
+            <div className="space-y-6 text-lg md:text-xl text-text-dark sacred-bold">
               <p dangerouslySetInnerHTML={{ __html: t.p1 }} />
               <p className="font-bold text-secondary" dangerouslySetInnerHTML={{ __html: t.p2 }} />
               <p dangerouslySetInnerHTML={{ __html: t.p3 }} />

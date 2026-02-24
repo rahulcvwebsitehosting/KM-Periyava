@@ -37,7 +37,7 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
                  </div>
                ) : (
                  <div className="space-y-8">
-                   <p className="text-2xl md:text-3xl font-bold text-[#2C1810] leading-relaxed tamil-font">
+                   <p className="text-2xl md:text-3xl font-bold text-[#2C1810] tamil-font">
                      {quote}
                    </p>
                    <div className="text-right">
@@ -99,10 +99,10 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
             <div className="space-y-12">
               <div className="space-y-4">
                 <span className="text-primary font-bold text-xs uppercase tracking-[0.4em]">{t.pidiArisi.badge}</span>
-                <h2 className="text-6xl font-bold text-text-dark heading-font">{t.pidiArisi.title}</h2>
+                <h2 className={`font-bold text-text-dark heading-font ${lang === 'ta' ? 'text-4xl md:text-5xl' : 'text-6xl'}`}>{t.pidiArisi.title}</h2>
               </div>
               <div className="p-10 bg-orange-50/50 border-l-8 border-primary rounded-[2.5rem] italic">
-                 <p className="text-2xl text-secondary leading-relaxed tamil-font" lang="ta">{t.pidiArisi.verse}</p>
+                 <p className="text-2xl text-secondary tamil-font" lang="ta">{t.pidiArisi.verse}</p>
                  <p className="text-gray-500 mt-6 text-sm">{t.pidiArisi.verseEn}</p>
               </div>
               <div className="pt-6">

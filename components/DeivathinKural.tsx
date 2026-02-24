@@ -58,7 +58,7 @@ const DeivathinKural: React.FC<DeivathinKuralProps> = ({ lang, quoteData, isLoad
             ) : (
               <div className="space-y-10 md:space-y-12 animate-in fade-in duration-1000">
                 {/* Tamil Content - 10% Larger than standard English text */}
-                <p className="text-3xl md:text-5xl font-bold text-text-dark leading-[1.6] tamil-font text-center max-w-3xl mx-auto">
+                <p className={`font-bold text-text-dark tamil-font text-center max-w-3xl mx-auto ${lang === 'ta' ? 'text-2xl md:text-4xl leading-[1.5]' : 'text-3xl md:text-5xl leading-[1.6]'}`}>
                   {quoteData.ta}
                 </p>
 

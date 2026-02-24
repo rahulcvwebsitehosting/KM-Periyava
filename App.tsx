@@ -136,7 +136,7 @@ const App: React.FC = () => {
     const [page, id] = currentPath.split('/');
     switch (page) {
       case 'home': return <HomePage lang={lang} t={t} quote={activeQuote[lang]} isLoadingQuote={isLoadingQuote} onRefreshQuote={fetchDailyQuote} navigate={navigate} />;
-      case 'about': return <AboutPage t={t.about} />;
+      case 'about': return <AboutPage t={t.about} lang={lang} />;
       case 'events': 
         if (id) return <EventDetailPage id={id} lang={lang} navigate={navigate} />;
         return <EventsPage lang={lang} t={t.events} navigate={navigate} />;
