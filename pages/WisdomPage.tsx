@@ -1,6 +1,7 @@
 
 import React from 'react';
 import DeivathinKural from '../components/DeivathinKural';
+import DeivathinKuralLibrary from '../components/DeivathinKuralLibrary';
 import { Language } from '../types';
 import { WisdomQuote } from '../data/wisdom';
 
@@ -20,6 +21,26 @@ const WisdomPage: React.FC<WisdomPageProps> = ({ lang, quoteData, isLoading, onR
         isLoading={isLoading} 
         onRefresh={onRefresh} 
       />
+
+      {/* Library Section */}
+      <section className="py-24 bg-[#FFFAF3]">
+        <div className="container mx-auto px-6 max-w-[1200px]">
+          <div className="text-center mb-16 space-y-4">
+            <span className="text-primary font-bold text-sm uppercase tracking-[0.4em]">Archive</span>
+            <h2 className={`font-bold text-text-dark heading-font ${lang === 'ta' ? 'text-4xl md:text-5xl' : 'text-5xl md:text-6xl'}`}>
+              {lang === 'ta' ? 'உபதேசக் களஞ்சியம்' : 'Wisdom Library'}
+            </h2>
+            <p className="text-gray-500 max-w-2xl mx-auto italic font-bold">
+              {lang === 'ta' 
+                ? 'மகாபெரியவாவின் பொன்மொழிகளைத் தலைப்பு வாரியாகத் தேடுங்கள்.' 
+                : 'Explore the eternal teachings of Mahaperiyava categorized by life topics.'}
+            </p>
+          </div>
+
+          <DeivathinKuralLibrary lang={lang} />
+        </div>
+      </section>
+
       <section className="py-24 bg-white">
         <div className="container mx-auto px-6 max-w-4xl text-center">
            <div className="inline-block w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center text-3xl mb-12 shadow-inner">📖</div>
