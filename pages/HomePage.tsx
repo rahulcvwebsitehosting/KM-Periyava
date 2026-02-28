@@ -15,7 +15,7 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onRefreshQuote, navigate }) => {
   return (
     <div className="space-y-0">
-      <Hero lang={lang} t={t.hero} />
+      <Hero lang={lang} t={t.hero} navigate={navigate} />
       
       {/* Wisdom Highlight */}
       <section className="py-32 bg-white relative overflow-hidden">

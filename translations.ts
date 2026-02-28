@@ -52,9 +52,8 @@ export const translations: Record<'en' | 'ta', TranslationSchema> = {
       p3: 'திருவாரூர், சீர்காழி, தேரெழுந்தூர் மற்றும் வைத்தீஸ்வரன் கோவில் ஆகியவை அருகில் உள்ள இடங்களாகும்.',
       templesTitle: '🛕 <strong>கந்தமங்கலத்தில்</strong> உள்ள கோவில்கள்',
       templeList: [
-        'பிரசன்ன மஹா கணபதி கோவில்',
-        'ஸ்கந்த ஐயனார் கோவில்',
-        'சிவன் கோவில்'
+        'ஸ்ரீ பிரசன்ன மஹா கணபதி கோவில்',
+        'ஸ்ரீ கைலாசநாதர் கோவில் (சிவன் கோவில்)'
       ],
       getDirections: '📍 வழிமுறைகளைப் பெறுக'
     },
@@ -119,9 +118,8 @@ export const translations: Record<'en' | 'ta', TranslationSchema> = {
       p3: 'Nearby places include Thiruvarur, Sirkazhi, Therizhandur (birthplace of Tamil poet Kambar), and Vaitheeswaran Koil.',
       templesTitle: '🛕 Temples in <strong>Kandhamangalam</strong>',
       templeList: [
-        'Prasanna Maha Ganapathi Temple',
-        'Skandha Ayyanar Temple',
-        'Shiva Temple'
+        'Sri Prasanna Maha Ganapathi Temple',
+        'Sri Kailasanathar Temple (Sivan Temple)'
       ],
       getDirections: '📍 Get Directions'
     },

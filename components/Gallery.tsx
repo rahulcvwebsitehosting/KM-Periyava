@@ -11,9 +11,10 @@ interface GalleryProps {
 const Gallery: React.FC<GalleryProps> = ({ lang, navigate, fullMode = false }) => {
   const [showAll, setShowAll] = useState(fullMode);
   const [selectedImage, setSelectedImage] = useState<null | any>(null);
+  const [activeTemple, setActiveTemple] = useState<'ganapathi' | 'sivan'>('ganapathi');
 
   // Complete list of all 13 images from the repository
-  const allImages = [
+  const ganapathiImages = [
     {
       id: 1,
       category: lang === 'ta' ? 'ஆராதனை' : 'Aradhana',
@@ -76,7 +77,7 @@ const Gallery: React.FC<GalleryProps> = ({ lang, navigate, fullMode = false }) =
     }
   ];
 
-  const visibleItems = showAll ? allImages : allImages.slice(0, 6);
+  const visibleItems = showAll ? ganapathiImages : ganapathiImages.slice(0, 6);
 
   const handleArchiveClick = () => {
     if (!showAll) {
@@ -106,55 +107,86 @@ const Gallery: React.FC<GalleryProps> = ({ lang, navigate, fullMode = false }) =
           </p>
         </div>
 
-        {/* Responsive Masonry Grid - Single column on mobile (<768px), multi-column on md+ */}
-        <div className="columns-1 md:columns-2 lg:columns-3 gap-4 md:gap-8 space-y-4 md:space-y-8 animate-in fade-in duration-700">
-          {visibleItems.map((item) => (
-            <div 
-              key={item.id} 
-              className="relative break-inside-avoid group cursor-pointer"
-              onClick={() => setSelectedImage(item)}
-            >
-              <div className="relative w-full rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-lg border-2 md:border-4 border-white transition-all transform active:scale-95 md:group-hover:shadow-2xl md:group-hover:-translate-y-1">
-                {/* Horizontal images use h-auto w-full to prevent vertical cropping and maintain detail */}
-                <img 
-                  src={item.src} 
-                  alt={item.category}
-                  className="w-full h-auto object-contain block transition-transform duration-1000 md:group-hover:scale-105"
-                  loading="lazy"
-                />
-                
-                {/* Visual Cue: Hidden by default, shows on hover or tap hint on mobile */}
-                <div className="absolute inset-0 bg-black/30 md:bg-black/40 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <div className="w-12 h-12 md:w-14 md:h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white text-xl md:text-2xl">
-                    🔍
-                  </div>
-                </div>
-
-                {/* Caption Overlay - Optimized for readability on small screens */}
-                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-4 md:p-8 text-white">
-                  <span className="text-accent text-[8px] md:text-[10px] font-bold uppercase tracking-widest mb-1">
-                    {item.category}
-                  </span>
-                  <h4 className="text-base md:text-xl font-bold heading-font leading-tight">
-                    {item.caption}
-                  </h4>
-                  <span className="md:hidden text-[10px] text-white/60 mt-2 font-medium">
-                    {lang === 'ta' ? 'பெரிதாக்க கிளிக் செய்யவும்' : 'Tap to enlarge'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))}
+        {/* Temple Selector */}
+        <div className="flex flex-col md:flex-row justify-center gap-4 mb-16">
+          <button 
+            onClick={() => setActiveTemple('ganapathi')}
+            className={`px-8 py-4 rounded-2xl font-bold transition-all text-sm uppercase tracking-widest border-2 ${activeTemple === 'ganapathi' ? 'bg-primary text-white border-primary shadow-lg' : 'bg-white text-gray-400 border-gray-100 hover:border-primary/30'}`}
+          >
+            Sri Prasanna Maha Ganapathi Temple
+          </button>
+          <button 
+            onClick={() => setActiveTemple('sivan')}
+            className={`px-8 py-4 rounded-2xl font-bold transition-all text-sm uppercase tracking-widest border-2 ${activeTemple === 'sivan' ? 'bg-primary text-white border-primary shadow-lg' : 'bg-white text-gray-400 border-gray-100 hover:border-primary/30'}`}
+          >
+            Sri Kailasanathar Temple (Sivan Temple)
+          </button>
         </div>
 
-        {!showAll && (
-          <div className="mt-12 md:mt-20 text-center block clear-both">
-            <button 
-              onClick={handleArchiveClick}
-              className="bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 md:px-10 py-3 md:py-4 rounded-full font-bold transition-all shadow-md transform hover:-translate-y-1 active:scale-95 inline-block whitespace-nowrap text-sm md:text-base"
-            >
-              {lang === 'ta' ? 'மேலும் படங்களைக் காண்க' : 'Explore Complete Archive →'}
-            </button>
+        {activeTemple === 'ganapathi' ? (
+          <>
+            {/* Responsive Masonry Grid - Single column on mobile (<768px), multi-column on md+ */}
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-4 md:gap-8 space-y-4 md:space-y-8 animate-in fade-in duration-700">
+              {visibleItems.map((item) => (
+                <div 
+                  key={item.id} 
+                  className="relative break-inside-avoid group cursor-pointer"
+                  onClick={() => setSelectedImage(item)}
+                >
+                  <div className="relative w-full rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-lg border-2 md:border-4 border-white transition-all transform active:scale-95 md:group-hover:shadow-2xl md:group-hover:-translate-y-1">
+                    {/* Horizontal images use h-auto w-full to prevent vertical cropping and maintain detail */}
+                    <img 
+                      src={item.src} 
+                      alt={item.category}
+                      className="w-full h-auto object-contain block transition-transform duration-1000 md:group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    
+                    {/* Visual Cue: Hidden by default, shows on hover or tap hint on mobile */}
+                    <div className="absolute inset-0 bg-black/30 md:bg-black/40 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <div className="w-12 h-12 md:w-14 md:h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center text-white text-xl md:text-2xl">
+                        🔍
+                      </div>
+                    </div>
+
+                    {/* Caption Overlay - Optimized for readability on small screens */}
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-4 md:p-8 text-white">
+                      <span className="text-accent text-[8px] md:text-[10px] font-bold uppercase tracking-widest mb-1">
+                        {item.category}
+                      </span>
+                      <h4 className="text-base md:text-xl font-bold heading-font leading-tight">
+                        {item.caption}
+                      </h4>
+                      <span className="md:hidden text-[10px] text-white/60 mt-2 font-medium">
+                        {lang === 'ta' ? 'பெரிதாக்க கிளிக் செய்யவும்' : 'Tap to enlarge'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {!showAll && (
+              <div className="mt-12 md:mt-20 text-center block clear-both">
+                <button 
+                  onClick={handleArchiveClick}
+                  className="bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 md:px-10 py-3 md:py-4 rounded-full font-bold transition-all shadow-md transform hover:-translate-y-1 active:scale-95 inline-block whitespace-nowrap text-sm md:text-base"
+                >
+                  {lang === 'ta' ? 'மேலும் படங்களைக் காண்க' : 'Explore Complete Archive →'}
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="text-center py-32 px-10 bg-gray-50/50 rounded-[3rem] border-2 border-dashed border-gray-200">
+            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm border border-gray-100">
+              <span className="text-5xl">📸</span>
+            </div>
+            <h3 className="text-3xl font-bold text-text-dark mb-4 heading-font">Sri Kailasanathar Temple Gallery</h3>
+            <p className="text-gray-500 max-w-md mx-auto italic font-bold">
+              The photo gallery for the Sivan Temple is currently being curated. 
+              Divine glimpses of the temple and its rituals will be uploaded soon.
+            </p>
           </div>
         )}
       </div>

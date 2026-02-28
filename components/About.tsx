@@ -85,7 +85,7 @@ const About: React.FC<AboutProps> = ({ t, lang }) => {
             
             <div className="grid grid-cols-3 gap-4">
               <StatCard val="15 km" label="Distance" sub="From Mayiladuthurai" />
-              <StatCard val="3" label="Temples" sub="In Village" />
+              <StatCard val="2" label="Temples" sub="In Village" />
               <StatCard val="25+" label="Years" sub="Of Divine Service" />
             </div>
           </div>

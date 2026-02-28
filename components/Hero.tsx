@@ -5,9 +5,10 @@ import { HeroTranslations, Language } from '../types';
 interface HeroProps {
   lang: Language;
   t: HeroTranslations;
+  navigate: (path: string) => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ lang, t }) => {
+const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#FFFAF3] py-20">
       {/* Subtle Pattern Overlay */}
@@ -91,19 +92,19 @@ const Hero: React.FC<HeroProps> = ({ lang, t }) => {
 
         {/* Hero Actions */}
         <div className="flex flex-wrap justify-center gap-6 md:gap-8 animate-in fade-in duration-1000 delay-700">
-          <a 
-            href="#about" 
+          <button 
+            onClick={() => navigate('about')} 
             className={`flex items-center gap-3 bg-gradient-to-br from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white rounded-full shadow-[0_15px_40px_rgba(210,105,30,0.3)] transition-all font-bold transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest ${lang === 'ta' ? 'px-8 md:px-12 py-4 md:py-5 text-xs md:text-lg' : 'px-10 md:px-14 py-4 md:py-6 text-sm md:text-xl'}`}
           >
             🙏 {t.planVisit}
-          </a>
+          </button>
           
-          <a 
-            href="#donate" 
+          <button 
+            onClick={() => navigate('donate')} 
             className={`flex items-center gap-3 bg-white border-2 border-primary text-primary hover:bg-orange-50 rounded-full shadow-lg transition-all font-bold transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest ${lang === 'ta' ? 'px-8 md:px-12 py-4 md:py-5 text-xs md:text-lg' : 'px-10 md:px-14 py-4 md:py-6 text-sm md:text-xl'}`}
           >
             🌸 {lang === 'ta' ? 'அன்னதான சேவை' : 'Seva & Donation'}
-          </a>
+          </button>
         </div>
       </div>
     </section>
