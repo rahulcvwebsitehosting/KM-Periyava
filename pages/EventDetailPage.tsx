@@ -77,14 +77,22 @@ const EventDetailPage: React.FC<EventDetailPageProps> = ({ id, lang, navigate })
                   {lang === 'ta' ? 'நன்கொடையாளர்கள்' : 'Donors'}
                 </h2>
                 <div className="grid sm:grid-cols-2 gap-6">
-                  {event.donors.map((donor, i) => (
-                    <div key={i} className="p-6 bg-orange-50/20 border border-orange-100/50 rounded-3xl shadow-sm flex items-center gap-4 group hover:bg-white hover:shadow-md transition-all">
-                      <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold text-lg group-hover:bg-primary group-hover:text-white transition-all">
-                        {donor.charAt(0)}
+                  {event.donors.map((donor, i) => {
+                    // Helper to get initial skipping titles
+                    const getInitial = (name: string) => {
+                      const cleanName = name.replace(/^(Mr\.|Mrs\.|Ms\.|Dr\.|Shri|Smt\.|Sri)\s+/i, '');
+                      return cleanName.charAt(0).toUpperCase();
+                    };
+                    
+                    return (
+                      <div key={i} className="p-6 bg-orange-50/20 border border-orange-100/50 rounded-3xl shadow-sm flex items-center gap-4 group hover:bg-white hover:shadow-md transition-all">
+                        <div className="w-12 h-12 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold text-lg group-hover:bg-primary group-hover:text-white transition-all">
+                          {getInitial(donor)}
+                        </div>
+                        <span className="text-text-dark font-bold text-base">{donor}</span>
                       </div>
-                      <span className="text-text-dark font-bold text-base">{donor}</span>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}
