@@ -9,14 +9,36 @@ interface ContactProps {
 const Contact: React.FC<ContactProps> = ({ lang }) => {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({ name: '', email: '', phone: '', message: '' });
-    }, 3000);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('https://formspree.io/f/xqeyjleq', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        setSubmitted(true);
+        setFormData({ name: '', email: '', phone: '', message: '' });
+        setTimeout(() => {
+          setSubmitted(false);
+        }, 5000);
+      } else {
+        alert('Oops! There was a problem submitting your form. Please try again.');
+      }
+    } catch (error) {
+      alert('Oops! There was a problem submitting your form. Please check your connection and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const address = "Kandhamangalam, Komal - East, Tamil Nadu 609805";
@@ -115,7 +137,7 @@ const Contact: React.FC<ContactProps> = ({ lang }) => {
                       type="text" 
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      placeholder="e.g. Shyam Sundar"
+                      placeholder="e.g. Ashwini R"
                       className="w-full px-8 py-5 bg-white border border-orange-100 rounded-3xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all font-medium shadow-sm"
                     />
                   </div>
@@ -126,7 +148,7 @@ const Contact: React.FC<ContactProps> = ({ lang }) => {
                       type="email" 
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      placeholder="shyam@example.com"
+                      placeholder="ramachandran@example.com"
                       className="w-full px-8 py-5 bg-white border border-orange-100 rounded-3xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/5 transition-all font-medium shadow-sm"
                     />
                   </div>
@@ -159,9 +181,10 @@ const Contact: React.FC<ContactProps> = ({ lang }) => {
                 <div className="pt-4">
                   <button 
                     type="submit"
-                    className="w-full py-6 bg-primary hover:bg-primary-dark text-white rounded-[2.5rem] font-bold text-xl shadow-[0_15px_40px_rgba(255,107,53,0.3)] transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-4 uppercase tracking-[0.2em]"
+                    disabled={isSubmitting}
+                    className={`w-full py-6 bg-primary hover:bg-primary-dark text-white rounded-[2.5rem] font-bold text-xl shadow-[0_15px_40px_rgba(255,107,53,0.3)] transition-all transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-4 uppercase tracking-[0.2em] ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                   >
-                    Send Message <span>🙏</span>
+                    {isSubmitting ? 'Sending...' : 'Send Message'} <span>🙏</span>
                   </button>
                 </div>
               </form>

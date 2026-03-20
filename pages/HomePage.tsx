@@ -112,10 +112,13 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
               </div>
             </div>
             <div className="relative group">
-               <div className="aspect-[3/4] rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-[#FFF9F0] bg-white flex items-center justify-center p-8">
+               <div className="aspect-[3/4] rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-[#FFF9F0] bg-gradient-to-b from-orange-50 to-amber-50 flex items-center justify-center p-8 relative">
+                 {/* Subtle Pattern Overlay */}
+                 <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#8B4513 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+                 
                  <img 
                     src="https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Main/71BsL6V3l6S.jpg" 
-                    className="max-w-full max-h-full object-contain group-hover:scale-[1.03] transition-transform duration-[3s]"
+                    className="max-w-full max-h-full object-contain group-hover:scale-[1.03] transition-transform duration-[3s] relative z-10 drop-shadow-2xl"
                     alt="Pidi Arisi Thittam Offering"
                  />
                </div>

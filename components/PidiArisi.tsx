@@ -49,12 +49,15 @@ const PidiArisi: React.FC<PidiArisiProps> = ({ t, lang, onDonate }) => {
 
           <div className="md:col-span-5 space-y-6">
             <div className="rounded-[2.5rem] overflow-hidden shadow-2xl bg-[#FFF9F0] border-[12px] border-white relative group">
-              {/* Full Image Container - Ensuring no cropping with object-contain and defined aspect */}
-              <div className="relative aspect-[3/4] md:min-h-[500px] flex items-center justify-center p-6 bg-white shadow-inner">
+              {/* Enhanced Image Container with Sacred Background */}
+              <div className="relative aspect-[3/4] md:min-h-[500px] flex items-center justify-center p-6 bg-gradient-to-b from-orange-50 to-amber-50 shadow-inner overflow-hidden">
+                {/* Subtle Pattern Overlay */}
+                <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#8B4513 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+                
                 <img 
                   src="https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Main/71BsL6V3l6S.jpg" 
                   alt="Pidi Arisi Thittam - Sacred Offering"
-                  className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-[1.03]"
+                  className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-[1.03] relative z-10 drop-shadow-2xl"
                 />
               </div>
               

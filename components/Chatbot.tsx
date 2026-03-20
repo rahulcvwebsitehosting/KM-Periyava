@@ -107,7 +107,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
       `;
  
       const response = await ai.models.generateContent({
-        model: 'gemini-flash-latest',
+        model: 'gemini-2.0-flash',
         contents: [
           ...messages.slice(-6).map(m => ({ role: m.role, parts: [{ text: m.text }] })),
           { role: 'user', parts: [{ text: userMessage }] }
