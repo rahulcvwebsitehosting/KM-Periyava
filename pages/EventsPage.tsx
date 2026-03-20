@@ -17,17 +17,108 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
   const ganapathiEvents = getProcessedEvents(); 
   const sivanEvents: any[] = []; // Empty for now as requested
 
+  const handleDownloadSchedule = async () => {
+    try {
+      const { jsPDF } = await import('jspdf');
+      const doc = new jsPDF();
+      const events = activeTemple === 'ganapathi' ? ganapathiEvents : sivanEvents;
+      const recentEvents = events.slice(0, 3);
+
+      // Colors
+      const saffron = '#FF6B35';
+      const darkText = '#2C1810';
+
+      // Header
+      doc.setTextColor(saffron);
+      doc.setFont('times', 'bold');
+      doc.setFontSize(22);
+      doc.text('KM Periyava Sannadhi - Kandhamangalam', 20, 30);
+
+      doc.setFontSize(16);
+      doc.setTextColor(darkText);
+      doc.text('Sacred Events Schedule', 20, 40);
+
+      // Date on the right
+      doc.setFontSize(10);
+      doc.setTextColor('#999999');
+      const today = new Date().toLocaleDateString();
+      doc.text(`Date: ${today}`, 160, 40);
+
+      // Line
+      doc.setDrawColor(saffron);
+      doc.setLineWidth(0.5);
+      doc.line(20, 45, 190, 45);
+
+      // Events
+      let y = 60;
+      if (recentEvents.length === 0) {
+        doc.setFontSize(12);
+        doc.setFont('times', 'italic');
+        doc.text('No events scheduled at this time for this temple.', 20, y);
+      } else {
+        recentEvents.forEach((event: any) => {
+          // Check for page overflow
+          if (y > 240) {
+            doc.addPage();
+            y = 30;
+          }
+
+          doc.setFontSize(14);
+          doc.setFont('times', 'bold');
+          doc.setTextColor(saffron);
+          doc.text(event.title, 20, y);
+          
+          doc.setFontSize(10);
+          doc.setFont('times', 'normal');
+          doc.setTextColor('#666666');
+          doc.text(event.date, 20, y + 7);
+
+          y += 15;
+
+          if (event.programs) {
+            doc.setTextColor(darkText);
+            event.programs.forEach((prog: string) => {
+              const splitProg = doc.splitTextToSize(`• ${prog}`, 160);
+              doc.text(splitProg, 25, y);
+              y += (splitProg.length * 6);
+            });
+          }
+          y += 15;
+        });
+      }
+
+      // Footer
+      doc.setFontSize(10);
+      doc.setTextColor('#999999');
+      doc.setDrawColor('#EEEEEE');
+      doc.line(20, 275, 190, 275);
+      doc.text('For more info: www.kmperiyavasannathi.co.in | +91 98843 86412', 105, 282, { align: 'center' });
+
+      doc.save('KM-Periyava-Schedule.pdf');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
+  };
+
   return (
     <section className="py-24 bg-white animate-in fade-in duration-500 sacred-bold">
       <div className="container mx-auto px-6 max-w-[1400px]">
-        <div className="text-center mb-16">
-          <span className="text-primary font-bold text-sm uppercase tracking-widest bg-orange-50 px-4 py-1.5 rounded-full">
-            {t.badge}
-          </span>
-          <h2 className="text-5xl font-bold text-text-dark heading-font mt-6 mb-4" dangerouslySetInnerHTML={{ __html: t.title }} />
-          <p className="text-secondary tracking-widest uppercase text-sm font-bold">
-            {lang === 'ta' ? 'கடந்த கால மற்றும் வரவிருக்கும் புனித நிகழ்வுகள்' : 'Sacred Past & Upcoming Events'}
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
+          <div className="text-center md:text-left">
+            <span className="text-primary font-bold text-sm uppercase tracking-widest bg-orange-50 px-4 py-1.5 rounded-full">
+              {t.badge}
+            </span>
+            <h2 className="text-5xl font-bold text-text-dark heading-font mt-6 mb-4" dangerouslySetInnerHTML={{ __html: t.title }} />
+            <p className="text-secondary tracking-widest uppercase text-sm font-bold">
+              {lang === 'ta' ? 'கடந்த கால மற்றும் வரவிருக்கும் புனித நிகழ்வுகள்' : 'Sacred Past & Upcoming Events'}
+            </p>
+          </div>
+          <button 
+            onClick={handleDownloadSchedule}
+            className="px-6 py-3 border-2 border-secondary text-secondary hover:bg-secondary hover:text-white rounded-full font-bold text-xs uppercase tracking-widest transition-all flex items-center gap-2"
+          >
+            📄 Download Schedule
+          </button>
         </div>
 
         {/* Temple Selector */}

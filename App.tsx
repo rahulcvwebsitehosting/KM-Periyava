@@ -19,6 +19,7 @@ import ExperiencePage from './pages/ExperiencePage';
 import WisdomPage from './pages/WisdomPage';
 import DonatePage from './pages/DonatePage';
 import ContactPage from './pages/ContactPage';
+import GratitudePage from './pages/GratitudePage';
 
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('en');
@@ -53,6 +54,7 @@ const App: React.FC = () => {
       wisdom: "Deivathin Kural | KM Periyava Sannadhi",
       donate: "Support & Donate | KM Periyava Sannadhi",
       contact: "Contact Us | KM Periyava Sannadhi",
+      gratitude: "Hall of Gratitude | KM Periyava Sannadhi",
     };
     const [page] = currentPath.split('/');
     document.title = titles[page] || "KM Periyava Sannadhi - Kandhamangalam";
@@ -160,6 +162,7 @@ const App: React.FC = () => {
       case 'wisdom': return <WisdomPage lang={lang} quoteData={activeQuote} isLoading={isLoadingQuote} onRefresh={fetchDailyQuote} />;
       case 'donate': return <DonatePage lang={lang} />;
       case 'contact': return <ContactPage lang={lang} />;
+      case 'gratitude': return <GratitudePage lang={lang} navigate={navigate} />;
       default: return <HomePage lang={lang} t={t} quote={activeQuote[lang]} isLoadingQuote={isLoadingQuote} onRefreshQuote={fetchDailyQuote} navigate={navigate} />;
     }
   };

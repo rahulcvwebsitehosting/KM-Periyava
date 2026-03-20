@@ -2,6 +2,8 @@
 import React from 'react';
 import { PidiArisiTranslations, Language } from '../types';
 
+const PLEDGE_COUNT = 47;
+
 interface PidiArisiProps {
   t: PidiArisiTranslations;
   lang: Language;
@@ -67,6 +69,36 @@ const PidiArisi: React.FC<PidiArisiProps> = ({ t, lang, onDonate }) => {
                  <p className="text-white text-[10px] font-bold uppercase tracking-widest bg-primary/90 backdrop-blur-sm px-4 py-1.5 rounded-full inline-block shadow-lg">
                     {lang === 'ta' ? 'அன்னதான சேவை' : 'Annadhanam Seva'}
                  </p>
+              </div>
+            </div>
+
+            {/* Pledge Counter Card */}
+            <div className="bg-gradient-to-br from-[#FF8C00] to-[#FF4500] p-10 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
+              {/* Sacred Pattern Overlay */}
+              <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(white 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
+              
+              <div className="relative z-10 text-center space-y-4">
+                <div className="text-7xl font-bold heading-font drop-shadow-lg">
+                  {PLEDGE_COUNT}
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xl font-bold uppercase tracking-widest leading-tight">
+                    {lang === 'ta' ? 'குடும்பங்கள் பிடி அரிசி திட்டத்தில் இணைந்துள்ளன' : 'Families pledged to Pidi Arisi Thittam'}
+                  </p>
+                  <p className="text-white/80 font-medium italic">
+                    {lang === 'ta' ? 'இன்று இந்த புனித முயற்சியில் இணையுங்கள்' : 'Join this sacred initiative today'}
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-white/20">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/60">
+                    {lang === 'ta' ? 'மாதாந்திர புதுப்பிப்பு' : 'Updated monthly'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Decorative Om */}
+              <div className="absolute -bottom-10 -right-10 text-[12rem] text-white/5 pointer-events-none select-none">
+                ॐ
               </div>
             </div>
 

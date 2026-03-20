@@ -18,6 +18,7 @@ const Footer: React.FC<FooterProps> = ({ lang, t, navigate }) => {
     experience: { en: 'Experience', ta: 'அனுபவங்கள்' },
     donate: { en: 'Donate', ta: 'நன்கொடை' },
     contact: { en: 'Contact', ta: 'தொடர்பு' },
+    gratitude: { en: 'Hall of Gratitude', ta: 'நன்றி நவிலல்' },
   };
 
   return (
@@ -63,7 +64,7 @@ const Footer: React.FC<FooterProps> = ({ lang, t, navigate }) => {
           <div>
             <h4 className="font-bold text-xs uppercase tracking-[0.5em] text-primary mb-10">Sacred Services</h4>
             <ul className="space-y-5 text-sm font-medium">
-              {['experience', 'donate', 'contact'].map(id => (
+              {['experience', 'donate', 'contact', 'gratitude'].map(id => (
                 <li key={id}>
                   <button onClick={() => navigate(id)} className="text-gray-300 hover:text-white hover:translate-x-2 transition-all">
                     {pageNames[id] ? pageNames[id][lang] : id.charAt(0).toUpperCase() + id.slice(1)}
