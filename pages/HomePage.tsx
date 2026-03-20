@@ -68,14 +68,14 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
             {[
-              { id: 1, name: 'Divine Darshan', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0024.jpg' },
-              { id: 2, name: 'Sacred Rituals', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0015.jpg' },
-              { id: 3, name: 'Holy Presence', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0019.jpg' },
-              { id: 4, name: 'Temple Sanctum', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0010.jpg' }
+              { id: 1, name: 'Divine Darshan', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0024.jpg', alt: 'Divine Darshan at KM Periyava Sannadhi' },
+              { id: 2, name: 'Sacred Rituals', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0015.jpg', alt: 'Sacred Rituals at Kandhamangalam' },
+              { id: 3, name: 'Holy Presence', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0019.jpg', alt: 'Holy Presence of Mahaperiyava' },
+              { id: 4, name: 'Temple Sanctum', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0010.jpg', alt: 'Temple Sanctum at Kandhamangalam' }
             ].map((deity) => (
               <div key={deity.id} className="group relative bg-white rounded-[2rem] overflow-hidden shadow-xl hover:-translate-y-4 transition-all duration-500">
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img src={deity.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" />
+                  <img src={deity.img} alt={deity.alt} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
                   <p className="text-white text-2xl font-bold heading-font">{deity.name}</p>

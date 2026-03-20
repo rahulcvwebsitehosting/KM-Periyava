@@ -43,6 +43,21 @@ const App: React.FC = () => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  useEffect(() => {
+    const titles: Record<string, string> = {
+      home: "KM Periyava Sannadhi - Kandhamangalam",
+      about: "About Us | KM Periyava Sannadhi",
+      events: "Sacred Events | KM Periyava Sannadhi",
+      gallery: "Gallery | KM Periyava Sannadhi",
+      experience: "Devotee Experiences | KM Periyava Sannadhi",
+      wisdom: "Deivathin Kural | KM Periyava Sannadhi",
+      donate: "Support & Donate | KM Periyava Sannadhi",
+      contact: "Contact Us | KM Periyava Sannadhi",
+    };
+    const [page] = currentPath.split('/');
+    document.title = titles[page] || "KM Periyava Sannadhi - Kandhamangalam";
+  }, [currentPath]);
+
   const navigate = (path: string) => {
     window.location.hash = `#/${path}`;
     setCurrentPath(path);

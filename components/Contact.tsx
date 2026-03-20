@@ -9,11 +9,13 @@ interface ContactProps {
 const Contact: React.FC<ContactProps> = ({ lang }) => {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(null);
 
     try {
       const response = await fetch('https://formspree.io/f/xqeyjleq', {
@@ -32,10 +34,10 @@ const Contact: React.FC<ContactProps> = ({ lang }) => {
           setSubmitted(false);
         }, 5000);
       } else {
-        alert('Oops! There was a problem submitting your form. Please try again.');
+        setSubmitError(lang === 'ta' ? 'மன்னிக்கவும்! உங்கள் படிவத்தைச் சமர்ப்பிப்பதில் சிக்கல் ஏற்பட்டது. மீண்டும் முயற்சிக்கவும்.' : 'Oops! There was a problem submitting your form. Please try again.');
       }
     } catch (error) {
-      alert('Oops! There was a problem submitting your form. Please check your connection and try again.');
+      setSubmitError(lang === 'ta' ? 'மன்னிக்கவும்! உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.' : 'Oops! There was a problem submitting your form. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -128,6 +130,13 @@ const Contact: React.FC<ContactProps> = ({ lang }) => {
                   <h3 className="text-2xl font-bold text-secondary heading-font">Submit Inquiry</h3>
                   <p className="text-gray-400 text-sm">Fill in the details below to reach our administrative office.</p>
                 </div>
+
+                {submitError && (
+                  <div className="bg-red-50 border border-red-100 p-6 rounded-3xl flex items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xl flex-shrink-0">⚠️</div>
+                    <p className="text-red-800 font-medium text-sm leading-relaxed">{submitError}</p>
+                  </div>
+                )}
 
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="space-y-2">

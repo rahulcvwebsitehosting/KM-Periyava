@@ -95,4 +95,20 @@ export const eventsData: Event[] = [
     donors: ["Mr. Thyagarajan (Chennai)"],
     mediaUrl: "https://photos.app.goo.gl/dPLXQy3nCkQ83RqcA"
   }
-];
+].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+export const getProcessedEvents = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  return eventsData.map(event => ({
+    ...event,
+    isUpcoming: new Date(event.date) >= today
+  })).sort((a, b) => {
+    // Upcoming first
+    if (a.isUpcoming && !b.isUpcoming) return -1;
+    if (!a.isUpcoming && b.isUpcoming) return 1;
+    // Then by date descending
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
+};

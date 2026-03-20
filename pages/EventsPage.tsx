@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { eventsData } from '../data/events';
+import { getProcessedEvents } from '../data/events';
 
 interface EventsPageProps {
   lang: string;
@@ -14,7 +14,7 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
   // Filter events based on temple. 
   // For now, we assume all current events belong to Ganapathi temple as per user request,
   // even if some descriptions mention Sivan temple, the user wants a separate empty section for Sivan.
-  const ganapathiEvents = eventsData; 
+  const ganapathiEvents = getProcessedEvents(); 
   const sivanEvents: any[] = []; // Empty for now as requested
 
   return (
@@ -51,8 +51,21 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
             {ganapathiEvents.map((event) => (
               <div 
                 key={event.id} 
-                className="bg-[#FFFCF7] p-8 rounded-[2.5rem] border border-orange-50 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group flex flex-col"
+                className="bg-[#FFFCF7] p-8 rounded-[2.5rem] border border-orange-50 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group flex flex-col relative overflow-hidden"
               >
+                {/* Status Badge */}
+                <div className="absolute top-6 right-6">
+                  {event.isUpcoming ? (
+                    <span className="bg-green-100 text-green-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-green-200">
+                      Upcoming
+                    </span>
+                  ) : (
+                    <span className="bg-gray-100 text-gray-500 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest border border-gray-200">
+                      Completed
+                    </span>
+                  )}
+                </div>
+
                 <div className="mb-6 flex items-center gap-3">
                   <span className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary font-bold text-xl">
                     ॐ

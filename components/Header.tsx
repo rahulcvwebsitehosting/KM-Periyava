@@ -128,8 +128,14 @@ const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Nav */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t p-8 shadow-2xl animate-in slide-in-from-top duration-300">
-          <ul className="flex flex-col gap-6 font-bold text-secondary text-base uppercase tracking-widest">
+        <>
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[-1] lg:hidden" 
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <div className="lg:hidden bg-white border-t p-8 shadow-2xl animate-in slide-in-from-top duration-300">
+            <ul className="flex flex-col gap-6 font-bold text-secondary text-base uppercase tracking-widest">
             {menuItems.map(item => (
               <li key={item.id}>
                 <button onClick={() => handleNav(item.id)} className={`w-full text-left pb-2 border-b border-orange-50 ${currentPath === item.id ? 'text-primary' : ''}`}>{item.name}</button>
@@ -144,8 +150,9 @@ const Header: React.FC<HeaderProps> = ({
             </li>
           </ul>
         </div>
-      )}
-    </header>
+      </>
+    )}
+  </header>
   );
 };
 

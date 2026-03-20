@@ -55,7 +55,7 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
     setIsSubmitting(true);
     
     try {
-      const response = await fetch('https://formspree.io/f/YOUR_FORMSPREE_ID_2', {
+      const response = await fetch('https://formspree.io/f/xreydlyv', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',

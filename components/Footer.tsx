@@ -9,6 +9,17 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ lang, t, navigate }) => {
+  const pageNames: Record<string, { en: string; ta: string }> = {
+    home: { en: 'Home', ta: 'முகப்பு' },
+    about: { en: 'About', ta: 'பற்றி' },
+    events: { en: 'Events', ta: 'நிகழ்வுகள்' },
+    gallery: { en: 'Gallery', ta: 'படங்கள்' },
+    wisdom: { en: 'Wisdom', ta: 'ஞானம்' },
+    experience: { en: 'Experience', ta: 'அனுபவங்கள்' },
+    donate: { en: 'Donate', ta: 'நன்கொடை' },
+    contact: { en: 'Contact', ta: 'தொடர்பு' },
+  };
+
   return (
     <footer className="bg-[#2C1810] text-[#FFF9F0] pt-24 pb-12 overflow-hidden relative border-t-8 border-primary">
       {/* Sacred Watermark */}
@@ -41,7 +52,7 @@ const Footer: React.FC<FooterProps> = ({ lang, t, navigate }) => {
               {['home', 'about', 'events', 'gallery', 'wisdom'].map(id => (
                 <li key={id}>
                   <button onClick={() => navigate(id)} className="text-gray-300 hover:text-white hover:translate-x-2 transition-all">
-                    {id.charAt(0).toUpperCase() + id.slice(1)}
+                    {pageNames[id] ? pageNames[id][lang] : id.charAt(0).toUpperCase() + id.slice(1)}
                   </button>
                 </li>
               ))}
@@ -55,7 +66,7 @@ const Footer: React.FC<FooterProps> = ({ lang, t, navigate }) => {
               {['experience', 'donate', 'contact'].map(id => (
                 <li key={id}>
                   <button onClick={() => navigate(id)} className="text-gray-300 hover:text-white hover:translate-x-2 transition-all">
-                    {id.charAt(0).toUpperCase() + id.slice(1)}
+                    {pageNames[id] ? pageNames[id][lang] : id.charAt(0).toUpperCase() + id.slice(1)}
                   </button>
                 </li>
               ))}
@@ -73,7 +84,7 @@ const Footer: React.FC<FooterProps> = ({ lang, t, navigate }) => {
                 </p>
                 <p className="flex items-center gap-3">
                   <span className="text-primary">📞</span> 
-                  <span className="text-gray-300">+91 98765 43210</span>
+                  <span className="text-gray-300">+91 98843 86412</span>
                 </p>
               </div>
               <p className="text-[10px] font-bold text-primary tracking-[0.6em] text-center pt-2">HARA HARA SANKARA</p>
