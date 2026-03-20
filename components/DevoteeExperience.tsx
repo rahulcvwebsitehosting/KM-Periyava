@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Language } from '../types';
 
 interface Story {
@@ -35,32 +35,12 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
     }
   ];
 
-  const [stories, setStories] = useState<Story[]>([]);
+  const [stories] = useState<Story[]>(defaultStories);
   const [expandedIds, setExpandedIds] = useState<number[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({ name: '', title: '', text: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
-  // Load stories from localStorage or defaults
-  useEffect(() => {
-    const saved = localStorage.getItem('km_devotee_stories');
-    if (saved) {
-      try {
-        setStories(JSON.parse(saved));
-      } catch (e) {
-        setStories(defaultStories);
-      }
-    } else {
-      setStories(defaultStories);
-    }
-  }, []);
-
-  // Persistence helper
-  const saveStories = (newStories: Story[]) => {
-    setStories(newStories);
-    localStorage.setItem('km_devotee_stories', JSON.stringify(newStories));
-  };
 
   const toggleExpand = (id: number) => {
     setExpandedIds(prev => 
@@ -68,61 +48,38 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmission = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.title || !formData.text) return;
 
     setIsSubmitting(true);
     
-    // Simulate slight delay for effect
-    setTimeout(() => {
-      const newStory: Story = { 
-        ...formData, 
-        date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
-      };
-      
-      const updatedStories = [newStory, ...stories];
-      saveStories(updatedStories);
-      
-      setFormData({ name: '', title: '', text: '' });
+    try {
+      const response = await fetch('https://formspree.io/f/YOUR_FORMSPREE_ID_2', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        setFormData({ name: '', title: '', text: '' });
+        setShowSuccess(true);
+        
+        setTimeout(() => {
+          setShowSuccess(false);
+          setIsModalOpen(false);
+        }, 5000);
+      } else {
+        alert('Oops! There was a problem submitting your story. Please try again.');
+      }
+    } catch (error) {
+      alert('Oops! There was a problem submitting your story. Please check your connection and try again.');
+    } finally {
       setIsSubmitting(false);
-      setShowSuccess(true);
-      
-      // Close success message and modal after a delay
-      setTimeout(() => {
-        setShowSuccess(false);
-        setIsModalOpen(false);
-      }, 2500);
-    }, 800000); // Changed to 800ms for responsiveness but keeping the "submitting" feel
-    
-    // Actually the instruction said "immediately appear", 
-    // but the original code had 1s. Let's use 800ms.
-    // Fixed: previous timeout was 1000, setting to 800.
-  };
-
-  // Correcting the delay to be reasonable
-  const handleSubmission = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.title || !formData.text) return;
-
-    setIsSubmitting(true);
-    
-    const newStory: Story = { 
-      ...formData, 
-      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
-    };
-    
-    const updatedStories = [newStory, ...stories];
-    saveStories(updatedStories);
-    
-    setFormData({ name: '', title: '', text: '' });
-    setIsSubmitting(false);
-    setShowSuccess(true);
-    
-    setTimeout(() => {
-      setShowSuccess(false);
-      setIsModalOpen(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -217,11 +174,11 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
                     {lang === 'ta' ? 'மிக்க நன்றி!' : 'Blessed Offering Received'}
                   </h3>
                   <p className="text-xl text-secondary font-medium italic">
-                    {lang === 'ta' ? 'உங்கள் அனுபவம் மற்றவர்களுக்கு ஊக்கமளிக்கும்.' : 'Thank you for sharing your blessing with the community.'}
+                    {lang === 'ta' ? 'உங்கள் அனுபவம் நிர்வாக ஒப்புதலுக்குப் பிறகு தோன்றும்.' : 'Your story will appear after admin approval.'}
                   </p>
                 </div>
                 <div className="text-primary font-bold animate-pulse text-sm uppercase tracking-widest">
-                  {lang === 'ta' ? 'ஊட்டம் புதுப்பிக்கப்படுகிறது...' : 'Updating the Sacred Feed...'}
+                  {lang === 'ta' ? 'சமர்ப்பிக்கப்பட்டது...' : 'Submitted...'}
                 </div>
               </div>
             ) : (
