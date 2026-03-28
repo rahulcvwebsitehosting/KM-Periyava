@@ -224,8 +224,8 @@ const CursorGlow: React.FC = () => {
 
     const handleMouseMove = (e: MouseEvent) => {
       if (outerRef.current) {
-        outerRef.current.style.left = (e.clientX - 160) + 'px';
-        outerRef.current.style.top = (e.clientY - 160) + 'px';
+        outerRef.current.style.left = (e.clientX - 120) + 'px';
+        outerRef.current.style.top = (e.clientY - 120) + 'px';
       }
       if (innerRef.current) {
         innerRef.current.style.left = (e.clientX - 6) + 'px';
@@ -260,11 +260,11 @@ const CursorGlow: React.FC = () => {
     <div className="fixed inset-0 pointer-events-none z-[60]">
       <div 
         ref={outerRef}
-        className="fixed w-[320px] h-[320px] rounded-full pointer-events-none transition-[left,top] duration-[150ms] ease-out"
+        className="fixed w-[240px] h-[240px] rounded-full pointer-events-none transition-[left,top] duration-[150ms] ease-out"
         style={{
           background: 'radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, rgba(255, 107, 53, 0) 70%)',
-          left: '-320px',
-          top: '-320px',
+          left: '-240px',
+          top: '-240px',
           mixBlendMode: 'screen'
         }}
       />
