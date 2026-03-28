@@ -11,19 +11,6 @@ export interface Event {
 
 export const eventsData: Event[] = [
   {
-    id: "anusham-feb-2026",
-    title: "ANUSHAM POOJA",
-    date: "February 11, 2026",
-    description: "Anusham pooja for Sri Mahaperiyava held on 11th February, 2026.",
-    programs: [
-      "Avahanthi Homam",
-      "Periyava Panchalogha Vighragham & Padhukha Purappadu along with Uthagashanthi parayanam",
-      "Annadhanam"
-    ],
-    donors: ["Mr. K. Thiyagarajan (Chennai)"],
-    mediaUrl: "https://photos.app.goo.gl/12poBaHSArGLe9Bu9"
-  },
-  {
     id: "anusham-mar-2026",
     title: "ANUSHAM POOJA",
     date: "March 10, 2026",
@@ -35,6 +22,19 @@ export const eventsData: Event[] = [
     ],
     donors: ["Ms. S. Subhashini Suresh (Chennai)", "Mr. Anand (Chennai)"],
     mediaUrl: "https://photos.app.goo.gl/AtSgJjYM7Bx9sS9A9"
+  },
+  {
+    id: "anusham-feb-2026",
+    title: "ANUSHAM POOJA",
+    date: "February 11, 2026",
+    description: "Anusham pooja for Sri Mahaperiyava held on 11th February, 2026.",
+    programs: [
+      "Avahanthi Homam",
+      "Periyava Panchalogha Vighragham & Padhukha Purappadu along with Uthagashanthi parayanam",
+      "Annadhanam"
+    ],
+    donors: ["Mr. K. Thiyagarajan (Chennai)"],
+    mediaUrl: "https://photos.app.goo.gl/12poBaHSArGLe9Bu9"
   },
   {
     id: "anusham-jan-2026",

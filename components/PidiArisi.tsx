@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { PidiArisiTranslations, Language } from '../types';
+import LazyImage from './LazyImage';
 
 const PLEDGE_COUNT = 47;
 
@@ -56,7 +57,7 @@ const PidiArisi: React.FC<PidiArisiProps> = ({ t, lang, onDonate }) => {
                 {/* Subtle Pattern Overlay */}
                 <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#8B4513 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
                 
-                <img 
+                <LazyImage 
                   src="https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Main/71BsL6V3l6S.jpg" 
                   alt="Pidi Arisi Thittam - Sacred Offering"
                   className="max-w-full max-h-full object-contain transition-transform duration-700 group-hover:scale-[1.03] relative z-10 drop-shadow-2xl"

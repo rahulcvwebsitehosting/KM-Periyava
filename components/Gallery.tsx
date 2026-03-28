@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Language } from '../types';
+import LazyImage from './LazyImage';
 
 interface GalleryProps {
   lang: Language;
@@ -133,14 +134,13 @@ const Gallery: React.FC<GalleryProps> = ({ lang, navigate, fullMode = false }) =
                   className="relative break-inside-avoid group cursor-pointer"
                   onClick={() => setSelectedImage(item)}
                 >
-                  <div className="relative w-full rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-lg border-2 md:border-4 border-white transition-all transform active:scale-95 md:group-hover:shadow-2xl md:group-hover:-translate-y-1">
-                    {/* Horizontal images use h-auto w-full to prevent vertical cropping and maintain detail */}
-                    <img 
-                      src={item.src} 
-                      alt={item.category}
-                      className="w-full h-auto object-contain block transition-transform duration-1000 md:group-hover:scale-105"
-                      loading="lazy"
-                    />
+                    <div className="relative w-full rounded-2xl md:rounded-[2.5rem] overflow-hidden shadow-lg border-2 md:border-4 border-white transition-all transform active:scale-95 md:group-hover:shadow-2xl md:group-hover:-translate-y-1">
+                      {/* Horizontal images use h-auto w-full to prevent vertical cropping and maintain detail */}
+                      <LazyImage 
+                        src={item.src} 
+                        alt={item.category}
+                        className="w-full h-auto object-contain block transition-transform duration-1000 md:group-hover:scale-105"
+                      />
                     
                     {/* Visual Cue: Hidden by default, shows on hover or tap hint on mobile */}
                     <div className="absolute inset-0 bg-black/30 md:bg-black/40 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -212,7 +212,7 @@ const Gallery: React.FC<GalleryProps> = ({ lang, navigate, fullMode = false }) =
             onClick={(e) => e.stopPropagation()}
           >
             <div className="relative w-full max-h-[75vh] md:max-h-[85vh] flex items-center justify-center">
-              <img 
+              <LazyImage 
                 src={selectedImage.src} 
                 alt={selectedImage.caption}
                 className="max-w-full max-h-full object-contain shadow-2xl rounded-sm md:rounded-lg animate-in zoom-in-95 duration-300"

@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { HeroTranslations, Language } from '../types';
+import LazyImage from './LazyImage';
 
 interface HeroProps {
   lang: Language;
@@ -8,7 +9,158 @@ interface HeroProps {
   navigate: (path: string) => void;
 }
 
+interface Particle {
+  x: number;
+  y: number;
+  size: number;
+  speedY: number;
+  speedX: number;
+  opacity: number;
+  life: number;
+  maxLife: number;
+  color: string;
+}
+
 const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationFrameId = useRef<number>(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Resize canvas to match its displayed size
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    const particles: Particle[] = [];
+    const colors = ['#FFD700', '#FFA500', '#FFFACD', '#FFE87C'];
+
+    const createParticle = (isInitial = false): Particle => {
+      const life = isInitial ? Math.random() : 0;
+      return {
+        x: Math.random() * canvas.width,
+        y: canvas.height * (0.4 + Math.random() * 0.5),
+        size: 1 + Math.random() * 2,
+        speedY: -0.3 - Math.random() * 0.9,
+        speedX: -0.3 + Math.random() * 0.6,
+        opacity: 0,
+        life: life,
+        maxLife: 0.6 + Math.random() * 0.4,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      };
+    };
+
+    // Initialize particles
+    for (let i = 0; i < 60; i++) {
+      particles.push(createParticle(true));
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach((p, index) => {
+        p.life += 0.003;
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.opacity = Math.sin(p.life * Math.PI);
+
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (p.life >= p.maxLife) {
+          particles[index] = createParticle();
+          // Randomize starting position to be near portrait center area as requested
+          particles[index].x = canvas.width * (0.2 + Math.random() * 0.6);
+          particles[index].y = canvas.height * (0.4 + Math.random() * 0.5);
+        }
+      });
+
+      animationFrameId.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .deepam-outer-flame {
+        position: absolute;
+        bottom: 0; left: 50%;
+        transform: translateX(-50%);
+        width: 24px; height: 44px;
+        background: linear-gradient(180deg, 
+          rgba(255,100,0,0) 0%, 
+          rgba(255,140,0,0.8) 40%, 
+          rgba(255,200,0,1) 100%);
+        border-radius: 50% 50% 20% 20%;
+        animation: flicker 0.8s ease-in-out infinite alternate,
+                   sway 1.2s ease-in-out infinite alternate;
+        transform-origin: bottom center;
+        filter: blur(1px);
+      }
+
+      .deepam-inner-flame {
+        position: absolute;
+        bottom: 0; left: 50%;
+        transform: translateX(-50%);
+        width: 12px; height: 28px;
+        background: linear-gradient(180deg, 
+          rgba(255,255,255,0) 0%, 
+          rgba(255,255,200,0.9) 50%, 
+          rgba(255,230,100,1) 100%);
+        border-radius: 50% 50% 20% 20%;
+        animation: flicker 0.6s ease-in-out infinite alternate-reverse,
+                   sway 1.2s ease-in-out infinite alternate;
+        transform-origin: bottom center;
+      }
+
+      .deepam-glow {
+        position: absolute;
+        bottom: -8px; left: 50%;
+        transform: translateX(-50%);
+        width: 60px; height: 20px;
+        background: radial-gradient(ellipse, 
+          rgba(255,180,0,0.4) 0%, 
+          rgba(255,180,0,0) 70%);
+        animation: glowPulse 1s ease-in-out infinite alternate;
+      }
+
+      @keyframes flicker {
+        0%   { transform: translateX(-50%) scaleX(1) scaleY(1); }
+        25%  { transform: translateX(-50%) scaleX(0.95) scaleY(1.05); }
+        50%  { transform: translateX(-50%) scaleX(1.05) scaleY(0.97); }
+        75%  { transform: translateX(-50%) scaleX(0.97) scaleY(1.03); }
+        100% { transform: translateX(-50%) scaleX(1.02) scaleY(0.98); }
+      }
+
+      @keyframes sway {
+        0%   { margin-left: -2px; }
+        100% { margin-left: 2px; }
+      }
+
+      @keyframes glowPulse {
+        0%   { opacity: 0.4; transform: translateX(-50%) scaleX(0.8); }
+        100% { opacity: 0.8; transform: translateX(-50%) scaleX(1.2); }
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#FFFAF3] py-20">
       {/* Subtle Pattern Overlay */}
@@ -30,7 +182,7 @@ const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
         </div>
 
         {/* Custom Arched Portrait Section */}
-        <div className="relative inline-block mb-16 animate-in zoom-in duration-1000 delay-300">
+        <div className="relative inline-block mb-4 animate-in zoom-in duration-1000 delay-300">
           <div className="relative mx-auto group">
             
             {/* The Arched Container */}
@@ -42,7 +194,7 @@ const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
             >
               {/* Manual Arch Masking with border-radius */}
               <div className="absolute inset-0 z-0 bg-white rounded-t-[50%] rounded-b-2xl overflow-hidden shadow-inner">
-                <img 
+                <LazyImage 
                   src="https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Main/Periyava%20Main.jpg" 
                   alt="Sri Kanchi Maha Periyava"
                   className="w-full h-full object-cover object-center transition-transform duration-[8s] group-hover:scale-105"
@@ -50,6 +202,12 @@ const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
                 
                 {/* Divine Soft Inner Glow */}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent pointer-events-none"></div>
+
+                {/* Particle Aura Canvas */}
+                <canvas 
+                  ref={canvasRef}
+                  className="absolute inset-0 z-[3] pointer-events-none w-full h-full"
+                />
               </div>
 
               {/* Arched Gold Frame Overlay (CSS Simulated) */}
@@ -67,6 +225,47 @@ const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-accent/15 blur-[100px] -z-10 animate-pulse opacity-50"
               style={{ borderRadius: '50% 50% 20% 20%' }}
             ></div>
+          </div>
+        </div>
+
+        {/* Flickering Deepam */}
+        <div aria-hidden="true" className="text-center mb-12">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem' }}>
+            {/* Flame */}
+            <div className="deepam-flame-wrapper" style={{ position: 'relative', width: '32px', height: '48px', marginBottom: '-4px' }}>
+              {/* Outer flame */}
+              <div className="deepam-outer-flame" />
+              {/* Inner flame */}
+              <div className="deepam-inner-flame" />
+              {/* Glow beneath flame */}
+              <div className="deepam-glow" />
+            </div>
+            
+            {/* Wick */}
+            <div style={{ width: '2px', height: '8px', background: '#555', borderRadius: '1px', zIndex: 2 }} />
+            
+            {/* Lamp bowl */}
+            <div style={{ 
+              width: '48px', height: '16px',
+              background: 'linear-gradient(180deg, #C9A227, #8B6914)',
+              borderRadius: '0 0 50% 50%',
+              boxShadow: '0 4px 12px rgba(201,162,39,0.4)',
+              marginTop: '-2px'
+            }} />
+            
+            {/* Lamp stand */}
+            <div style={{
+              width: '4px', height: '20px',
+              background: 'linear-gradient(180deg, #C9A227, #8B6914)',
+              margin: '0 auto'
+            }} />
+            
+            {/* Base */}
+            <div style={{
+              width: '32px', height: '6px',
+              background: 'linear-gradient(180deg, #C9A227, #8B6914)',
+              borderRadius: '50%'
+            }} />
           </div>
         </div>
         

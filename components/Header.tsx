@@ -7,6 +7,8 @@ interface HeaderProps {
   setLang: (lang: Language) => void;
   isMusicPlaying: boolean;
   toggleMusic: () => void;
+  isPetalsOn: boolean;
+  togglePetals: () => void;
   t: NavTranslations;
   currentPath: string;
   navigate: (path: string) => void;
@@ -17,6 +19,8 @@ const Header: React.FC<HeaderProps> = ({
   setLang, 
   isMusicPlaying, 
   toggleMusic, 
+  isPetalsOn,
+  togglePetals,
   t, 
   currentPath,
   navigate
@@ -94,6 +98,15 @@ const Header: React.FC<HeaderProps> = ({
               </button>
             </div>
 
+            {/* Petal Toggle */}
+            <button 
+              onClick={togglePetals}
+              className={`relative w-9 h-9 xl:w-11 xl:h-11 rounded-full flex items-center justify-center transition-all duration-500 ${isPetalsOn ? 'bg-primary/20 shadow-md' : 'bg-gray-100 hover:bg-gray-200'}`}
+              title="Toggle Sacred Petals"
+            >
+              <span className={`text-sm xl:text-base transition-opacity duration-300 ${isPetalsOn ? 'opacity-100' : 'opacity-30'}`}>🌸</span>
+            </button>
+
             {/* Language */}
             <div className="flex bg-gray-50 rounded-xl p-0.5 xl:p-1 border border-gray-100 shrink-0">
               <button onClick={() => setLang('ta')} className={`px-1.5 xl:px-2 py-1 rounded-md text-[9px] font-bold tracking-tighter ${lang === 'ta' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>தமிழ்</button>
@@ -118,6 +131,13 @@ const Header: React.FC<HeaderProps> = ({
             {isMusicPlaying && <span className="absolute w-10 h-10 rounded-full bg-primary/30 animate-ping"></span>}
             <span className="text-lg relative z-10">{isMusicPlaying ? '🔊' : '🔇'}</span>
           </button>
+          <button 
+            onClick={togglePetals} 
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isPetalsOn ? 'bg-primary/20 shadow-lg' : 'bg-gray-100'}`}
+            title="Toggle Sacred Petals"
+          >
+            <span className={`text-lg transition-opacity duration-300 ${isPetalsOn ? 'opacity-100' : 'opacity-30'}`}>🌸</span>
+          </button>
           <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-secondary p-1">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6" : "M4 6h16M4 12h16M4 18h16"} />
@@ -131,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({
         <>
           {/* Backdrop */}
           <div 
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[-1] lg:hidden" 
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden" 
             onClick={() => setIsMobileMenuOpen(false)}
           />
           <div className="lg:hidden bg-white border-t p-8 shadow-2xl animate-in slide-in-from-top duration-300">

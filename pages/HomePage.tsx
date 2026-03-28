@@ -2,6 +2,7 @@
 import React from 'react';
 import Hero from '../components/Hero';
 import { Language, TranslationSchema } from '../types';
+import LazyImage from '../components/LazyImage';
 
 interface HomePageProps {
   lang: Language;
@@ -75,7 +76,7 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
             ].map((deity) => (
               <div key={deity.id} className="group relative bg-white rounded-[2rem] overflow-hidden shadow-xl hover:-translate-y-4 transition-all duration-500">
                 <div className="aspect-[3/4] overflow-hidden">
-                  <img src={deity.img} alt={deity.alt} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" />
+                  <LazyImage src={deity.img} alt={deity.alt} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-8">
                   <p className="text-white text-2xl font-bold heading-font">{deity.name}</p>
@@ -116,7 +117,7 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
                  {/* Subtle Pattern Overlay */}
                  <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#8B4513 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
                  
-                 <img 
+                 <LazyImage 
                     src="https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Main/71BsL6V3l6S.jpg" 
                     className="max-w-full max-h-full object-contain group-hover:scale-[1.03] transition-transform duration-[3s] relative z-10 drop-shadow-2xl"
                     alt="Pidi Arisi Thittam Offering"

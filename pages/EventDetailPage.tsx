@@ -111,7 +111,7 @@ const EventDetailPage: React.FC<EventDetailPageProps> = ({ id, lang, navigate })
                 </a>
 
                 <a 
-                  href={`https://wa.me/?text=${encodeURIComponent(`🙏 Attended the ${event.title} at KM Periyava Sannadhi, Kandhamangalam on ${event.date}. Jai Jai Shankara! View photos & details: ${event.mediaUrl}`)}`}
+                  href={`https://wa.me/?text=${encodeURIComponent(lang === 'ta' ? `🙏 KM பெரியவா சந்நிதி, கந்தமங்கலத்தில் ${event.date} அன்று நடைபெற்ற ${event.title} நிகழ்வில் கலந்துகொண்டோம். ஜெய் ஜெய் சங்கர! புகைப்படங்கள் & விவரங்கள்: ${event.mediaUrl}` : `🙏 Attended the ${event.title} at KM Periyava Sannadhi, Kandhamangalam on ${event.date}. Jai Jai Shankara! View photos & details: ${event.mediaUrl}`)}`}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-full md:w-auto inline-flex items-center justify-center gap-4 bg-[#25D366] hover:bg-[#128C7E] text-white px-12 py-6 rounded-full font-bold shadow-2xl transition-all transform hover:-translate-y-1 text-lg uppercase tracking-widest"

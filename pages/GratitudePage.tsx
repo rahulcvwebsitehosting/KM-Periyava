@@ -16,6 +16,8 @@ interface DonorStats {
 }
 
 const GratitudePage: React.FC<GratitudePageProps> = ({ lang, navigate }) => {
+  const cleanName = (name: string) => name.replace(/\s*\([^)]*\)/g, '').trim();
+
   // Extract and process donors
   const donorsMap = new Map<string, DonorStats>();
 
@@ -46,8 +48,8 @@ const GratitudePage: React.FC<GratitudePageProps> = ({ lang, navigate }) => {
   });
 
   const getInitial = (name: string) => {
-    const cleanName = name.replace(/^(Mr\.|Mrs\.|Ms\.|Dr\.|Shri|Smt\.|Sri)\s+/i, '');
-    return cleanName.charAt(0).toUpperCase();
+    const cleaned = cleanName(name).replace(/^(Mr\.|Mrs\.|Ms\.|Dr\.|Shri|Smt\.|Sri)\s+/i, '');
+    return cleaned.charAt(0).toUpperCase();
   };
 
   return (
@@ -101,7 +103,7 @@ const GratitudePage: React.FC<GratitudePageProps> = ({ lang, navigate }) => {
                 </div>
                 <div className="flex-1 pt-1">
                   <h3 className="text-xl font-bold text-text-dark mb-1 leading-tight group-hover:text-primary transition-colors">
-                    {donor.name}
+                    {cleanName(donor.name)}
                   </h3>
                   {donor.location && (
                     <p className="text-xs font-bold text-secondary uppercase tracking-widest mb-4">
