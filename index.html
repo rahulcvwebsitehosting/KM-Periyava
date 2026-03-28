@@ -112,6 +112,38 @@
         color: #8B4513;
         font-weight: 700;
       }
+      
+      /* Scroll Reveal Animations */
+      .sr-hidden {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+      }
+
+      .sr-hidden-left {
+        opacity: 0;
+        transform: translateX(-40px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+      }
+
+      .sr-hidden-scale {
+        opacity: 0;
+        transform: scale(0.92);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      .sr-visible {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      /* Stagger children */
+      .sr-stagger > *:nth-child(1) { transition-delay: 0s; }
+      .sr-stagger > *:nth-child(2) { transition-delay: 0.1s; }
+      .sr-stagger > *:nth-child(3) { transition-delay: 0.2s; }
+      .sr-stagger > *:nth-child(4) { transition-delay: 0.3s; }
+      .sr-stagger > *:nth-child(5) { transition-delay: 0.4s; }
+      .sr-stagger > *:nth-child(6) { transition-delay: 0.5s; }
     </style>
   <script type="importmap">
 {

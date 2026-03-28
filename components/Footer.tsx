@@ -28,11 +28,11 @@ const Footer: React.FC<FooterProps> = ({ lang, t, navigate }) => {
         <span className="text-[30rem] leading-none">ॐ</span>
       </div>
 
-      <div className="container mx-auto px-12 relative z-10">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-20 mb-20">
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-16 lg:gap-20 mb-10 md:mb-20">
           {/* Column 1 - Brand */}
           <div className="space-y-8">
-            <button onClick={() => navigate('home')} className="flex items-center gap-5 group text-left">
+            <button onClick={() => navigate('home')} className="flex items-center gap-3 md:gap-5 group text-left">
               <span className="text-4xl text-primary transform group-hover:rotate-12 transition-transform">ॐ</span>
               <div>
                 <h3 className="font-bold text-2xl heading-font leading-none tracking-tight">KM Periyava Sannadhi</h3>
@@ -94,8 +94,8 @@ const Footer: React.FC<FooterProps> = ({ lang, t, navigate }) => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">
-          <p>© 2026 kmperiyavasannathi.co.in | All Rights Reserved</p>
+        <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-8 text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">
+          <p className="text-center md:text-left">© 2026 kmperiyavasannathi.co.in | All Rights Reserved</p>
           <p className="flex items-center gap-2">
             DESIGNED BY <a href="https://www.linkedin.com/in/rahulshyamcivil/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-white transition">RAHUL SHYAM</a>
           </p>

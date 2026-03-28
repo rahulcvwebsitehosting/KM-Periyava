@@ -17,24 +17,24 @@ const DonateModal: React.FC<DonateModalProps> = ({ isOpen, onClose, lang }) => {
       <div className="absolute inset-0 bg-bg-dark/80 backdrop-blur-sm" onClick={onClose}></div>
       
       {/* Modal Content */}
-      <div className="relative bg-white w-full max-w-lg rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
-        <div className="bg-primary p-8 text-white relative">
+      <div className="relative bg-white w-full max-w-lg rounded-[2rem] md:rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
+        <div className="bg-primary p-5 md:p-8 text-white relative">
           <button 
             onClick={onClose}
-            className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-black/10 hover:bg-black/20 rounded-full transition"
+            className="absolute top-4 md:top-6 right-4 md:right-6 w-10 h-10 flex items-center justify-center bg-black/10 hover:bg-black/20 rounded-full transition"
             aria-label="Close"
           >
             ✕
           </button>
-          <h2 className="text-3xl font-bold heading-font">
+          <h2 className="text-2xl md:text-3xl font-bold heading-font">
             {lang === 'ta' ? 'பங்களிப்பு செய்யவும்' : 'Make a Donation'}
           </h2>
-          <p className="mt-2 text-white/80 font-medium">
+          <p className="mt-2 text-white/80 font-medium text-sm md:text-base">
             {lang === 'ta' ? 'அன்னதானம் மற்றும் கோவில் திருப்பணிகளுக்கு உதவவும்.' : 'Support our Annadhanam and temple maintenance initiatives.'}
           </p>
         </div>
         
-        <div className="p-8 space-y-8">
+        <div className="p-5 md:p-8 space-y-8">
           {/* Bank Details */}
           <div className="space-y-4">
             <h3 className="font-bold text-secondary uppercase tracking-widest text-xs">Bank Transfer Details</h3>
@@ -80,7 +80,7 @@ const DonateModal: React.FC<DonateModalProps> = ({ isOpen, onClose, lang }) => {
           </p>
         </div>
 
-        <div className="p-8 pt-0">
+        <div className="p-5 md:p-8 pt-0">
           <button 
             onClick={onClose}
             className="w-full py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all"

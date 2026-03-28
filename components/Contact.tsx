@@ -56,7 +56,7 @@ const Contact: React.FC<ContactProps> = ({ lang }) => {
               <span className="text-primary font-bold text-sm uppercase tracking-[0.3em] bg-orange-50 px-5 py-2 rounded-full inline-block mb-6">
                 {lang === 'ta' ? 'தொடர்பு' : 'Get in Touch'}
               </span>
-              <h2 className="text-4xl md:text-6xl font-bold text-text-dark heading-font leading-tight">
+              <h2 className="text-3xl md:text-6xl font-bold text-text-dark heading-font leading-tight">
                 {lang === 'ta' ? 'எங்களை தொடர்பு கொள்ள' : 'Contact Our Sannadhi'}
               </h2>
               <p className="text-gray-500 text-xl mt-6 leading-relaxed max-w-xl font-medium">
@@ -108,7 +108,7 @@ const Contact: React.FC<ContactProps> = ({ lang }) => {
           </div>
 
           {/* Form Side */}
-          <div className="bg-[#FFFCF7] p-10 md:p-16 rounded-[4rem] shadow-2xl shadow-primary/5 border border-orange-100 relative overflow-hidden">
+          <div className="bg-[#FFFCF7] p-6 md:p-10 lg:p-16 rounded-[2rem] md:rounded-[4rem] shadow-2xl shadow-primary/5 border border-orange-100 relative overflow-hidden">
              {/* Decorative Background Icon */}
             <div className="absolute -bottom-10 -right-10 text-[20rem] text-primary/5 select-none pointer-events-none">ॐ</div>
 
@@ -206,7 +206,7 @@ const Contact: React.FC<ContactProps> = ({ lang }) => {
 };
 
 const ContactInfoItem = ({ icon, title, content }: any) => (
-  <div className="flex gap-8 items-start group">
+  <div className="flex gap-4 md:gap-8 items-start group">
     <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-orange-100 flex items-center justify-center text-3xl flex-shrink-0 group-hover:bg-primary group-hover:text-white transition-all duration-300">
       {icon}
     </div>

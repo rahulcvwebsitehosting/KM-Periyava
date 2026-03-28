@@ -166,10 +166,10 @@ const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
       {/* Subtle Pattern Overlay */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#8B4513 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
       
-      <div className="container mx-auto px-6 max-w-[1200px] text-center relative z-10 py-24">
+      <div className="container mx-auto px-6 max-w-[1200px] text-center relative z-10 py-8 md:py-24">
         {/* Top Sacred Chants */}
         <div className="mb-12 space-y-4 animate-in fade-in slide-in-from-top-4 duration-1000">
-          <p className="text-3xl md:text-5xl font-bold text-primary heading-font tracking-[0.3em] uppercase drop-shadow-sm">
+          <p className="text-xl md:text-5xl font-bold text-primary heading-font tracking-[0.3em] uppercase drop-shadow-sm">
             {t.chant1}
           </p>
           <div className="flex flex-col md:flex-row gap-2 md:gap-6 justify-center items-center text-secondary font-bold text-sm md:text-lg opacity-80">
@@ -276,9 +276,9 @@ const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
             <span className="text-secondary font-bold">{t.sannadhi}</span>
           </h1>
           
-          <div className="flex items-center justify-center gap-4 md:gap-8">
+          <div className="flex items-center justify-center gap-4 md:gap-8 overflow-hidden">
             <span className="h-px w-16 md:w-32 bg-gradient-to-r from-transparent to-accent/40"></span>
-            <p className={`text-secondary font-bold uppercase ${lang === 'ta' ? 'text-sm md:text-xl tracking-[0.3em]' : 'text-base md:text-2xl tracking-[0.5em]'}`}>
+            <p className={`text-secondary font-bold uppercase truncate ${lang === 'ta' ? 'text-[10px] sm:text-sm md:text-xl tracking-[0.2em] md:tracking-[0.3em]' : 'text-[10px] sm:text-base md:text-2xl tracking-[0.2em] md:tracking-[0.5em]'}`}>
               K A N D H A M A N G A L A M
             </p>
             <span className="h-px w-16 md:w-32 bg-gradient-to-l from-transparent to-accent/40"></span>
@@ -290,17 +290,17 @@ const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
         </div>
 
         {/* Hero Actions */}
-        <div className="flex flex-wrap justify-center gap-6 md:gap-8 animate-in fade-in duration-1000 delay-700">
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 md:gap-8 w-full px-4 sm:px-0 animate-in fade-in duration-1000 delay-700">
           <button 
             onClick={() => navigate('about')} 
-            className={`flex items-center gap-3 bg-gradient-to-br from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white rounded-full shadow-[0_15px_40px_rgba(210,105,30,0.3)] transition-all font-bold transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest ${lang === 'ta' ? 'px-8 md:px-12 py-4 md:py-5 text-xs md:text-lg' : 'px-10 md:px-14 py-4 md:py-6 text-sm md:text-xl'}`}
+            className={`w-full sm:w-auto flex items-center justify-center gap-3 bg-gradient-to-br from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white rounded-full shadow-[0_15px_40px_rgba(210,105,30,0.3)] transition-all font-bold transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest ${lang === 'ta' ? 'px-8 md:px-12 py-4 md:py-5 text-xs md:text-lg' : 'px-10 md:px-14 py-4 md:py-6 text-sm md:text-xl'}`}
           >
             🙏 {t.planVisit}
           </button>
           
           <button 
             onClick={() => navigate('donate')} 
-            className={`flex items-center gap-3 bg-white border-2 border-primary text-primary hover:bg-orange-50 rounded-full shadow-lg transition-all font-bold transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest ${lang === 'ta' ? 'px-8 md:px-12 py-4 md:py-5 text-xs md:text-lg' : 'px-10 md:px-14 py-4 md:py-6 text-sm md:text-xl'}`}
+            className={`w-full sm:w-auto flex items-center justify-center gap-3 bg-white border-2 border-primary text-primary hover:bg-orange-50 rounded-full shadow-lg transition-all font-bold transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest ${lang === 'ta' ? 'px-8 md:px-12 py-4 md:py-5 text-xs md:text-lg' : 'px-10 md:px-14 py-4 md:py-6 text-sm md:text-xl'}`}
           >
             🌸 {lang === 'ta' ? 'அன்னதான சேவை' : 'Seva & Donation'}
           </button>

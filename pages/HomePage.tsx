@@ -3,6 +3,7 @@ import React from 'react';
 import Hero from '../components/Hero';
 import { Language, TranslationSchema } from '../types';
 import LazyImage from '../components/LazyImage';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface HomePageProps {
   lang: Language;
@@ -14,12 +15,16 @@ interface HomePageProps {
 }
 
 const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onRefreshQuote, navigate }) => {
+  const wisdomRef = useScrollReveal();
+  const deitiesRef = useScrollReveal();
+  const pidiArisiRef = useScrollReveal();
+
   return (
     <div className="space-y-0">
       <Hero lang={lang} t={t.hero} navigate={navigate} />
       
       {/* Wisdom Highlight */}
-      <section className="py-32 bg-white relative overflow-hidden">
+      <section ref={wisdomRef} className="py-16 md:py-32 bg-white relative overflow-hidden sr-hidden-left">
         <div className="container mx-auto px-8 max-w-5xl text-center">
            <h2 className="text-4xl font-bold text-text-dark heading-font mb-4">Deivathin Kural</h2>
            <p className="text-lg text-secondary uppercase tracking-[0.3em] mb-16">Eternal Echoes of Wisdom</p>
@@ -60,14 +65,14 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
       </section>
 
       {/* Sacred Deity Gallery Highlight */}
-      <section className="py-32 bg-[#FFF9F0]">
-        <div className="container mx-auto px-12 max-w-[1400px]">
-          <div className="text-center mb-24">
-            <h2 className="text-5xl font-bold text-text-dark heading-font mb-4">Sacred Deities</h2>
+      <section ref={deitiesRef} className="py-16 md:py-32 bg-[#FFF9F0] sr-hidden">
+        <div className="container mx-auto px-4 md:px-12 max-w-[1400px]">
+          <div className="text-center mb-10 md:mb-24">
+            <h2 className="text-3xl md:text-5xl font-bold text-text-dark heading-font mb-4">Sacred Deities</h2>
             <p className="text-lg text-secondary tracking-widest">Divine Presence at Kandhamangalam</p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-12">
             {[
               { id: 1, name: 'Divine Darshan', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0024.jpg', alt: 'Divine Darshan at KM Periyava Sannadhi' },
               { id: 2, name: 'Sacred Rituals', img: 'https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Gallery/DSC_0015.jpg', alt: 'Sacred Rituals at Kandhamangalam' },
@@ -94,20 +99,20 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
       </section>
 
       {/* Pidi Arisi Section */}
-      <section className="py-32 bg-white">
-        <div className="container mx-auto px-12 max-w-[1200px]">
-          <div className="grid lg:grid-cols-2 gap-24 items-center">
+      <section ref={pidiArisiRef} className="py-16 md:py-32 bg-white sr-hidden">
+        <div className="container mx-auto px-4 md:px-12 max-w-[1200px]">
+          <div className="grid lg:grid-cols-2 gap-10 md:gap-24 items-center">
             <div className="space-y-12">
               <div className="space-y-4">
                 <span className="text-primary font-bold text-xs uppercase tracking-[0.4em]">{t.pidiArisi.badge}</span>
                 <h2 className={`font-bold text-text-dark heading-font ${lang === 'ta' ? 'text-4xl md:text-5xl' : 'text-6xl'}`}>{t.pidiArisi.title}</h2>
               </div>
-              <div className="p-10 bg-orange-50/50 border-l-8 border-primary rounded-[2.5rem] italic">
+              <div className="p-6 md:p-10 bg-orange-50/50 border-l-8 border-primary rounded-[2.5rem] italic">
                  <p className="text-2xl text-secondary tamil-font" lang="ta">{t.pidiArisi.verse}</p>
                  <p className="text-gray-500 mt-6 text-sm">{t.pidiArisi.verseEn}</p>
               </div>
               <div className="pt-6">
-                 <button onClick={() => navigate('donate')} className="bg-primary text-white px-12 py-5 rounded-full font-bold shadow-2xl shadow-primary/30 transform hover:-translate-y-1 transition-all uppercase text-xs tracking-widest">
+                 <button onClick={() => navigate('donate')} className="bg-primary text-white px-8 md:px-12 py-4 md:py-5 rounded-full font-bold shadow-2xl shadow-primary/30 transform hover:-translate-y-1 transition-all uppercase text-xs tracking-widest">
                    Contribute to Annadhanam
                  </button>
               </div>

@@ -4,6 +4,7 @@ import DeivathinKural from '../components/DeivathinKural';
 import DeivathinKuralLibrary from '../components/DeivathinKuralLibrary';
 import { Language } from '../types';
 import { WisdomQuote } from '../data/wisdom';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface WisdomPageProps {
   lang: Language;
@@ -13,6 +14,7 @@ interface WisdomPageProps {
 }
 
 const WisdomPage: React.FC<WisdomPageProps> = ({ lang, quoteData, isLoading, onRefresh }) => {
+  const quoteRef = useScrollReveal();
   return (
     <div className="animate-in fade-in duration-500">
       <DeivathinKural 
@@ -55,7 +57,18 @@ const WisdomPage: React.FC<WisdomPageProps> = ({ lang, quoteData, isLoading, onR
              <p>
                It serves as an encyclopedia of Hindu Dharma for the modern seeker, preserving the eternal truths of our ancestors in a language that speaks directly to the soul.
              </p>
-             <div className="p-10 bg-orange-50/50 rounded-[3rem] border-l-8 border-primary italic font-bold text-2xl md:text-3xl text-secondary">
+             <div 
+               ref={quoteRef}
+               className="p-10 rounded-[3rem] border-l-8 border-primary italic font-bold text-2xl md:text-3xl text-secondary sr-hidden-scale"
+               style={{
+                 background: 'rgba(255, 252, 247, 0.75)',
+                 backdropFilter: 'blur(12px)',
+                 WebkitBackdropFilter: 'blur(12px)',
+                 border: '1px solid rgba(255, 200, 150, 0.25)',
+                 borderLeftWidth: '8px',
+                 boxShadow: '0 8px 32px rgba(139, 69, 19, 0.08), inset 0 1px 0 rgba(255,255,255,0.5)'
+               }}
+             >
                "God will do anything for us; what matters is what we do for God."
              </div>
            </div>

@@ -1,7 +1,7 @@
 
 import React from 'react';
-
 import { Language } from '../types';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface AboutProps {
   t: {
@@ -18,13 +18,15 @@ interface AboutProps {
 }
 
 const About: React.FC<AboutProps> = ({ t, lang }) => {
+  const textRef = useScrollReveal();
+  const mediaRef = useScrollReveal();
   const directionsUrl = "https://www.google.com/maps/dir//Kandhamangalam,+Komal+-+East,+Tamil+Nadu+609805/@11.0234307,79.6038842,18z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3a552501876a9e1f:0xbf1e786d3668c84f!2m2!1d79.6038842!2d11.0234307?entry=ttu&g_ep=EgoyMDI2MDEyOC4wIKXMDSoASAFQAw%3D%3D";
 
   return (
     <section id="about" className="py-24 bg-bg-primary">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="space-y-8 order-2 lg:order-1">
+          <div ref={textRef} className="space-y-8 order-2 lg:order-1 sr-hidden-left">
             <span className="text-primary font-bold text-sm uppercase tracking-widest bg-orange-50 px-3 py-1 rounded-full inline-block">
               {t.badge}
             </span>
@@ -61,7 +63,7 @@ const About: React.FC<AboutProps> = ({ t, lang }) => {
             </a>
           </div>
           
-          <div className="order-1 lg:order-2 space-y-8">
+          <div ref={mediaRef} className="order-1 lg:order-2 space-y-8 sr-hidden">
             <div className="rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-white relative aspect-[4/3]">
               <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
                 {/* Simulated Map UI */}

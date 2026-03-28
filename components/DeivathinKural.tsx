@@ -38,7 +38,16 @@ const DeivathinKural: React.FC<DeivathinKuralProps> = ({ lang, quoteData, isLoad
 
         <div className="relative group max-w-4xl mx-auto">
           {/* Sacred Parchment Card */}
-          <div className="bg-[#FFFEFB] p-10 md:p-20 rounded-sm shadow-[0_20px_60px_rgba(139,69,19,0.08)] border border-[#D4AF37]/20 relative">
+          <div 
+            className="p-10 md:p-20 rounded-sm relative"
+            style={{
+              background: 'rgba(255, 252, 247, 0.75)',
+              backdropFilter: 'blur(12px)',
+              WebkitBackdropFilter: 'blur(12px)',
+              border: '1px solid rgba(255, 200, 150, 0.25)',
+              boxShadow: '0 8px 32px rgba(139, 69, 19, 0.08), inset 0 1px 0 rgba(255,255,255,0.5)'
+            }}
+          >
             
             {/* Corner Decorative Elements */}
             <div className="absolute top-4 left-4 w-12 h-12 border-t-2 border-l-2 border-[#D4AF37]/30"></div>

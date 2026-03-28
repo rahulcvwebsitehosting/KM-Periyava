@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { getProcessedEvents } from '../data/events';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface EventsPageProps {
   lang: string;
@@ -10,6 +11,7 @@ interface EventsPageProps {
 
 const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
   const [activeTemple, setActiveTemple] = React.useState<'ganapathi' | 'sivan'>('ganapathi');
+  const gridRef = useScrollReveal({ threshold: 0.1 });
 
   // Filter events based on temple. 
   // For now, we assume all current events belong to Ganapathi temple as per user request,
@@ -36,24 +38,31 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
         <div className="flex flex-col md:flex-row justify-center gap-4 mb-16">
           <button 
             onClick={() => setActiveTemple('ganapathi')}
-            className={`px-8 py-4 rounded-2xl font-bold transition-all text-sm uppercase tracking-widest border-2 ${activeTemple === 'ganapathi' ? 'bg-primary text-white border-primary shadow-lg' : 'bg-white text-gray-400 border-gray-100 hover:border-primary/30'}`}
+            className={`px-4 md:px-8 py-3 md:py-4 rounded-2xl font-bold transition-all text-xs md:text-sm uppercase tracking-widest border-2 ${activeTemple === 'ganapathi' ? 'bg-primary text-white border-primary shadow-lg' : 'bg-white text-gray-400 border-gray-100 hover:border-primary/30'}`}
           >
             Sri Prasanna Maha Ganapathi Temple
           </button>
           <button 
             onClick={() => setActiveTemple('sivan')}
-            className={`px-8 py-4 rounded-2xl font-bold transition-all text-sm uppercase tracking-widest border-2 ${activeTemple === 'sivan' ? 'bg-primary text-white border-primary shadow-lg' : 'bg-white text-gray-400 border-gray-100 hover:border-primary/30'}`}
+            className={`px-4 md:px-8 py-3 md:py-4 rounded-2xl font-bold transition-all text-xs md:text-sm uppercase tracking-widest border-2 ${activeTemple === 'sivan' ? 'bg-primary text-white border-primary shadow-lg' : 'bg-white text-gray-400 border-gray-100 hover:border-primary/30'}`}
           >
             Sri Kailasanathar Temple (Sivan Temple)
           </button>
         </div>
 
         {activeTemple === 'ganapathi' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 sr-hidden sr-stagger">
             {ganapathiEvents.map((event) => (
               <div 
                 key={event.id} 
-                className="bg-[#FFFCF7] p-8 rounded-[2.5rem] border border-orange-50 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group flex flex-col relative overflow-hidden"
+                className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group flex flex-col relative overflow-hidden sr-hidden"
+                style={{
+                  background: 'rgba(255, 252, 247, 0.75)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 200, 150, 0.25)',
+                  boxShadow: '0 8px 32px rgba(139, 69, 19, 0.08), inset 0 1px 0 rgba(255,255,255,0.5)'
+                }}
               >
                 {/* Status Badge */}
                 <div className="absolute top-6 right-6">

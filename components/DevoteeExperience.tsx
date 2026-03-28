@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Language } from '../types';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface Story {
   name: string;
@@ -14,6 +15,7 @@ interface DevoteeExperienceProps {
 }
 
 const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
+  const revealRef = useScrollReveal({ threshold: 0.1 });
   const defaultStories: Story[] = [
     { 
       name: 'R. Venkatesh', 
@@ -102,14 +104,14 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="px-10 py-5 bg-gradient-to-r from-primary to-primary-dark hover:shadow-2xl hover:-translate-y-1 text-white rounded-full font-bold shadow-xl transition-all flex items-center gap-3 uppercase text-sm tracking-widest"
+            className="px-6 md:px-10 py-3 md:py-5 bg-gradient-to-r from-primary to-primary-dark hover:shadow-2xl hover:-translate-y-1 text-white rounded-full font-bold shadow-xl transition-all flex items-center gap-3 uppercase text-sm tracking-widest"
           >
             <span>🙏</span> {lang === 'ta' ? 'அனுபவத்தைப் பகிரவும்' : 'Share Your Blessing'}
           </button>
         </div>
 
         {/* Masonry-like Sacred Feed */}
-        <div className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8">
+        <div ref={revealRef} className="columns-1 md:columns-2 lg:columns-3 gap-8 space-y-8 sr-hidden sr-stagger">
           {stories.map((story, idx) => {
             const isExpanded = expandedIds.includes(idx);
             const needsToggle = story.text.length > 200;
@@ -118,7 +120,14 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
             return (
               <div 
                 key={`${story.name}-${idx}`} 
-                className="break-inside-avoid bg-[#FFF8F0] p-10 rounded-[2.5rem] border border-accent/20 shadow-sm flex flex-col hover:shadow-lg transition-all relative group overflow-hidden"
+                className="break-inside-avoid p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col hover:shadow-lg transition-all relative group overflow-hidden sr-hidden"
+                style={{
+                  background: 'rgba(255, 252, 247, 0.75)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(255, 200, 150, 0.25)',
+                  boxShadow: '0 8px 32px rgba(139, 69, 19, 0.08), inset 0 1px 0 rgba(255,255,255,0.5)'
+                }}
               >
                 {/* Lotus/Om Watermark Icon */}
                 <div className="absolute -top-4 -right-4 text-accent/10 text-8xl pointer-events-none select-none group-hover:text-accent/20 transition-colors">
@@ -163,9 +172,9 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-bg-dark/80 backdrop-blur-md" onClick={() => !isSubmitting && setIsModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+          <div className="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
             {showSuccess ? (
-              <div className="p-16 text-center space-y-8 bg-[#FFF8F0]">
+              <div className="p-8 md:p-16 text-center space-y-8 bg-[#FFF8F0]">
                 <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-5xl animate-bounce">
                   ✓
                 </div>
@@ -183,7 +192,7 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
               </div>
             ) : (
               <>
-                <div className="bg-gradient-to-br from-primary to-primary-dark p-10 text-white relative">
+                <div className="bg-gradient-to-br from-primary to-primary-dark p-6 md:p-10 text-white relative">
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="text-3xl font-bold heading-font">{lang === 'ta' ? 'அனுபவத்தைப் பகிரவும்' : 'Share Your Blessing'}</h3>
                     <button onClick={() => setIsModalOpen(false)} className="w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded-full transition text-2xl">✕</button>
@@ -193,7 +202,7 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
                   </p>
                 </div>
                 
-                <form onSubmit={handleSubmission} className="p-10 space-y-8">
+                <form onSubmit={handleSubmission} className="p-6 md:p-10 space-y-8">
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
                       <label className="block text-[10px] font-bold text-accent uppercase tracking-widest mb-3 ml-2">Your Name *</label>
