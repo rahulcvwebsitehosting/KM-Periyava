@@ -41,35 +41,52 @@ const DonateModal: React.FC<DonateModalProps> = ({ isOpen, onClose, lang }) => {
             <div className="bg-orange-50 p-6 rounded-3xl border border-orange-100 space-y-3">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500 font-medium">Account Name:</span>
-                <span className="font-bold text-secondary">KM Periyava Sannadhi Trust</span>
+                <span className="font-bold text-secondary">Kandhamangalam Maha Periyava Trust</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500 font-medium">Bank Name:</span>
-                <span className="font-bold text-secondary">State Bank of India</span>
+                <span className="font-bold text-secondary">City Union Bank (CUB)</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500 font-medium">Account No:</span>
-                <span className="font-bold text-primary text-lg">123456789012</span>
+                <span className="font-bold text-primary text-lg">500101011983121</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500 font-medium">IFSC Code:</span>
-                <span className="font-bold text-secondary">SBIN0001234</span>
+                <span className="font-bold text-secondary">CIUB0000279</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-500 font-medium">Branch:</span>
-                <span className="font-bold text-secondary">Mayiladuthurai</span>
+                <span className="font-bold text-secondary">Mylapore</span>
               </div>
             </div>
           </div>
 
-          {/* UPI Placeholder */}
           <div className="space-y-4">
-            <h3 className="font-bold text-secondary uppercase tracking-widest text-xs">Scan & Pay (UPI)</h3>
-            <div className="bg-white border-2 border-dashed border-gray-100 rounded-3xl p-8 flex flex-col items-center justify-center">
-              <div className="w-40 h-40 bg-gray-50 rounded-2xl border-4 border-white shadow-inner flex items-center justify-center mb-4">
-                <div className="w-32 h-32 bg-gray-200 animate-pulse rounded-lg"></div>
+            <h3 className="font-bold text-secondary uppercase 
+              tracking-widest text-xs">GPay / UPI</h3>
+            <div className="bg-orange-50 p-6 rounded-3xl border 
+              border-orange-100">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <p className="text-xs text-gray-500 font-medium">
+                    GPay Number
+                  </p>
+                  <p className="text-2xl font-bold text-secondary 
+                    tracking-wide">
+                    +91 89255 11855
+                  </p>
+                  <p className="text-[10px] text-gray-400 font-bold 
+                    uppercase tracking-widest">
+                    Kandhamangalam Maha Periyava Trust
+                  </p>
+                </div>
+                <div className="w-14 h-14 bg-white rounded-2xl 
+                  flex items-center justify-center shadow-sm 
+                  border border-orange-100 text-3xl">
+                  📲
+                </div>
               </div>
-              <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">kmperiyava@upi</p>
             </div>
           </div>
 
