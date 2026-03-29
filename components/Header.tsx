@@ -63,7 +63,7 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <header className="fixed top-0 w-full bg-white/95 backdrop-blur-xl shadow-sm z-50 border-b border-orange-100/50 py-5 transition-all duration-500">
+      <header className="fixed top-0 w-full bg-white shadow-sm z-50 border-b border-orange-100/50 py-5 transition-all duration-500">
         <div className="container mx-auto max-w-[1400px] px-6 lg:px-12 flex justify-between items-center">
           {/* Logo */}
           <button onClick={() => handleNav('home')} className="flex items-center gap-2 md:gap-4 group focus:outline-none shrink-0 mr-8">
