@@ -185,30 +185,43 @@ const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Nav */}
       {isMobileMenuOpen && (
-        <>
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-black/40 z-[41] lg:hidden" 
-            onClick={() => setIsMobileMenuOpen(false)}
-          />
-          <div className="lg:hidden bg-white border-t p-8 shadow-2xl animate-in slide-in-from-top duration-300 z-[42] relative">
-            <ul className="flex flex-col gap-6 font-bold text-secondary text-base uppercase tracking-widest">
+        <div className="lg:hidden fixed top-[72px] left-0 right-0 bg-white border-t-2 border-orange-100 shadow-2xl z-50">
+          <ul className="flex flex-col px-6 py-4">
             {menuItems.map(item => (
               <li key={item.id}>
-                <button onClick={() => handleNav(item.id)} className={`w-full text-left pb-2 border-b border-orange-50 ${currentPath === item.id ? 'text-primary' : ''}`}>{item.name}</button>
+                <button
+                  onClick={() => handleNav(item.id)}
+                  className={`w-full text-left py-4 text-base font-bold uppercase tracking-widest border-b border-orange-50 transition-colors ${currentPath === item.id ? 'text-primary' : 'text-secondary'}`}
+                >
+                  {item.name}
+                </button>
               </li>
             ))}
-            <li className="pt-4 flex flex-col gap-6">
-              <div className="flex bg-gray-100 rounded-xl p-1 w-full">
-                <button onClick={() => setLang('ta')} className={`flex-1 py-3 rounded-lg text-xs font-bold ${lang === 'ta' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>தமிழ்</button>
-                <button onClick={() => setLang('en')} className={`flex-1 py-3 rounded-lg text-xs font-bold ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>English</button>
+            <li className="pt-4 pb-2 flex flex-col gap-4">
+              <div className="flex bg-gray-100 rounded-xl p-1">
+                <button
+                  onClick={() => setLang('ta')}
+                  className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${lang === 'ta' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}
+                >
+                  தமிழ்
+                </button>
+                <button
+                  onClick={() => setLang('en')}
+                  className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}
+                >
+                  English
+                </button>
               </div>
-              <button onClick={() => handleNav('donate')} className="w-full bg-primary text-white py-5 rounded-2xl font-bold shadow-lg uppercase text-xs tracking-widest">{t.donate}</button>
+              <button
+                onClick={() => handleNav('donate')}
+                className="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-lg uppercase text-sm tracking-widest"
+              >
+                {t.donate}
+              </button>
             </li>
           </ul>
         </div>
-      </>
-    )}
+      )}
     </>
   );
 };
