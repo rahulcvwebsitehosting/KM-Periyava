@@ -7,8 +7,6 @@ interface HeaderProps {
   setLang: (lang: Language) => void;
   isMusicPlaying: boolean;
   toggleMusic: () => void;
-  isAmbientOn: boolean;
-  toggleAmbient: () => void;
   isPetalsOn: boolean;
   togglePetals: () => void;
   t: NavTranslations;
@@ -21,8 +19,6 @@ const Header: React.FC<HeaderProps> = ({
   setLang, 
   isMusicPlaying, 
   toggleMusic, 
-  isAmbientOn,
-  toggleAmbient,
   isPetalsOn,
   togglePetals,
   t, 
@@ -30,6 +26,25 @@ const Header: React.FC<HeaderProps> = ({
   navigate
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  React.useEffect(() => {
+    const styleId = 'header-lyric-styles';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = [
+        '@keyframes lyricScroll {',
+        '  0%   { transform: translateX(100%); }',
+        '  100% { transform: translateX(-100%); }',
+        '}'
+      ].join('\n');
+      document.head.appendChild(style);
+    }
+    return () => {
+      const el = document.getElementById(styleId);
+      if (el) el.remove();
+    };
+  }, []);
 
   const menuItems = [
     { name: t.home, id: 'home' },
@@ -74,59 +89,43 @@ const Header: React.FC<HeaderProps> = ({
             ))}
           </ul>
           
-          <div className={`flex items-center ml-4 ${lang === 'ta' ? 'gap-2 xl:gap-3' : 'gap-3 xl:gap-6'}`}>
-            {/* Music Toggle - Redesigned */}
-            <div className="flex items-center gap-2">
-              <span className={`font-bold uppercase tracking-tight transition-opacity duration-500 ${isMusicPlaying ? 'text-primary opacity-100' : 'text-gray-300 opacity-40'} ${lang === 'ta' ? 'text-[10px] max-w-[80px] leading-tight text-right hidden xl:block' : 'text-[9px] tracking-widest'}`}>
-                {lang === 'ta' ? 'திவ்ய நாம சங்கீர்த்தனம்' : 'Divine Chant'}
-              </span>
-              <button 
-                onClick={toggleMusic}
-                className={`relative group rounded-full flex items-center justify-center transition-all duration-500 ${lang === 'ta' ? 'w-8 h-8 xl:w-9 xl:h-9' : 'w-9 h-9 xl:w-11 xl:h-11'} ${isMusicPlaying ? 'bg-primary shadow-[0_0_20px_rgba(255,107,53,0.4)]' : 'bg-gray-100 hover:bg-gray-200'}`}
-                title={isMusicPlaying ? 'Mute Chant' : 'Play Divine Chant'}
-              >
-                {/* Pulsing ring when playing */}
-                {isMusicPlaying && (
-                  <span className="absolute inset-0 rounded-full bg-primary/40 animate-ping"></span>
-                )}
-                
-                {isMusicPlaying ? (
-                  <svg className={`${lang === 'ta' ? 'w-3 h-3 xl:w-4 xl:h-4' : 'w-4 h-4 xl:w-5 xl:h-5'} text-white relative z-10`} fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-                  </svg>
-                ) : (
-                  <svg className={`${lang === 'ta' ? 'w-3 h-3 xl:w-4 xl:h-4' : 'w-4 h-4 xl:w-5 xl:h-5'} text-gray-400 group-hover:text-primary relative z-10`} fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                )}
-              </button>
-            </div>
-
-            {/* Ambient Toggle */}
-            <div className="flex items-center gap-2">
-              <span className="text-[9px] font-bold uppercase tracking-widest hidden xl:block"
-                style={{ color: isAmbientOn ? '#C9A227' : '#9CA3AF', 
-                  opacity: isAmbientOn ? 1 : 0.4 }}
-              >
-                Temple Bells
-              </span>
+          <div className={`flex items-center ml-4 ${lang === 'ta' ? 'gap-2 xl:gap-3' : 'gap-3 xl:gap-4'}`}>
+                    <div className="flex flex-col items-center gap-1 shrink-0">
               <button
-                onClick={toggleAmbient}
-                className={`relative rounded-full w-9 h-9 xl:w-11 xl:h-11 
-                  flex items-center justify-center transition-all duration-500
-                  ${isAmbientOn 
-                    ? 'bg-accent shadow-[0_0_20px_rgba(201,162,39,0.4)]' 
-                    : 'bg-gray-100 hover:bg-gray-200'}`}
-                title={isAmbientOn ? 'Stop Temple Bells' : 'Play Temple Bells'}
+                onClick={toggleMusic}
+                className={`relative flex items-center gap-2 px-3 xl:px-4 py-1.5 rounded-full font-bold text-[9px] xl:text-[10px] uppercase tracking-widest transition-all duration-500 border shrink-0 ${isMusicPlaying ? 'bg-primary text-white border-primary shadow-[0_0_16px_rgba(255,107,53,0.35)]' : 'bg-gray-50 text-gray-400 border-gray-200 hover:border-primary/30'}`}
+                title={isMusicPlaying ? 'Pause Chant' : 'Play Divine Chant'}
               >
-                <span className="text-base xl:text-lg relative z-10">
-                  {isAmbientOn ? '🔔' : '🔕'}
-                </span>
-                {isAmbientOn && (
-                  <span className="absolute inset-0 rounded-full 
-                    bg-accent/40 animate-ping" />
+                {isMusicPlaying && (
+                  <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
                 )}
+                <span className="relative z-10 text-sm">🎵</span>
+                <span className="relative z-10 hidden xl:inline whitespace-nowrap">
+                  {isMusicPlaying ? 'Playing' : 'Chant'}
+                </span>
+                <span className="relative z-10 flex items-center gap-[2px]">
+                  {isMusicPlaying ? (
+                    <>
+                      <span className="w-[2px] h-3 bg-white rounded-full animate-pulse" />
+                      <span className="w-[2px] h-3 bg-white rounded-full animate-pulse [animation-delay:0.2s]" />
+                    </>
+                  ) : (
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  )}
+                </span>
               </button>
+              {isMusicPlaying && (
+                <div className="overflow-hidden w-[100px] xl:w-[130px] h-[14px] relative">
+                  <p
+                    className="text-[8px] xl:text-[9px] text-primary/70 font-bold whitespace-nowrap absolute"
+                    style={{ animation: 'lyricScroll 12s linear infinite' }}
+                  >
+                    {'Jaya Jaya Shankara  \u2022  Hara Hara Shankara  \u2022  Jaya Jaya Shankara  \u2022  Hara Hara Shankara  \u2022  '}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Petal Toggle */}
@@ -155,20 +154,17 @@ const Header: React.FC<HeaderProps> = ({
 
         {/* Mobile Actions */}
         <div className="flex items-center gap-4 lg:hidden">
-          <button 
-            onClick={toggleMusic} 
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isMusicPlaying ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-gray-100 text-gray-400'}`}
+          <button
+            onClick={toggleMusic}
+            className={`relative flex items-center gap-1.5 px-3 py-2 rounded-full text-[10px] font-bold uppercase tracking-tight transition-all border ${isMusicPlaying ? 'bg-primary text-white border-primary' : 'bg-gray-100 text-gray-400 border-gray-200'}`}
           >
-            {isMusicPlaying && <span className="absolute w-10 h-10 rounded-full bg-primary/30 animate-ping"></span>}
-            <span className="text-lg relative z-10">{isMusicPlaying ? '🔊' : '🔇'}</span>
-          </button>
-          <button 
-            onClick={toggleAmbient} 
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isAmbientOn ? 'bg-accent text-white shadow-lg shadow-accent/30' : 'bg-gray-100 text-gray-400'}`}
-            title={isAmbientOn ? 'Stop Temple Bells' : 'Play Temple Bells'}
-          >
-            {isAmbientOn && <span className="absolute w-10 h-10 rounded-full bg-accent/30 animate-ping"></span>}
-            <span className="text-lg relative z-10">{isAmbientOn ? '🔔' : '🔕'}</span>
+            {isMusicPlaying && (
+              <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
+            )}
+            <span className="relative z-10">🎵</span>
+            <span className="relative z-10">
+              {isMusicPlaying ? '▌▌' : '▶'}
+            </span>
           </button>
           <button 
             onClick={togglePetals} 
@@ -201,18 +197,6 @@ const Header: React.FC<HeaderProps> = ({
               </li>
             ))}
             <li className="pt-4 flex flex-col gap-6">
-              <li className="flex items-center justify-between py-2 border-b border-orange-50">
-                <span className="font-bold text-secondary uppercase tracking-widest text-sm">Temple Bells</span>
-                <button
-                  onClick={toggleAmbient}
-                  className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all
-                    ${isAmbientOn 
-                      ? 'bg-accent text-white' 
-                      : 'bg-gray-100 text-gray-400'}`}
-                >
-                  {isAmbientOn ? '🔔' : '🔕'}
-                </button>
-              </li>
               <div className="flex bg-gray-100 rounded-xl p-1 w-full">
                 <button onClick={() => setLang('ta')} className={`flex-1 py-3 rounded-lg text-xs font-bold ${lang === 'ta' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>தமிழ்</button>
                 <button onClick={() => setLang('en')} className={`flex-1 py-3 rounded-lg text-xs font-bold ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>English</button>
