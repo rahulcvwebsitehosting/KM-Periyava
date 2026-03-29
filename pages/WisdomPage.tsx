@@ -50,7 +50,7 @@ const WisdomPage: React.FC<WisdomPageProps> = ({ lang, quoteData, isLoading, onR
            <h3 className="text-4xl md:text-5xl font-bold heading-font text-text-dark mb-10 tracking-tight">About Deivathin Kural</h3>
            <div className="prose prose-lg text-text-dark space-y-10 max-w-3xl mx-auto leading-relaxed text-xl font-medium sacred-bold">
              <p>
-               "<SacredWord className="font-bold">Deivathin Kural</SacredWord>" (The Voice of God) is a monumental collection of teachings and discourses given by <SacredWord className="font-bold">Sri Kanchi Mahaperiyava</SacredWord>, the 68th Jagadguru of the Kanchi Kamakoti Peetham.
+               <SacredWord>Deivathin Kural</SacredWord> (The Voice of God) is a monumental collection of teachings and discourses given by <SacredWord>Sri Kanchi Mahaperiyava</SacredWord>, the 68th Jagadguru of the Kanchi Kamakoti Peetham.
              </p>
              <p>
                Compiled over several decades, these volumes cover an immense range of topics—from Advaita Vedanta and the Vedas to social conduct, temple rituals, and the path of devotion.
