@@ -186,10 +186,10 @@ const Header: React.FC<HeaderProps> = ({
         <>
           {/* Backdrop */}
           <div 
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[41] lg:hidden" 
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden" 
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="lg:hidden bg-white border-t p-8 shadow-2xl animate-in slide-in-from-top duration-300 z-[42] relative">
+          <div className="absolute top-full left-0 w-full lg:hidden bg-white border-t p-8 shadow-2xl animate-in slide-in-from-top duration-300 z-50">
             <ul className="flex flex-col gap-6 font-bold text-secondary text-base uppercase tracking-widest">
             {menuItems.map(item => (
               <li key={item.id}>
