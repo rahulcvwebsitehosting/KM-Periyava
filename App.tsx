@@ -216,7 +216,12 @@ const CursorGlow: React.FC = () => {
   const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
-    setIsDesktop(window.matchMedia('(hover: hover)').matches);
+    const noTouch = window.matchMedia('(hover: hover)').matches;
+    const notCoarse = window.matchMedia(
+      '(pointer: fine)').matches;
+    const notMobile = !('ontouchstart' in window) && 
+      navigator.maxTouchPoints === 0;
+    setIsDesktop(noTouch && notCoarse && notMobile);
   }, []);
 
   useEffect(() => {

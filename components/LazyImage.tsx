@@ -26,8 +26,7 @@ const LazyImage: React.FC<LazyImageProps> = ({ src, alt, className, imgClassName
       {/* Placeholder with blur */}
       {!isLoaded && (
         <div 
-          className="absolute inset-0 bg-gray-200 animate-pulse backdrop-blur-xl"
-          style={{ filter: 'blur(20px)', transform: 'scale(1.1)' }}
+          className="absolute inset-0 bg-gray-200 animate-pulse"
         />
       )}
       
