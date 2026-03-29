@@ -7,6 +7,8 @@ interface HeaderProps {
   setLang: (lang: Language) => void;
   isMusicPlaying: boolean;
   toggleMusic: () => void;
+  isAmbientOn: boolean;
+  toggleAmbient: () => void;
   isPetalsOn: boolean;
   togglePetals: () => void;
   t: NavTranslations;
@@ -19,6 +21,8 @@ const Header: React.FC<HeaderProps> = ({
   setLang, 
   isMusicPlaying, 
   toggleMusic, 
+  isAmbientOn,
+  toggleAmbient,
   isPetalsOn,
   togglePetals,
   t, 
@@ -98,6 +102,33 @@ const Header: React.FC<HeaderProps> = ({
               </button>
             </div>
 
+            {/* Ambient Toggle */}
+            <div className="flex items-center gap-2">
+              <span className="text-[9px] font-bold uppercase tracking-widest hidden xl:block"
+                style={{ color: isAmbientOn ? '#C9A227' : '#9CA3AF', 
+                  opacity: isAmbientOn ? 1 : 0.4 }}
+              >
+                Temple Bells
+              </span>
+              <button
+                onClick={toggleAmbient}
+                className={`relative rounded-full w-9 h-9 xl:w-11 xl:h-11 
+                  flex items-center justify-center transition-all duration-500
+                  ${isAmbientOn 
+                    ? 'bg-accent shadow-[0_0_20px_rgba(201,162,39,0.4)]' 
+                    : 'bg-gray-100 hover:bg-gray-200'}`}
+                title={isAmbientOn ? 'Stop Temple Bells' : 'Play Temple Bells'}
+              >
+                <span className="text-base xl:text-lg relative z-10">
+                  {isAmbientOn ? '🔔' : '🔕'}
+                </span>
+                {isAmbientOn && (
+                  <span className="absolute inset-0 rounded-full 
+                    bg-accent/40 animate-ping" />
+                )}
+              </button>
+            </div>
+
             {/* Petal Toggle */}
             <button 
               onClick={togglePetals}
@@ -132,6 +163,14 @@ const Header: React.FC<HeaderProps> = ({
             <span className="text-lg relative z-10">{isMusicPlaying ? '🔊' : '🔇'}</span>
           </button>
           <button 
+            onClick={toggleAmbient} 
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isAmbientOn ? 'bg-accent text-white shadow-lg shadow-accent/30' : 'bg-gray-100 text-gray-400'}`}
+            title={isAmbientOn ? 'Stop Temple Bells' : 'Play Temple Bells'}
+          >
+            {isAmbientOn && <span className="absolute w-10 h-10 rounded-full bg-accent/30 animate-ping"></span>}
+            <span className="text-lg relative z-10">{isAmbientOn ? '🔔' : '🔕'}</span>
+          </button>
+          <button 
             onClick={togglePetals} 
             className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isPetalsOn ? 'bg-primary/20 shadow-lg' : 'bg-gray-100'}`}
             title="Toggle Sacred Petals"
@@ -162,6 +201,18 @@ const Header: React.FC<HeaderProps> = ({
               </li>
             ))}
             <li className="pt-4 flex flex-col gap-6">
+              <li className="flex items-center justify-between py-2 border-b border-orange-50">
+                <span className="font-bold text-secondary uppercase tracking-widest text-sm">Temple Bells</span>
+                <button
+                  onClick={toggleAmbient}
+                  className={`w-12 h-12 rounded-full flex items-center justify-center text-xl transition-all
+                    ${isAmbientOn 
+                      ? 'bg-accent text-white' 
+                      : 'bg-gray-100 text-gray-400'}`}
+                >
+                  {isAmbientOn ? '🔔' : '🔕'}
+                </button>
+              </li>
               <div className="flex bg-gray-100 rounded-xl p-1 w-full">
                 <button onClick={() => setLang('ta')} className={`flex-1 py-3 rounded-lg text-xs font-bold ${lang === 'ta' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>தமிழ்</button>
                 <button onClick={() => setLang('en')} className={`flex-1 py-3 rounded-lg text-xs font-bold ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>English</button>

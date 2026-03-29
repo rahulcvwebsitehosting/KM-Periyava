@@ -308,8 +308,11 @@ const PageTransition: React.FC<{ isVisible: boolean }> = ({ isVisible }) => {
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('en');
   const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+  const [isAmbientOn, setIsAmbientOn] = useState(false);
   const [isPetalsOn, setIsPetalsOn] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const ambientCleanupRef = useRef<(() => void) | null>(null);
+  const ambientStartedRef = useRef(false);
   const [currentPath, setCurrentPath] = useState<string>('home');
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [pendingPath, setPendingPath] = useState<string | null>(null);
@@ -430,6 +433,89 @@ const App: React.FC = () => {
 
   const toggleMusic = () => setIsMusicPlaying(!isMusicPlaying);
 
+  const createAmbientSound = () => {
+    try {
+      const ctx = new (window.AudioContext || 
+        (window as any).webkitAudioContext)();
+      
+      // Create reverb-like effect
+      const masterGain = ctx.createGain();
+      masterGain.gain.value = 0.15;
+      masterGain.connect(ctx.destination);
+      
+      // Bell tone 1 — rings every 8 seconds
+      const createBell = (freq: number, delay: number, 
+        interval: number) => {
+        const ring = () => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(masterGain);
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0, ctx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.001, 
+            ctx.currentTime + 3);
+          osc.start(ctx.currentTime);
+          osc.stop(ctx.currentTime + 3);
+        };
+        setTimeout(ring, delay * 1000);
+        return setInterval(ring, interval * 1000);
+      };
+      
+      // Drone — continuous low hum
+      const drone = ctx.createOscillator();
+      const droneGain = ctx.createGain();
+      drone.connect(droneGain);
+      droneGain.connect(masterGain);
+      drone.type = 'sine';
+      drone.frequency.value = 110; // Low A
+      droneGain.gain.value = 0.08;
+      drone.start();
+      
+      // Bell intervals
+      const bell1 = createBell(528, 0, 8);
+      const bell2 = createBell(396, 3, 12);
+      const bell3 = createBell(660, 6, 15);
+      
+      // Return cleanup function
+      return () => {
+        clearInterval(bell1);
+        clearInterval(bell2);
+        clearInterval(bell3);
+        drone.stop();
+        ctx.close();
+      };
+    } catch(e) {
+      return () => {};
+    }
+  };
+
+  const toggleAmbient = () => {
+    if (isAmbientOn) {
+      // Stop ambient
+      if (ambientCleanupRef.current) {
+        ambientCleanupRef.current();
+        ambientCleanupRef.current = null;
+      }
+      ambientStartedRef.current = false;
+      setIsAmbientOn(false);
+    } else {
+      // Start ambient
+      const cleanup = createAmbientSound();
+      ambientCleanupRef.current = cleanup;
+      ambientStartedRef.current = true;
+      setIsAmbientOn(true);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (ambientCleanupRef.current) ambientCleanupRef.current();
+    };
+  }, []);
+
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
 
@@ -475,6 +561,8 @@ const App: React.FC = () => {
         setLang={setLang} 
         isMusicPlaying={isMusicPlaying}
         toggleMusic={toggleMusic}
+        isAmbientOn={isAmbientOn}
+        toggleAmbient={toggleAmbient}
         isPetalsOn={isPetalsOn}
         togglePetals={() => setIsPetalsOn(p => !p)}
         t={t.nav}

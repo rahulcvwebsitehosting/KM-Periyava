@@ -2,6 +2,7 @@
 import React from 'react';
 import { getProcessedEvents } from '../data/events';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { TiltCard } from '../hooks/use3DTilt';
 
 interface EventsPageProps {
   lang: string;
@@ -53,9 +54,10 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
         {activeTemple === 'ganapathi' ? (
           <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 sr-hidden sr-stagger">
             {ganapathiEvents.map((event) => (
-              <div 
+              <TiltCard 
                 key={event.id} 
-                className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] hover:shadow-xl hover:-translate-y-2 transition-all duration-500 group flex flex-col relative overflow-hidden sr-hidden"
+                className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] hover:shadow-xl transition-all duration-500 group flex flex-col relative overflow-hidden sr-hidden cursor-pointer"
+                onClick={() => navigate(`events/${event.id}`)}
                 style={{
                   background: 'rgba(255, 252, 247, 0.75)',
                   backdropFilter: 'blur(12px)',
@@ -95,12 +97,15 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
                 </p>
                 
                 <button 
-                  onClick={() => navigate(`events/${event.id}`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`events/${event.id}`);
+                  }}
                   className="inline-flex items-center gap-2 text-secondary font-bold text-xs uppercase tracking-[0.2em] group-hover:text-primary transition-colors"
                 >
                   {t.viewDetails} →
                 </button>
-              </div>
+              </TiltCard>
             ))}
           </div>
         ) : (

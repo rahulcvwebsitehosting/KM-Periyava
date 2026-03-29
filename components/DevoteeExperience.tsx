@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Language } from '../types';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { TiltCard } from '../hooks/use3DTilt';
 
 interface Story {
   name: string;
@@ -118,8 +119,9 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
             const displayText = isExpanded ? story.text : `${story.text.slice(0, 200)}${needsToggle ? '...' : ''}`;
 
             return (
-              <div 
+              <TiltCard 
                 key={`${story.name}-${idx}`} 
+                maxTilt={6}
                 className="break-inside-avoid p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col hover:shadow-lg transition-all relative group overflow-hidden sr-hidden"
                 style={{
                   background: 'rgba(255, 252, 247, 0.75)',
@@ -162,11 +164,12 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
                   </div>
                   <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{story.date}</p>
                 </div>
-              </div>
+              </TiltCard>
             );
           })}
         </div>
       </div>
+
 
       {/* Submission Modal */}
       {isModalOpen && (

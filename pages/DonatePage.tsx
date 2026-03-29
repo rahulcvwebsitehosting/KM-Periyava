@@ -1,8 +1,96 @@
 
-import React from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Language } from '../types';
 
+interface FlowerData {
+  id: number;
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
+  rotation: number;
+  size: number;
+  color: string;
+  delay: number;
+}
+
+const FlowerBurst: React.FC<{ 
+  origin: { x: number; y: number };
+  onComplete: () => void;
+}> = ({ origin, onComplete }) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const colors = ['#FF6B35','#FFB347','#FF69B4','#FFD700','#FF4500','#FFA07A','#FF1493','#FFC0CB'];
+  
+  const flowers: FlowerData[] = useMemo(() => Array.from({ length: 24 }, (_, i) => {
+    const angle = (i / 24) * 360;
+    const speed = Math.random() * 6 + 4;
+    const rad = (angle * Math.PI) / 180;
+    const dist = speed * 80;
+    
+    return {
+      id: i,
+      startX: origin.x,
+      startY: origin.y,
+      endX: origin.x + Math.cos(rad) * dist,
+      endY: origin.y + Math.sin(rad) * dist + 60,
+      rotation: Math.random() * 360,
+      size: Math.random() * 16 + 10,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      delay: Math.random() * 0.4
+    };
+  }), [origin]);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setIsAnimating(true), 50);
+    const t2 = setTimeout(onComplete, 1800);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [onComplete]);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[300] overflow-hidden">
+      {flowers.map(flower => (
+        <div
+          key={flower.id}
+          style={{
+            position: 'fixed',
+            left: isAnimating ? flower.endX : flower.startX,
+            top: isAnimating ? flower.endY : flower.startY,
+            transition: `all ${1.2 + flower.delay}s cubic-bezier(0.25,0.46,0.45,0.94)`,
+            opacity: isAnimating ? 0 : 1,
+            transform: isAnimating 
+              ? `translate(-50%, -50%) rotate(${flower.rotation * 5}deg) scale(0)` 
+              : `translate(-50%, -50%) rotate(0deg) scale(1)`,
+            fontSize: flower.size + 'px',
+            pointerEvents: 'none',
+            zIndex: 300
+          }}
+        >
+          🌸
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const DonatePage: React.FC<{ lang: Language }> = ({ lang }) => {
+  const [burstActive, setBurstActive] = useState(false);
+  const [burstOrigin, setBurstOrigin] = useState({ x: 0, y: 0 });
+  const buttonRef = useRef<HTMLAnchorElement>(null);
+
+  const handleDonateClick = () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setBurstOrigin({ 
+        x: rect.left + rect.width / 2, 
+        y: rect.top + rect.height / 2 
+      });
+      setBurstActive(true);
+    }
+  };
+
   const whatsappUrl = `https://wa.me/+919884386412?text=${encodeURIComponent("Pranam. I would like to contribute to KM Periyava Sannadhi. Please provide the donation details.")}`;
 
   return (
@@ -34,6 +122,8 @@ const DonatePage: React.FC<{ lang: Language }> = ({ lang }) => {
             </div>
 
             <a 
+              ref={buttonRef}
+              onClick={handleDonateClick}
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -52,6 +142,12 @@ const DonatePage: React.FC<{ lang: Language }> = ({ lang }) => {
           </div>
         </div>
       </div>
+      {burstActive && (
+        <FlowerBurst 
+          origin={burstOrigin} 
+          onComplete={() => setBurstActive(false)} 
+        />
+      )}
     </section>
   );
 };

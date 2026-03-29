@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { HeroTranslations, Language } from '../types';
 import LazyImage from './LazyImage';
+import SacredWord from './SacredWord';
 
 interface HeroProps {
   lang: Language;
@@ -193,11 +194,12 @@ const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
               }}
             >
               {/* Manual Arch Masking with border-radius */}
-              <div className="absolute inset-0 z-0 bg-white rounded-t-[50%] rounded-b-2xl overflow-hidden shadow-inner">
+              <div className="absolute inset-0 z-0 rounded-t-[50%] rounded-b-2xl overflow-hidden">
                 <LazyImage 
                   src="https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Main/Periyava%20Main.jpg" 
                   alt="Sri Kanchi Maha Periyava"
-                  className="w-full h-full object-cover object-center transition-transform duration-[8s] group-hover:scale-105"
+                  className="w-full h-full"
+                  imgClassName="object-cover object-center transition-transform duration-[8s] group-hover:scale-105"
                 />
                 
                 {/* Divine Soft Inner Glow */}
@@ -272,7 +274,7 @@ const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
         {/* Temple Branding Title */}
         <div className="space-y-6 mb-16 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
           <h1 className={`font-bold text-text-dark heading-font leading-[1.1] tracking-tight ${lang === 'ta' ? 'text-3xl md:text-6xl' : 'text-4xl md:text-7xl'}`}>
-            {t.title} <br className="hidden md:block"/> 
+            {lang === 'ta' ? t.title : <SacredWord>{t.title}</SacredWord>} <br className="hidden md:block"/> 
             <span className="text-secondary font-bold">{t.sannadhi}</span>
           </h1>
           

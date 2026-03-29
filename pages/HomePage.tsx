@@ -4,6 +4,7 @@ import Hero from '../components/Hero';
 import { Language, TranslationSchema } from '../types';
 import LazyImage from '../components/LazyImage';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import SacredWord from '../components/SacredWord';
 
 interface HomePageProps {
   lang: Language;
@@ -26,7 +27,9 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
       {/* Wisdom Highlight */}
       <section ref={wisdomRef} className="py-16 md:py-32 bg-white relative overflow-hidden sr-hidden-left">
         <div className="container mx-auto px-8 max-w-5xl text-center">
-           <h2 className="text-4xl font-bold text-text-dark heading-font mb-4">Deivathin Kural</h2>
+           <h2 className="text-4xl font-bold text-text-dark heading-font mb-4">
+             <SacredWord>Deivathin Kural</SacredWord>
+           </h2>
            <p className="text-lg text-secondary uppercase tracking-[0.3em] mb-16">Eternal Echoes of Wisdom</p>
            
            <div className="relative group p-12 md:p-20 bg-[#FFFCF7] rounded-[2rem] shadow-[0_30px_70px_rgba(139,69,19,0.08)] border border-orange-50 overflow-hidden">
@@ -47,7 +50,7 @@ const HomePage: React.FC<HomePageProps> = ({ lang, t, quote, isLoadingQuote, onR
                      {quote}
                    </p>
                    <div className="text-right">
-                     <p className="text-secondary font-bold text-lg">— Sri Kanchi Maha Periyava</p>
+                     <p className="text-secondary font-bold text-lg">— <SacredWord>Sri Kanchi Maha Periyava</SacredWord></p>
                    </div>
                  </div>
                )}

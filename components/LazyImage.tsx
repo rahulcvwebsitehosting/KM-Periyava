@@ -5,9 +5,10 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
   alt: string;
   className?: string;
+  imgClassName?: string;
 }
 
-const LazyImage: React.FC<LazyImageProps> = ({ src, alt, className, ...props }) => {
+const LazyImage: React.FC<LazyImageProps> = ({ src, alt, className, imgClassName, ...props }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentSrc, setCurrentSrc] = useState<string | null>(null);
 
@@ -37,7 +38,7 @@ const LazyImage: React.FC<LazyImageProps> = ({ src, alt, className, ...props }) 
           alt={alt}
           className={`w-full h-full object-cover transition-opacity duration-1000 ease-in-out ${
             isLoaded ? 'opacity-100' : 'opacity-0'
-          }`}
+          } ${imgClassName || ''}`}
           referrerPolicy="no-referrer"
           {...props}
         />

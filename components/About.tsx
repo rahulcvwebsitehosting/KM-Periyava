@@ -2,6 +2,7 @@
 import React from 'react';
 import { Language } from '../types';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import SacredWord from './SacredWord';
 
 interface AboutProps {
   t: {
@@ -31,7 +32,7 @@ const About: React.FC<AboutProps> = ({ t, lang }) => {
               {t.badge}
             </span>
             <h2 className={`font-bold text-text-dark heading-font ${lang === 'ta' ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl'}`}>
-              {t.title}
+              {lang === 'ta' ? t.title : <SacredWord>{t.title}</SacredWord>}
             </h2>
             
             <div className="space-y-6 text-lg md:text-xl text-text-dark sacred-bold">

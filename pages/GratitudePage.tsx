@@ -3,6 +3,8 @@ import React from 'react';
 import { eventsData } from '../data/events';
 import { Language } from '../types';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import SacredWord from '../components/SacredWord';
+import { TiltCard } from '../hooks/use3DTilt';
 
 interface GratitudePageProps {
   lang: Language;
@@ -65,7 +67,7 @@ const GratitudePage: React.FC<GratitudePageProps> = ({ lang, navigate }) => {
         
         <div className="container mx-auto px-6 relative z-10">
           <h1 className="text-3xl md:text-7xl font-bold heading-font mb-6 tracking-tight">
-            {lang === 'ta' ? 'நன்றி நவிலல்' : 'Hall of Gratitude'}
+            {lang === 'ta' ? 'நன்றி நவிலல்' : <SacredWord>Hall of Gratitude</SacredWord>}
           </h1>
           <p className="text-lg md:text-2xl text-white/80 max-w-2xl mx-auto font-medium italic">
             {lang === 'ta' 
@@ -86,9 +88,10 @@ const GratitudePage: React.FC<GratitudePageProps> = ({ lang, navigate }) => {
       <div className="container mx-auto px-6 py-24 max-w-7xl">
         <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sr-hidden sr-stagger">
           {sortedDonors.map((donor, index) => (
-            <div 
+            <TiltCard 
               key={index} 
-              className="p-8 rounded-[2.5rem] hover:shadow-xl hover:-translate-y-1 transition-all duration-500 group relative overflow-hidden sr-hidden"
+              maxTilt={5}
+              className="p-8 rounded-[2.5rem] hover:shadow-xl transition-all duration-500 group relative overflow-hidden sr-hidden"
               style={{
                 background: 'rgba(255, 252, 247, 0.75)',
                 backdropFilter: 'blur(12px)',
@@ -126,9 +129,10 @@ const GratitudePage: React.FC<GratitudePageProps> = ({ lang, navigate }) => {
                   </div>
                 </div>
               </div>
-            </div>
+            </TiltCard>
           ))}
         </div>
+
 
         {/* CTA Card */}
         <div className="mt-24 bg-[#2C1810] p-8 md:p-20 rounded-[2rem] md:rounded-[3rem] text-center relative overflow-hidden shadow-2xl">
