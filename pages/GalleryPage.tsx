@@ -5,7 +5,7 @@ import { Language } from '../types';
 
 const GalleryPage: React.FC<{ lang: Language; navigate: (path: string) => void }> = ({ lang, navigate }) => {
   return (
-    <div className="animate-in fade-in duration-500">
+    <div className="duration-500">
       <Gallery lang={lang} navigate={navigate} fullMode={true} />
     </div>
   );

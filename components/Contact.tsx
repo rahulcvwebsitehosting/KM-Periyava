@@ -47,7 +47,7 @@ const Contact: React.FC<ContactProps> = ({ lang }) => {
   const directionsUrl = "https://www.google.com/maps/dir//Kandhamangalam,+Komal+-+East,+Tamil+Nadu+609805/@11.0234307,79.6038842,18z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3a552501876a9e1f:0xbf1e786d3668c84f!2m2!1d79.6038842!2d11.0234307";
 
   return (
-    <section id="contact" className="py-24 bg-white animate-in fade-in duration-500">
+    <section id="contact" className="py-24 bg-white duration-500">
       <div className="container mx-auto px-6 max-w-[1400px]">
         <div className="grid lg:grid-cols-2 gap-20 items-start">
           {/* Info Side */}
@@ -96,10 +96,16 @@ const Contact: React.FC<ContactProps> = ({ lang }) => {
             </div>
 
             {/* Integrated Map */}
-            <div className="rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-orange-50/50 aspect-video relative group">
+            <div className="rounded-[2rem] md:rounded-[3rem] 
+              overflow-hidden shadow-2xl border-[8px] md:border-[12px] 
+              border-orange-50/50 relative group"
+              style={{ height: '350px' }}
+            >
               <iframe 
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3921.282859942691!2d79.60169557474447!3d11.023430689140417!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a552501876a9e1f%3A0xbf1e786d3668c84f!2sKandhamangalam%2C%20Komal%20-%20East%2C%20Tamil%20Nadu%20609805!5e0!3m2!1sen!2sin!4v1738220000000!5m2!1sen!2sin" 
-                className="w-full h-full border-0 grayscale hover:grayscale-0 transition-all duration-700"
+                style={{ width: '100%', height: '100%', border: 0 }}
+                className="grayscale hover:grayscale-0 transition-all 
+                  duration-700"
                 allowFullScreen={true}
                 loading="lazy"
                 title="Google Maps Location"
@@ -132,7 +138,7 @@ const Contact: React.FC<ContactProps> = ({ lang }) => {
                 </div>
 
                 {submitError && (
-                  <div className="bg-red-50 border border-red-100 p-6 rounded-3xl flex items-center gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <div className="bg-red-50 border border-red-100 p-6 rounded-3xl flex items-center gap-4 duration-300">
                     <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xl flex-shrink-0">⚠️</div>
                     <p className="text-red-800 font-medium text-sm leading-relaxed">{submitError}</p>
                   </div>

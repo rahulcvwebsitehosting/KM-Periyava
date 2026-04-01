@@ -5,7 +5,7 @@ import { Language } from '../types';
 
 const ExperiencePage: React.FC<{ lang: Language }> = ({ lang }) => {
   return (
-    <div className="animate-in fade-in duration-500">
+    <div className="duration-500">
       <DevoteeExperience lang={lang} />
     </div>
   );

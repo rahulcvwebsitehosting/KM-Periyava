@@ -21,7 +21,7 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
   const sivanEvents: any[] = []; // Empty for now as requested
 
   return (
-    <section className="py-24 bg-white animate-in fade-in duration-500 sacred-bold">
+    <section className="py-24 bg-white duration-500 sacred-bold">
       <div className="container mx-auto px-6 max-w-[1400px]">
         <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
           <div className="text-center md:text-left">
@@ -56,7 +56,7 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
             {ganapathiEvents.map((event) => (
               <TiltCard 
                 key={event.id} 
-                className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] hover:shadow-xl transition-all duration-500 group flex flex-col relative overflow-hidden sr-hidden cursor-pointer"
+                className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] hover:shadow-xl transition-all duration-500 group flex flex-col relative overflow-hidden cursor-pointer"
                 onClick={() => navigate(`events/${event.id}`)}
                 style={{
                   background: 'rgba(255, 252, 247, 0.75)',

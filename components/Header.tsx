@@ -90,10 +90,9 @@ const Header: React.FC<HeaderProps> = ({
           </nav>
 
           {/* Controls Section */}
-          <div className="hidden lg:flex items-center gap-4 xl:gap-6 ml-auto">
+          <div className="hidden lg:flex items-center gap-3 xl:gap-4 ml-auto">
             {/* Divine Chant Control */}
             <div className="flex flex-col items-center">
-              <span className="text-[9px] font-bold text-primary uppercase tracking-widest mb-1">Divine Chant</span>
               <button
                 onClick={toggleMusic}
                 className="relative group"
@@ -117,7 +116,6 @@ const Header: React.FC<HeaderProps> = ({
 
             {/* Temple Bells Control */}
             <div className="flex flex-col items-center">
-              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Temple Bells</span>
               <button
                 onClick={toggleBells}
                 className={`w-10 h-10 xl:w-12 xl:h-12 rounded-full flex items-center justify-center transition-all duration-500 ${isBellsOn ? 'bg-accent/20 text-accent shadow-md' : 'bg-gray-100 text-gray-400'}`}

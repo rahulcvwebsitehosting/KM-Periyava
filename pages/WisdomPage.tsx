@@ -17,7 +17,7 @@ interface WisdomPageProps {
 const WisdomPage: React.FC<WisdomPageProps> = ({ lang, quoteData, isLoading, onRefresh }) => {
   const quoteRef = useScrollReveal();
   return (
-    <div className="animate-in fade-in duration-500">
+    <div className="duration-500">
       <DeivathinKural 
         lang={lang} 
         quoteData={quoteData} 

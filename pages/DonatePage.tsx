@@ -94,7 +94,7 @@ const DonatePage: React.FC<{ lang: Language }> = ({ lang }) => {
   const whatsappUrl = `https://wa.me/+919884386412?text=${encodeURIComponent("Pranam. I would like to contribute to KM Periyava Sannadhi. Please provide the donation details.")}`;
 
   return (
-    <section className="py-24 animate-in fade-in duration-500 bg-bg-primary">
+    <section className="py-24 duration-500 bg-bg-primary">
       <div className="container mx-auto px-6 max-w-4xl">
         <div className="bg-white rounded-[3rem] shadow-2xl overflow-hidden">
           <div className="bg-primary p-12 md:p-16 text-white text-center">

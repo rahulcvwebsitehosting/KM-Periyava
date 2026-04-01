@@ -24,7 +24,7 @@ const EventDetailPage: React.FC<EventDetailPageProps> = ({ id, lang, navigate })
   }
 
   return (
-    <div className="py-24 bg-[#FFFCF7] animate-in fade-in slide-in-from-bottom-10 duration-700">
+    <div className="py-24 bg-[#FFFCF7] duration-700">
       <div className="container mx-auto px-6 max-w-4xl">
         <button 
           onClick={() => navigate('events')}

@@ -122,7 +122,7 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
               <TiltCard 
                 key={`${story.name}-${idx}`} 
                 maxTilt={6}
-                className="break-inside-avoid p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col hover:shadow-lg transition-all relative group overflow-hidden sr-hidden"
+                className="break-inside-avoid p-6 md:p-10 rounded-[1.5rem] md:rounded-[2.5rem] flex flex-col hover:shadow-lg transition-all relative group overflow-hidden"
                 style={{
                   background: 'rgba(255, 252, 247, 0.75)',
                   backdropFilter: 'blur(12px)',
@@ -175,7 +175,7 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-bg-dark/80 backdrop-blur-md" onClick={() => !isSubmitting && setIsModalOpen(false)}></div>
-          <div className="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
+          <div className="relative bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden duration-300 max-h-[90vh] overflow-y-auto">
             {showSuccess ? (
               <div className="p-8 md:p-16 text-center space-y-8 bg-[#FFF8F0]">
                 <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-5xl animate-bounce">

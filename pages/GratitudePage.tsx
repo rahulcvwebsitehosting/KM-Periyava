@@ -57,7 +57,7 @@ const GratitudePage: React.FC<GratitudePageProps> = ({ lang, navigate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFCF7] animate-in fade-in duration-700">
+    <div className="min-h-screen bg-[#FFFCF7] duration-700">
       {/* Hero Section */}
       <div className="bg-gradient-to-br from-primary to-primary-dark pt-24 md:pt-32 pb-16 md:pb-24 text-white text-center relative overflow-hidden">
         {/* Sacred Watermark */}
