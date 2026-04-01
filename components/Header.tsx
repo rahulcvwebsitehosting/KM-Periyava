@@ -1,12 +1,15 @@
-
 import React, { useState } from 'react';
 import { Language, NavTranslations } from '../types';
+import { motion, AnimatePresence } from 'motion/react';
+import { Bell, BellOff, Flower2, Menu, X, Play, Pause } from 'lucide-react';
 
 interface HeaderProps {
   lang: Language;
   setLang: (lang: Language) => void;
   isMusicPlaying: boolean;
   toggleMusic: () => void;
+  isBellsOn: boolean;
+  toggleBells: () => void;
   isPetalsOn: boolean;
   togglePetals: () => void;
   t: NavTranslations;
@@ -19,6 +22,8 @@ const Header: React.FC<HeaderProps> = ({
   setLang, 
   isMusicPlaying, 
   toggleMusic, 
+  isBellsOn,
+  toggleBells,
   isPetalsOn,
   togglePetals,
   t, 
@@ -26,25 +31,6 @@ const Header: React.FC<HeaderProps> = ({
   navigate
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  React.useEffect(() => {
-    const styleId = 'header-lyric-styles';
-    if (!document.getElementById(styleId)) {
-      const style = document.createElement('style');
-      style.id = styleId;
-      style.textContent = [
-        '@keyframes lyricScroll {',
-        '  0%   { transform: translateX(100%); }',
-        '  100% { transform: translateX(-100%); }',
-        '}'
-      ].join('\n');
-      document.head.appendChild(style);
-    }
-    return () => {
-      const el = document.getElementById(styleId);
-      if (el) el.remove();
-    };
-  }, []);
 
   const menuItems = [
     { name: t.home, id: 'home' },
@@ -63,20 +49,27 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <header className="fixed top-0 w-full bg-white shadow-sm z-50 border-b border-orange-100/50 py-5 transition-all duration-500">
-        <div className="container mx-auto max-w-[1400px] px-6 lg:px-12 flex justify-between items-center">
-          {/* Logo */}
-          <button onClick={() => handleNav('home')} className="flex items-center gap-2 md:gap-4 group focus:outline-none shrink-0 mr-8">
-            <span className="text-2xl md:text-3xl text-primary transform group-hover:rotate-12 transition-transform duration-500">ॐ</span>
-            <div className="text-left hidden sm:block">
-              <h1 className={`font-bold text-text-dark heading-font tracking-tight leading-none ${lang === 'ta' ? 'text-sm md:text-base' : 'text-base md:text-lg'}`}>KM Periyava Sannadhi</h1>
-              <p className="text-[9px] md:text-[10px] text-secondary font-bold uppercase tracking-[0.2em] md:tracking-[0.3em] mt-1">Kandhamangalam</p>
+      <header className="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50 border-b border-orange-100/50 py-4 transition-all duration-500">
+        <div className="container mx-auto max-w-[1500px] px-4 lg:px-8 flex justify-between items-center">
+          {/* Logo Section */}
+          <button 
+            onClick={() => handleNav('home')} 
+            className="flex items-center gap-3 group focus:outline-none shrink-0"
+          >
+            <span className="text-3xl md:text-4xl text-primary transform group-hover:scale-110 transition-transform duration-500">ॐ</span>
+            <div className="text-left">
+              <h1 className="font-bold text-gray-900 heading-font tracking-tight leading-none text-lg md:text-xl">
+                KM Periyava Sannadhi
+              </h1>
+              <p className="text-[10px] md:text-[11px] text-secondary font-bold uppercase tracking-[0.3em] mt-1.5 opacity-80">
+                KANDHAMANGALAM
+              </p>
             </div>
           </button>
 
-          {/* Desktop Nav */}
-          <div className={`hidden lg:flex items-center ml-auto ${lang === 'ta' ? 'gap-2 xl:gap-4' : 'gap-4 xl:gap-12'}`}>
-            <ul className={`flex items-center font-bold text-gray-500 uppercase ${lang === 'ta' ? 'gap-2 xl:gap-4 text-[10px] xl:text-[11px]' : 'gap-4 xl:gap-12 text-[10px] xl:text-xs tracking-widest'}`}>
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-8 xl:gap-12 ml-8">
+            <ul className="flex items-center gap-6 xl:gap-10 font-bold text-gray-500 uppercase text-[11px] xl:text-xs tracking-widest">
               {menuItems.map((item) => (
                 <li key={item.id}>
                   <button 
@@ -84,144 +77,162 @@ const Header: React.FC<HeaderProps> = ({
                     className={`hover:text-primary transition-all relative py-1 group whitespace-nowrap ${currentPath === item.id ? 'text-primary' : ''}`}
                   >
                     {item.name}
-                    <span className={`absolute bottom-0 left-0 h-[2px] bg-gradient-to-r from-primary to-secondary transition-all duration-300 ${currentPath === item.id ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
+                    <motion.span 
+                      className="absolute bottom-0 left-0 h-[2px] bg-primary"
+                      initial={false}
+                      animate={{ width: currentPath === item.id ? '100%' : '0%' }}
+                      transition={{ duration: 0.3 }}
+                    />
                   </button>
                 </li>
               ))}
             </ul>
-            
-            <div className={`flex items-center ml-4 ${lang === 'ta' ? 'gap-2 xl:gap-3' : 'gap-3 xl:gap-4'}`}>
-                      <div className="flex flex-col items-center gap-1 shrink-0">
-                <button
-                  onClick={toggleMusic}
-                  className={`relative flex items-center gap-2 px-3 xl:px-4 py-1.5 rounded-full font-bold text-[9px] xl:text-[10px] uppercase tracking-widest transition-all duration-500 border shrink-0 ${isMusicPlaying ? 'bg-primary text-white border-primary shadow-[0_0_16px_rgba(255,107,53,0.35)]' : 'bg-gray-50 text-gray-400 border-gray-200 hover:border-primary/30'}`}
-                  title={isMusicPlaying ? 'Pause Chant' : 'Play Divine Chant'}
+          </nav>
+
+          {/* Controls Section */}
+          <div className="hidden lg:flex items-center gap-4 xl:gap-6 ml-auto">
+            {/* Divine Chant Control */}
+            <div className="flex flex-col items-center">
+              <span className="text-[9px] font-bold text-primary uppercase tracking-widest mb-1">Divine Chant</span>
+              <button
+                onClick={toggleMusic}
+                className="relative group"
+              >
+                <motion.div 
+                  className={`w-10 h-10 xl:w-12 xl:h-12 rounded-full flex items-center justify-center transition-all duration-500 ${isMusicPlaying ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-gray-100 text-gray-400'}`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  {isMusicPlaying && (
-                    <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
-                  )}
-                  <span className="relative z-10 text-sm">🎵</span>
-                  <span className="relative z-10 hidden xl:inline whitespace-nowrap">
-                    {isMusicPlaying ? 'Playing' : 'Chant'}
-                  </span>
-                  <span className="relative z-10 flex items-center gap-[2px]">
-                    {isMusicPlaying ? (
-                      <>
-                        <span className="w-[2px] h-3 bg-white rounded-full animate-pulse" />
-                        <span className="w-[2px] h-3 bg-white rounded-full animate-pulse [animation-delay:0.2s]" />
-                      </>
-                    ) : (
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
-                    )}
-                  </span>
-                </button>
+                  {isMusicPlaying ? <Pause size={20} fill="currentColor" /> : <Play size={20} fill="currentColor" className="ml-1" />}
+                </motion.div>
                 {isMusicPlaying && (
-                  <div className="overflow-hidden w-[100px] xl:w-[130px] h-[14px] relative">
-                    <p
-                      className="text-[8px] xl:text-[9px] text-primary/70 font-bold whitespace-nowrap absolute"
-                      style={{ animation: 'lyricScroll 12s linear infinite' }}
-                    >
-                      {'Jaya Jaya Shankara  \u2022  Hara Hara Shankara  \u2022  Jaya Jaya Shankara  \u2022  Hara Hara Shankara  \u2022  '}
-                    </p>
-                  </div>
+                  <motion.div 
+                    className="absolute -inset-1 rounded-full border-2 border-primary/30"
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
                 )}
-              </div>
-
-              {/* Petal Toggle */}
-              <button 
-                onClick={togglePetals}
-                className={`relative w-9 h-9 xl:w-11 xl:h-11 rounded-full flex items-center justify-center transition-all duration-500 ${isPetalsOn ? 'bg-primary/20 shadow-md' : 'bg-gray-100 hover:bg-gray-200'}`}
-                title="Toggle Sacred Petals"
-              >
-                <span className={`text-sm xl:text-base transition-opacity duration-300 ${isPetalsOn ? 'opacity-100' : 'opacity-30'}`}>🌸</span>
-              </button>
-
-              {/* Language */}
-              <div className="flex bg-gray-50 rounded-xl p-0.5 xl:p-1 border border-gray-100 shrink-0">
-                <button onClick={() => setLang('ta')} className={`px-1.5 xl:px-2 py-1 rounded-md text-[9px] font-bold tracking-tighter ${lang === 'ta' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>தமிழ்</button>
-                <button onClick={() => setLang('en')} className={`px-1.5 xl:px-2 py-1 rounded-md text-[9px] font-bold tracking-widest ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}>EN</button>
-              </div>
-
-              <button 
-                onClick={() => handleNav('donate')}
-                className={`bg-gradient-to-br from-primary to-secondary hover:shadow-xl hover:-translate-y-0.5 text-white rounded-full shadow-lg transition-all font-bold uppercase tracking-widest shrink-0 ${lang === 'ta' ? 'px-3 xl:px-4 py-2 text-[9px] xl:text-[10px]' : 'px-4 xl:px-8 py-2 xl:py-3 text-[10px] xl:text-xs'}`}
-              >
-                {t.donate}
               </button>
             </div>
+
+            {/* Temple Bells Control */}
+            <div className="flex flex-col items-center">
+              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Temple Bells</span>
+              <button
+                onClick={toggleBells}
+                className={`w-10 h-10 xl:w-12 xl:h-12 rounded-full flex items-center justify-center transition-all duration-500 ${isBellsOn ? 'bg-accent/20 text-accent shadow-md' : 'bg-gray-100 text-gray-400'}`}
+              >
+                {isBellsOn ? <Bell size={20} fill="currentColor" /> : <BellOff size={20} />}
+              </button>
+            </div>
+
+            {/* Petals Control */}
+            <button
+              onClick={togglePetals}
+              className={`w-10 h-10 xl:w-12 xl:h-12 rounded-full flex items-center justify-center transition-all duration-500 ${isPetalsOn ? 'bg-pink-50 text-pink-500 shadow-md' : 'bg-gray-100 text-gray-400'}`}
+            >
+              <Flower2 size={20} fill={isPetalsOn ? "currentColor" : "none"} />
+            </button>
+
+            {/* Language Switcher */}
+            <div className="flex bg-gray-100 rounded-full p-1 border border-gray-200">
+              <button 
+                onClick={() => setLang('ta')} 
+                className={`px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${lang === 'ta' ? 'bg-white text-primary shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                தமிழ்
+              </button>
+              <button 
+                onClick={() => setLang('en')} 
+                className={`px-3 py-1.5 rounded-full text-[10px] font-bold transition-all ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                EN
+              </button>
+            </div>
+
+            {/* Donate Button */}
+            <button 
+              onClick={() => handleNav('donate')}
+              className="bg-gradient-to-r from-primary to-orange-600 hover:from-orange-600 hover:to-primary text-white px-6 xl:px-10 py-2.5 xl:py-3 rounded-full shadow-lg shadow-primary/20 transition-all font-bold uppercase text-[11px] xl:text-xs tracking-[0.15em] hover:-translate-y-0.5 active:translate-y-0"
+            >
+              {t.donate}
+            </button>
           </div>
 
-          {/* Mobile Actions */}
-          <div className="flex items-center gap-4 lg:hidden">
+          {/* Mobile Menu Toggle */}
+          <div className="flex items-center gap-3 lg:hidden">
             <button
               onClick={toggleMusic}
-              className={`relative flex items-center gap-1.5 px-3 py-2 rounded-full text-[10px] font-bold uppercase tracking-tight transition-all border ${isMusicPlaying ? 'bg-primary text-white border-primary' : 'bg-gray-100 text-gray-400 border-gray-200'}`}
+              className={`w-10 h-10 rounded-full flex items-center justify-center ${isMusicPlaying ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'}`}
             >
-              {isMusicPlaying && (
-                <span className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
-              )}
-              <span className="relative z-10">🎵</span>
-              <span className="relative z-10">
-                {isMusicPlaying ? '▌▌' : '▶'}
-              </span>
+              {isMusicPlaying ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
             </button>
             <button 
-              onClick={togglePetals} 
-              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${isPetalsOn ? 'bg-primary/20 shadow-lg' : 'bg-gray-100'}`}
-              title="Toggle Sacred Petals"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 text-gray-600"
             >
-              <span className={`text-lg transition-opacity duration-300 ${isPetalsOn ? 'opacity-100' : 'opacity-30'}`}>🌸</span>
-            </button>
-            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-secondary p-1">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6" : "M4 6h16M4 12h16M4 18h16"} />
-              </svg>
+              {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Nav */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden fixed top-[72px] left-0 right-0 bg-white border-t-2 border-orange-100 shadow-2xl z-50">
-          <ul className="flex flex-col px-6 py-4">
-            {menuItems.map(item => (
-              <li key={item.id}>
-                <button
-                  onClick={() => handleNav(item.id)}
-                  className={`w-full text-left py-4 text-base font-bold uppercase tracking-widest border-b border-orange-50 transition-colors ${currentPath === item.id ? 'text-primary' : 'text-secondary'}`}
-                >
-                  {item.name}
-                </button>
+      {/* Mobile Navigation Menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="lg:hidden fixed top-[76px] left-0 right-0 bg-white border-t border-orange-50 shadow-2xl z-50 overflow-y-auto max-h-[calc(100vh-76px)]"
+          >
+            <ul className="flex flex-col p-6 gap-2">
+              {menuItems.map(item => (
+                <li key={item.id}>
+                  <button
+                    onClick={() => handleNav(item.id)}
+                    className={`w-full text-left py-4 px-4 rounded-xl text-sm font-bold uppercase tracking-widest transition-colors ${currentPath === item.id ? 'bg-orange-50 text-primary' : 'text-gray-600 hover:bg-gray-50'}`}
+                  >
+                    {item.name}
+                  </button>
+                </li>
+              ))}
+              <li className="mt-4 pt-6 border-t border-gray-100 flex flex-col gap-6">
+                <div className="flex bg-gray-100 rounded-2xl p-1.5">
+                  <button
+                    onClick={() => setLang('ta')}
+                    className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${lang === 'ta' ? 'bg-white text-primary shadow-md' : 'text-gray-400'}`}
+                  >
+                    தமிழ்
+                  </button>
+                  <button
+                    onClick={() => setLang('en')}
+                    className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${lang === 'en' ? 'bg-white text-primary shadow-md' : 'text-gray-400'}`}
+                  >
+                    English
+                  </button>
+                </div>
+                <div className="flex justify-between items-center px-2">
+                   <div className="flex gap-4">
+                      <button onClick={toggleBells} className={`w-12 h-12 rounded-full flex items-center justify-center ${isBellsOn ? 'bg-accent/20 text-accent' : 'bg-gray-100 text-gray-400'}`}>
+                        {isBellsOn ? <Bell size={24} /> : <BellOff size={24} />}
+                      </button>
+                      <button onClick={togglePetals} className={`w-12 h-12 rounded-full flex items-center justify-center ${isPetalsOn ? 'bg-pink-50 text-pink-500' : 'bg-gray-100 text-gray-400'}`}>
+                        <Flower2 size={24} />
+                      </button>
+                   </div>
+                   <button
+                    onClick={() => handleNav('donate')}
+                    className="bg-primary text-white px-8 py-4 rounded-2xl font-bold shadow-lg uppercase text-sm tracking-widest"
+                  >
+                    {t.donate}
+                  </button>
+                </div>
               </li>
-            ))}
-            <li className="pt-4 pb-2 flex flex-col gap-4">
-              <div className="flex bg-gray-100 rounded-xl p-1">
-                <button
-                  onClick={() => setLang('ta')}
-                  className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${lang === 'ta' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}
-                >
-                  தமிழ்
-                </button>
-                <button
-                  onClick={() => setLang('en')}
-                  className={`flex-1 py-3 rounded-lg text-sm font-bold transition-all ${lang === 'en' ? 'bg-white text-primary shadow-sm' : 'text-gray-400'}`}
-                >
-                  English
-                </button>
-              </div>
-              <button
-                onClick={() => handleNav('donate')}
-                className="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-lg uppercase text-sm tracking-widest"
-              >
-                {t.donate}
-              </button>
-            </li>
-          </ul>
-        </div>
-      )}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
