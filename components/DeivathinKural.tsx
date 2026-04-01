@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Language } from '../types';
 import { WisdomQuote } from '../data/wisdom';
 
@@ -11,6 +11,66 @@ interface DeivathinKuralProps {
 }
 
 const DeivathinKural: React.FC<DeivathinKuralProps> = ({ lang, quoteData, isLoading, onRefresh }) => {
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  const handleReadAloud = () => {
+    if (!('speechSynthesis' in window)) return;
+    
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    const text = quoteData[lang];
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Divine voice settings
+    utterance.rate = 0.75;      // Slow, contemplative
+    utterance.pitch = 0.9;      // Slightly deep
+    utterance.volume = 0.9;
+    
+    // Pick best available voice
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(v => 
+      lang === 'ta' 
+        ? v.lang.startsWith('ta')     // Tamil voice
+        : (v.name.includes('Google') || v.name.includes('Premium') || 
+           v.name.includes('Enhanced')) && v.lang.startsWith('en')
+    ) || voices.find(v => v.lang.startsWith(lang === 'ta' ? 'ta' : 'en'));
+    
+    if (preferredVoice) utterance.voice = preferredVoice;
+    
+    utterance.onstart = () => setIsSpeaking(true);
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Stop on unmount
+  useEffect(() => {
+    return () => { window.speechSynthesis.cancel(); };
+  }, []);
+
+  // Stop when quote changes
+  useEffect(() => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(false);
+  }, [quoteData]);
+
+  // Handle voices loading
+  useEffect(() => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        // Voices now loaded — no action needed, 
+        // handleReadAloud reads them fresh each call
+      };
+    }
+  }, []);
+
   const shareOnWhatsApp = () => {
     const text = `Today's Wisdom from Sri Maha Periyava: "${quoteData[lang]}" - KM Periyava Sannadhi`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
@@ -88,6 +148,31 @@ const DeivathinKural: React.FC<DeivathinKuralProps> = ({ lang, quoteData, isLoad
 
           {/* Controls */}
           <div className="mt-12 flex flex-wrap justify-center items-center gap-6">
+            <button 
+              onClick={handleReadAloud}
+              disabled={!('speechSynthesis' in window)}
+              className={`inline-flex items-center gap-2 px-8 py-4 rounded-full font-bold text-xs uppercase tracking-widest transition-all border
+                ${isSpeaking 
+                  ? 'bg-primary text-white border-primary shadow-lg animate-pulse' 
+                  : 'bg-white text-primary border-primary/30 hover:border-primary hover:bg-orange-50'
+                }
+                disabled:opacity-30 disabled:cursor-not-allowed`}
+              title={isSpeaking ? 'Stop Reading' : 'Listen to this teaching'}
+            >
+              <span className="text-lg">{isSpeaking ? '⏹' : '🔊'}</span>
+              <span>{isSpeaking 
+                ? (lang === 'ta' ? 'நிறுத்து' : 'Stop') 
+                : (lang === 'ta' ? 'கேளுங்கள்' : 'Read Aloud')
+              }</span>
+              {isSpeaking && (
+                <span className="flex gap-[2px] items-center">
+                  <span className="w-[2px] h-3 bg-white rounded-full animate-pulse" />
+                  <span className="w-[2px] h-3 bg-white rounded-full animate-pulse [animation-delay:0.15s]" />
+                  <span className="w-[2px] h-3 bg-white rounded-full animate-pulse [animation-delay:0.3s]" />
+                </span>
+              )}
+            </button>
+
             <button 
               onClick={onRefresh}
               disabled={isLoading}

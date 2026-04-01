@@ -210,83 +210,6 @@ const FloatingPetals: React.FC = () => {
   );
 };
 
-const CursorGlow: React.FC = () => {
-  const outerRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const noTouch = window.matchMedia('(hover: hover)').matches;
-    const notCoarse = window.matchMedia(
-      '(pointer: fine)').matches;
-    const notMobile = !('ontouchstart' in window) && 
-      navigator.maxTouchPoints === 0;
-    setIsDesktop(noTouch && notCoarse && notMobile);
-  }, []);
-
-  useEffect(() => {
-    if (!isDesktop) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (outerRef.current) {
-        outerRef.current.style.left = (e.clientX - 120) + 'px';
-        outerRef.current.style.top = (e.clientY - 120) + 'px';
-      }
-      if (innerRef.current) {
-        innerRef.current.style.left = (e.clientX - 6) + 'px';
-        innerRef.current.style.top = (e.clientY - 6) + 'px';
-      }
-    };
-
-    const handleMouseLeave = () => {
-      if (outerRef.current) outerRef.current.style.opacity = '0';
-      if (innerRef.current) innerRef.current.style.opacity = '0';
-    };
-
-    const handleMouseEnter = () => {
-      if (outerRef.current) outerRef.current.style.opacity = '1';
-      if (innerRef.current) innerRef.current.style.opacity = '1';
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    document.addEventListener('mouseenter', handleMouseEnter);
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-    };
-  }, [isDesktop]);
-
-  if (!isDesktop) return null;
-
-  return (
-    <div className="fixed inset-0 pointer-events-none z-[60]">
-      <div 
-        ref={outerRef}
-        className="fixed w-[240px] h-[240px] rounded-full pointer-events-none transition-[left,top] duration-[150ms] ease-out"
-        style={{
-          background: 'radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, rgba(255, 107, 53, 0) 70%)',
-          left: '-240px',
-          top: '-240px',
-          mixBlendMode: 'screen'
-        }}
-      />
-      <div 
-        ref={innerRef}
-        className="fixed w-[12px] h-[12px] rounded-full pointer-events-none transition-[left,top] duration-[50ms] ease-out"
-        style={{
-          background: 'radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(255, 215, 0, 1) 40%, rgba(255, 107, 53, 0.8) 100%)',
-          boxShadow: '0 0 30px rgba(255, 215, 0, 1), 0 0 60px rgba(255, 107, 53, 0.6)',
-          left: '-20px',
-          top: '-20px'
-        }}
-      />
-    </div>
-  );
-};
-
 const PageTransition: React.FC<{ isVisible: boolean }> = ({ isVisible }) => {
   return (
     <div 
@@ -519,7 +442,6 @@ const App: React.FC = () => {
       <Chatbot lang={lang} navigate={navigate} />
 
       {isPetalsOn && <FloatingPetals />}
-      <CursorGlow />
       <PageTransition isVisible={isTransitioning} />
     </div>
   );
