@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Language } from './types';
 import { translations } from './translations';
 import { wisdomQuotes } from './data/wisdom';
+import { motion, AnimatePresence } from 'motion/react';
 
 // Shared Layout Components
 import Header from './components/Header';
@@ -236,8 +237,6 @@ const PageTransition: React.FC<{ isVisible: boolean }> = ({ isVisible }) => {
 const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('en');
   const [isMusicPlaying, setIsMusicPlaying] = useState(true);
-  const [isBellsOn, setIsBellsOn] = useState(false);
-  const bellAudioRef = useRef<HTMLAudioElement | null>(null);
   const [isPetalsOn, setIsPetalsOn] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentPath, setCurrentPath] = useState<string>('home');
@@ -359,24 +358,6 @@ const App: React.FC = () => {
   }, [isMusicPlaying]);
 
   const toggleMusic = () => setIsMusicPlaying(!isMusicPlaying);
-  const toggleBells = () => setIsBellsOn(!isBellsOn);
-  useEffect(() => {
-    bellAudioRef.current = new Audio("https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3");
-    bellAudioRef.current.volume = 0.3;
-  }, []);
-
-  useEffect(() => {
-    if (isBellsOn && bellAudioRef.current) {
-      bellAudioRef.current.play().catch(e => console.debug("Bell play blocked", e));
-      const interval = setInterval(() => {
-        if (bellAudioRef.current) {
-          bellAudioRef.current.currentTime = 0;
-          bellAudioRef.current.play().catch(e => console.debug("Bell play blocked", e));
-        }
-      }, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [isBellsOn]);
 
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   const [isLoadingQuote, setIsLoadingQuote] = useState(false);
@@ -423,8 +404,6 @@ const App: React.FC = () => {
         setLang={setLang} 
         isMusicPlaying={isMusicPlaying}
         toggleMusic={toggleMusic}
-        isBellsOn={isBellsOn}
-        toggleBells={toggleBells}
         isPetalsOn={isPetalsOn}
         togglePetals={() => setIsPetalsOn(p => !p)}
         t={t.nav}

@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { Language, NavTranslations } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
-import { Bell, BellOff, Flower2, Menu, X, Play, Pause } from 'lucide-react';
+import { Flower2, Menu, X, Play, Pause } from 'lucide-react';
 
 interface HeaderProps {
   lang: Language;
   setLang: (lang: Language) => void;
   isMusicPlaying: boolean;
   toggleMusic: () => void;
-  isBellsOn: boolean;
-  toggleBells: () => void;
   isPetalsOn: boolean;
   togglePetals: () => void;
   t: NavTranslations;
@@ -22,8 +20,6 @@ const Header: React.FC<HeaderProps> = ({
   setLang, 
   isMusicPlaying, 
   toggleMusic, 
-  isBellsOn,
-  toggleBells,
   isPetalsOn,
   togglePetals,
   t, 
@@ -92,7 +88,7 @@ const Header: React.FC<HeaderProps> = ({
           {/* Controls Section */}
           <div className="hidden lg:flex items-center gap-3 xl:gap-4 ml-auto">
             {/* Divine Chant Control */}
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center gap-1">
               <button
                 onClick={toggleMusic}
                 className="relative group"
@@ -112,24 +108,58 @@ const Header: React.FC<HeaderProps> = ({
                   />
                 )}
               </button>
-            </div>
-
-            {/* Temple Bells Control */}
-            <div className="flex flex-col items-center">
-              <button
-                onClick={toggleBells}
-                className={`w-10 h-10 xl:w-12 xl:h-12 rounded-full flex items-center justify-center transition-all duration-500 ${isBellsOn ? 'bg-accent/20 text-accent shadow-md' : 'bg-gray-100 text-gray-400'}`}
-              >
-                {isBellsOn ? <Bell size={20} fill="currentColor" /> : <BellOff size={20} />}
-              </button>
+              
+              {/* Small Scrolling Lyrics */}
+              <AnimatePresence>
+                {isMusicPlaying && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="w-24 xl:w-32 overflow-hidden"
+                  >
+                    <div className="flex whitespace-nowrap">
+                      <motion.div 
+                        animate={{ x: ['0%', '-50%'] }}
+                        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                        className="flex gap-4 items-center text-[8px] xl:text-[9px] font-bold text-primary uppercase tracking-wider"
+                      >
+                        {[...Array(4)].map((_, i) => (
+                          <span key={i} className="flex items-center gap-2">
+                            {lang === 'ta' ? "ஜய ஜய சங்கர..." : "Jaya Jaya Sankara..."}
+                            <span className="text-accent">ॐ</span>
+                          </span>
+                        ))}
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Petals Control */}
             <button
               onClick={togglePetals}
-              className={`w-10 h-10 xl:w-12 xl:h-12 rounded-full flex items-center justify-center transition-all duration-500 ${isPetalsOn ? 'bg-pink-50 text-pink-500 shadow-md' : 'bg-gray-100 text-gray-400'}`}
+              className={`w-10 h-10 xl:w-12 xl:h-12 rounded-full flex items-center justify-center transition-all duration-500 relative group ${isPetalsOn ? 'bg-pink-50 text-pink-500 shadow-md' : 'bg-gray-100 text-gray-400'}`}
+              title={lang === 'ta' ? 'மலர்கள்' : 'Flower Petals'}
             >
-              <Flower2 size={20} fill={isPetalsOn ? "currentColor" : "none"} />
+              <motion.div
+                animate={isPetalsOn ? { rotate: 360 } : { rotate: 0 }}
+                transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                className="relative z-10"
+              >
+                <Flower2 size={20} fill={isPetalsOn ? "currentColor" : "none"} />
+              </motion.div>
+              {isPetalsOn && (
+                <motion.div 
+                  className="absolute inset-0 rounded-full bg-pink-200/30"
+                  animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                />
+              )}
+              <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[9px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                {isPetalsOn ? (lang === 'ta' ? 'மலர்களை நிறுத்து' : 'Stop Petals') : (lang === 'ta' ? 'மலர்களைத் தொடங்கு' : 'Start Petals')}
+              </span>
             </button>
 
             {/* Language Switcher */}
@@ -159,12 +189,30 @@ const Header: React.FC<HeaderProps> = ({
 
           {/* Mobile Menu Toggle */}
           <div className="flex items-center gap-3 lg:hidden">
-            <button
-              onClick={toggleMusic}
-              className={`w-10 h-10 rounded-full flex items-center justify-center ${isMusicPlaying ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'}`}
-            >
-              {isMusicPlaying ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
-            </button>
+            <div className="flex flex-col items-center gap-0.5">
+              <button
+                onClick={toggleMusic}
+                className={`w-10 h-10 rounded-full flex items-center justify-center ${isMusicPlaying ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'}`}
+              >
+                {isMusicPlaying ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
+              </button>
+              {isMusicPlaying && (
+                <div className="w-16 overflow-hidden">
+                  <motion.div 
+                    animate={{ x: ['0%', '-50%'] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                    className="flex gap-2 items-center text-[7px] font-bold text-primary uppercase whitespace-nowrap"
+                  >
+                    {[...Array(4)].map((_, i) => (
+                      <span key={i} className="flex items-center gap-1">
+                        {lang === 'ta' ? "ஜய ஜய..." : "Jaya Jaya..."}
+                        <span className="text-accent">ॐ</span>
+                      </span>
+                    ))}
+                  </motion.div>
+                </div>
+              )}
+            </div>
             <button 
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 text-gray-600"
@@ -212,11 +260,24 @@ const Header: React.FC<HeaderProps> = ({
                 </div>
                 <div className="flex justify-between items-center px-2">
                    <div className="flex gap-4">
-                      <button onClick={toggleBells} className={`w-12 h-12 rounded-full flex items-center justify-center ${isBellsOn ? 'bg-accent/20 text-accent' : 'bg-gray-100 text-gray-400'}`}>
-                        {isBellsOn ? <Bell size={24} /> : <BellOff size={24} />}
-                      </button>
-                      <button onClick={togglePetals} className={`w-12 h-12 rounded-full flex items-center justify-center ${isPetalsOn ? 'bg-pink-50 text-pink-500' : 'bg-gray-100 text-gray-400'}`}>
-                        <Flower2 size={24} />
+                      <button 
+                        onClick={togglePetals} 
+                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 relative ${isPetalsOn ? 'bg-pink-50 text-pink-500 shadow-md' : 'bg-gray-100 text-gray-400'}`}
+                      >
+                        <motion.div
+                          animate={isPetalsOn ? { rotate: 360 } : { rotate: 0 }}
+                          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                          className="relative z-10"
+                        >
+                          <Flower2 size={24} fill={isPetalsOn ? "currentColor" : "none"} />
+                        </motion.div>
+                        {isPetalsOn && (
+                          <motion.div 
+                            className="absolute inset-0 rounded-full bg-pink-200/30"
+                            animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
+                            transition={{ duration: 3, repeat: Infinity }}
+                          />
+                        )}
                       </button>
                    </div>
                    <button
