@@ -48,7 +48,7 @@ const WisdomPage: React.FC<WisdomPageProps> = ({ lang, quoteData, isLoading, onR
         <div className="container mx-auto px-6 max-w-4xl text-center">
            <div className="inline-block w-20 h-20 bg-orange-50 rounded-full flex items-center justify-center text-3xl mb-12 shadow-inner">📖</div>
            <h3 className="text-4xl md:text-5xl font-bold heading-font text-text-dark mb-10 tracking-tight">About Deivathin Kural</h3>
-           <div className="prose prose-lg text-text-dark space-y-10 max-w-3xl mx-auto leading-relaxed text-xl font-medium sacred-bold">
+           <div className="prose prose-lg text-text-dark space-y-10 max-w-3xl mx-auto leading-relaxed text-base md:text-xl font-medium sacred-bold">
              <p>
                <SacredWord>Deivathin Kural</SacredWord> (The Voice of God) is a monumental collection of teachings and discourses given by <SacredWord>Sri Kanchi Mahaperiyava</SacredWord>, the 68th Jagadguru of the Kanchi Kamakoti Peetham.
              </p>
@@ -60,11 +60,9 @@ const WisdomPage: React.FC<WisdomPageProps> = ({ lang, quoteData, isLoading, onR
              </p>
              <div 
                ref={quoteRef}
-               className="p-10 rounded-[3rem] border-l-8 border-primary italic font-bold text-2xl md:text-3xl text-secondary sr-hidden-scale"
+               className="p-10 rounded-[3rem] border-l-8 border-primary italic font-bold text-2xl md:text-3xl text-secondary sr-hidden-scale md:backdrop-blur-md"
                style={{
                  background: 'rgba(255, 252, 247, 0.75)',
-                 backdropFilter: 'blur(12px)',
-                 WebkitBackdropFilter: 'blur(12px)',
                  border: '1px solid rgba(255, 200, 150, 0.25)',
                  borderLeftWidth: '8px',
                  boxShadow: '0 8px 32px rgba(139, 69, 19, 0.08), inset 0 1px 0 rgba(255,255,255,0.5)'

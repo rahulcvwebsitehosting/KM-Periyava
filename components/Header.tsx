@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Language, NavTranslations } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { Flower2, Menu, X, Play, Pause } from 'lucide-react';
@@ -28,6 +28,19 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    // Always clean up on unmount
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
   const menuItems = [
     { name: t.home, id: 'home' },
     { name: t.about, id: 'about' },
@@ -45,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <header className="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50 border-b border-orange-100/50 py-4 transition-all duration-500">
+      <header className="fixed relative top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50 border-b border-orange-100/50 py-4 transition-all duration-500">
         <div className="container mx-auto max-w-[1500px] px-4 lg:px-8 flex justify-between items-center">
           {/* Logo Section */}
           <button 
@@ -221,17 +234,16 @@ const Header: React.FC<HeaderProps> = ({
             </button>
           </div>
         </div>
-      </header>
 
-      {/* Mobile Navigation Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="lg:hidden fixed top-[76px] left-0 right-0 bg-white border-t border-orange-50 shadow-2xl z-50 overflow-y-auto max-h-[calc(100vh-76px)]"
-          >
+        {/* Mobile Navigation Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="lg:hidden absolute top-full left-0 right-0 bg-white border-t border-orange-50 shadow-2xl z-50 overflow-y-auto max-h-[85vh]"
+            >
             <ul className="flex flex-col p-6 gap-2">
               {menuItems.map(item => (
                 <li key={item.id}>
@@ -292,6 +304,7 @@ const Header: React.FC<HeaderProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+      </header>
     </>
   );
 };

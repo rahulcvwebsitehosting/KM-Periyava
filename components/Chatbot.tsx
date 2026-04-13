@@ -21,46 +21,110 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const styleId = 'chatbot-pulse-style';
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement('style');
+      style.id = styleId;
+      style.textContent = [
+        '@keyframes slowPing {',
+        '  0%, 100% { transform: scale(1); opacity: 0.4; }',
+        '  50% { transform: scale(1.3); opacity: 0; }',
+        '}'
+      ].join('\n');
+      document.head.appendChild(style);
+    }
+    return () => {
+      document.getElementById(styleId)?.remove();
+    };
+  }, []);
+
+  useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
 
   const formatMessage = (text: string) => {
-    // Handle navigation buttons [[NAV:page_id|Label]]
-    const navRegex = /\[\[NAV:(\w+)\|(.*?)\]\]/g;
-    
-    // First, split by navigation buttons
-    const parts = text.split(/(\[\[NAV:\w+\|.*?\]\])/g);
-    
-    return parts.map((part, i) => {
-      const navMatch = navRegex.exec(part);
-      if (navMatch) {
-        const [, pageId, label] = navMatch;
-        navRegex.lastIndex = 0; // Reset regex state
-        return (
-          <button 
-            key={i}
-            onClick={() => {
-              navigate(pageId);
-              setIsOpen(false);
-            }}
-            className="mt-3 block w-full py-2 px-4 bg-orange-50 hover:bg-orange-100 text-primary border border-orange-200 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-center"
-          >
-            {label} →
-          </button>
-        );
-      }
+    // Split entire message into lines first
+    const lines = text.split('\n');
+    const elements: React.ReactNode[] = [];
+    let bulletBuffer: string[] = [];
+    let keyCounter = 0;
 
-      // Then handle bolding for the remaining text
-      const boldParts = part.split(/(\*\*.*?\*\*)/g);
-      return boldParts.map((boldPart, j) => {
-        if (boldPart.startsWith('**') && boldPart.endsWith('**')) {
-          return <strong key={`${i}-${j}`} className="font-extrabold text-secondary decoration-accent/30 decoration-2 underline-offset-4">{boldPart.slice(2, -2)}</strong>;
+    const getKey = () => `msg-${keyCounter++}`;
+
+    // Helper to render inline bold and NAV buttons within text
+    const renderInline = (line: string, keyPrefix: string) => {
+      const parts = line.split(/(\[\[NAV:\w+\|.*?\]\]|\*\*.*?\*\*)/g);
+      
+      return parts.map((part, i) => {
+        const navMatch = part.match(/\[\[NAV:(\w+)\|(.*?)\]\]/);
+        if (navMatch) {
+          const [, pageId, label] = navMatch;
+          return (
+            <button
+              key={`${keyPrefix}-nav-${i}`}
+              onClick={() => { navigate(pageId); setIsOpen(false); }}
+              className="mt-3 block w-full py-2 px-4 bg-orange-50 hover:bg-orange-100 text-primary border border-orange-200 rounded-xl text-xs font-bold uppercase tracking-wider transition-all text-center"
+            >
+              {label} →
+            </button>
+          );
         }
-        return boldPart;
+        if (part.startsWith('**') && part.endsWith('**')) {
+          return (
+            <strong key={`${keyPrefix}-bold-${i}`} className="font-extrabold text-secondary">
+              {part.slice(2, -2)}
+            </strong>
+          );
+        }
+        return part;
       });
+    };
+
+    // Flush bullet buffer into a <ul>
+    const flushBullets = () => {
+      if (bulletBuffer.length === 0) return;
+      elements.push(
+        <ul key={getKey()} className="list-none space-y-1 my-2 pl-1">
+          {bulletBuffer.map((item, i) => (
+            <li key={i} className="flex items-start gap-2 text-sm">
+              <span className="text-primary mt-1 shrink-0">•</span>
+              <span>{renderInline(item, `bullet-${i}`)}</span>
+            </li>
+          ))}
+        </ul>
+      );
+      bulletBuffer = [];
+    };
+
+    lines.forEach((line, i) => {
+      const trimmed = line.trim();
+      
+      // Detect bullet: lines starting with "- " or "* "
+      if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+        bulletBuffer.push(trimmed.slice(2));
+      } else {
+        // Flush any buffered bullets before this non-bullet line
+        flushBullets();
+        
+        if (trimmed === '') {
+          // Empty line — small spacer
+          elements.push(<div key={getKey()} className="h-1" />);
+        } else {
+          elements.push(
+            <p key={getKey()} className="text-sm leading-relaxed">
+              {renderInline(trimmed, `line-${i}`)}
+            </p>
+          );
+        }
+      }
     });
+
+    // Flush any remaining bullets at end of message
+    flushBullets();
+
+    return <div className="space-y-1">{elements}</div>;
   };
 
   const handleSend = async () => {
@@ -135,10 +199,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
   };
 
   return (
-    <div className="fixed bottom-8 right-8 z-[100] font-inter">
+    <div className="fixed bottom-6 right-4 md:bottom-8 md:right-8 z-[100] font-inter">
       {/* Chat Window */}
       {isOpen && (
-        <div className="absolute bottom-20 right-0 w-[90vw] md:w-[400px] h-[500px] bg-white rounded-[2.5rem] shadow-2xl border border-orange-100 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300">
+        <div className="fixed bottom-[5.5rem] right-4 left-4 md:left-auto md:right-8 md:w-[400px] h-[500px] max-h-[calc(100vh-8rem)] bg-white rounded-[2.5rem] shadow-2xl border border-orange-100 flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300">
           {/* Header */}
           <div className="bg-gradient-to-r from-primary to-primary-dark p-6 text-white flex justify-between items-center shadow-lg">
             <div className="flex items-center gap-3">
@@ -170,9 +234,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
                     ? 'bg-primary text-white rounded-tr-none font-bold' 
                     : 'bg-white text-text-dark border border-orange-100 rounded-tl-none font-medium'
                 }`}>
-                  <div className="whitespace-pre-wrap">
-                    {formatMessage(msg.text)}
-                  </div>
+                  {formatMessage(msg.text)}
                 </div>
               </div>
             ))}
@@ -212,22 +274,28 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
         </div>
       )}
 
-      {/* Floating Toggle Button */}
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 shadow-2xl group relative ${isOpen ? 'bg-bg-dark text-white' : 'bg-primary text-white'}`}
-        title="Divine Assistant"
-      >
-        {!isOpen && (
-          <span className="absolute inset-0 rounded-full bg-primary/40 animate-ping"></span>
-        )}
-        <span className="text-2xl relative z-10">{isOpen ? '✕' : 'ॐ'}</span>
-        {!isOpen && (
-           <span className="absolute -top-14 right-0 bg-white text-primary text-[10px] font-bold py-2 px-4 rounded-full shadow-lg border border-orange-100 whitespace-nowrap opacity-100 animate-bounce">
-             Divine Help 🙏
-           </span>
-        )}
-      </button>
+        {/* Floating Toggle Button */}
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-500 shadow-2xl group relative ${isOpen ? 'bg-bg-dark text-white' : 'bg-primary text-white'}`}
+          title="Divine Assistant"
+        >
+          {!isOpen && (
+            <span 
+              className="absolute inset-0 rounded-full bg-primary/40"
+              style={{ animation: 'slowPing 2.5s ease-in-out infinite' }}
+            ></span>
+          )}
+          <span className="text-2xl relative z-10">{isOpen ? '✕' : 'ॐ'}</span>
+          {!isOpen && (
+             <span 
+               className="absolute -top-14 right-0 bg-white text-primary text-[10px] font-bold py-2 px-4 rounded-full shadow-lg border border-orange-100 whitespace-nowrap opacity-100"
+               style={{ animation: 'slowPing 3s ease-in-out infinite' }}
+             >
+               Divine Help 🙏
+             </span>
+          )}
+        </button>
     </div>
   );
 };

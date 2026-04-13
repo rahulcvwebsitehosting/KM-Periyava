@@ -56,12 +56,10 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
             {ganapathiEvents.map((event) => (
               <TiltCard 
                 key={event.id} 
-                className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] hover:shadow-xl transition-all duration-500 group flex flex-col relative overflow-hidden cursor-pointer"
+                className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] hover:shadow-xl transition-all duration-500 group flex flex-col relative overflow-hidden cursor-pointer md:backdrop-blur-md"
                 onClick={() => navigate(`events/${event.id}`)}
                 style={{
                   background: 'rgba(255, 252, 247, 0.75)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
                   border: '1px solid rgba(255, 200, 150, 0.25)',
                   boxShadow: '0 8px 32px rgba(139, 69, 19, 0.08), inset 0 1px 0 rgba(255,255,255,0.5)'
                 }}

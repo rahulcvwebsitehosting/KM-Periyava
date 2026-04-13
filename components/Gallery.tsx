@@ -64,8 +64,17 @@ const Gallery: React.FC<GalleryProps> = ({ lang, navigate, fullMode = false }) =
         background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
         opacity: 0.03;
         pointer-events: none;
-        animation: noise 8s steps(10) infinite;
         z-index: 1;
+      }
+      @media (min-width: 768px) {
+        .noise-bg::before {
+          animation: noise 8s steps(10) infinite;
+        }
+      }
+      @media (max-width: 767px) {
+        .kb-image {
+          animation: none !important;
+        }
       }
     `;
     document.head.appendChild(style);

@@ -60,36 +60,50 @@ const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
       particles.push(createParticle(true));
     }
 
+    const isPaused = { current: false };
+
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!isPaused.current) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      particles.forEach((p, index) => {
-        p.life += 0.003;
-        p.x += p.speedX;
-        p.y += p.speedY;
-        p.opacity = Math.sin(p.life * Math.PI);
+        particles.forEach((p, index) => {
+          p.life += 0.003;
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.opacity = Math.sin(p.life * Math.PI);
 
-        ctx.globalAlpha = Math.max(0, p.opacity);
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
+          ctx.globalAlpha = Math.max(0, p.opacity);
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
 
-        if (p.life >= p.maxLife) {
-          particles[index] = createParticle();
-          // Randomize starting position to be near portrait center area as requested
-          particles[index].x = canvas.width * (0.2 + Math.random() * 0.6);
-          particles[index].y = canvas.height * (0.4 + Math.random() * 0.5);
-        }
-      });
+          if (p.life >= p.maxLife) {
+            particles[index] = createParticle();
+            // Randomize starting position to be near portrait center area as requested
+            particles[index].x = canvas.width * (0.2 + Math.random() * 0.6);
+            particles[index].y = canvas.height * (0.4 + Math.random() * 0.5);
+          }
+        });
+      }
 
       animationFrameId.current = requestAnimationFrame(animate);
     };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isPaused.current = !entry.isIntersecting;
+      },
+      { threshold: 0.1 }
+    );
+
+    if (canvas) observer.observe(canvas);
 
     animate();
 
     return () => {
       cancelAnimationFrame(animationFrameId.current);
+      observer.disconnect();
     };
   }, []);
 
@@ -188,7 +202,7 @@ const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
             
             {/* The Arched Container */}
             <div 
-              className="relative w-[300px] md:w-[480px] h-[400px] md:h-[640px] overflow-hidden"
+              className="relative w-[280px] sm:w-[300px] md:w-[480px] h-[370px] sm:h-[400px] md:h-[640px] overflow-hidden"
               style={{ 
                 filter: 'drop-shadow(0 0 25px rgba(201, 162, 39, 0.45))',
               }}

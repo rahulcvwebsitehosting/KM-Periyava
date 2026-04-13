@@ -241,9 +241,9 @@ const App: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [currentPath, setCurrentPath] = useState<string>('home');
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [pendingPath, setPendingPath] = useState<string | null>(null);
   const musicStateRef = useRef(isMusicPlaying);
   const fadeIntervalRef = useRef<number | null>(null);
+  const transitionTimersRef = useRef<number[]>([]);
 
   // Sync ref with state
   useEffect(() => {
@@ -277,22 +277,25 @@ const App: React.FC = () => {
   }, [currentPath]);
 
   const navigate = (path: string) => {
-    if (isTransitioning) return; // prevent double-trigger
-    setIsTransitioning(true);
-    setPendingPath(path);
+    if (isTransitioning) return;
     
-    // After flash covers screen (200ms), switch the page
-    setTimeout(() => {
+    // Clear any existing transition timers before starting new ones
+    transitionTimersRef.current.forEach(id => clearTimeout(id));
+    transitionTimersRef.current = [];
+    
+    setIsTransitioning(true);
+    
+    const t1 = window.setTimeout(() => {
       window.location.hash = '#/' + path;
       setCurrentPath(path);
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
     }, 200);
     
-    // After page switched, uncover (fade out)
-    setTimeout(() => {
+    const t2 = window.setTimeout(() => {
       setIsTransitioning(false);
-      setPendingPath(null);
     }, 500);
+    
+    transitionTimersRef.current = [t1, t2];
   };
 
   const startFadeIn = (audio: HTMLAudioElement) => {
@@ -314,20 +317,28 @@ const App: React.FC = () => {
     const audio = new Audio("https://archive.org/download/JayaJayaSankara/JayaJayaSankara.mp3");
     audio.loop = true;
     audio.volume = 0;
+    audio.preload = 'none';
     audioRef.current = audio;
 
+    const removeListeners = () => {
+      document.removeEventListener('click', startAudioOnInteraction);
+      document.removeEventListener('touchstart', startAudioOnInteraction);
+      document.removeEventListener('scroll', startAudioOnInteraction);
+      document.removeEventListener('keydown', startAudioOnInteraction);
+    };
+
     const startAudioOnInteraction = () => {
-      if (audioRef.current && musicStateRef.current) {
-        audioRef.current.play()
-          .then(() => {
-            startFadeIn(audioRef.current!);
-            document.removeEventListener('click', startAudioOnInteraction);
-            document.removeEventListener('touchstart', startAudioOnInteraction);
-            document.removeEventListener('scroll', startAudioOnInteraction);
-            document.removeEventListener('keydown', startAudioOnInteraction);
-          })
-          .catch(err => console.debug("Autoplay pending interaction...", err));
-      }
+      if (!audioRef.current || !musicStateRef.current) return;
+      
+      audioRef.current.play()
+        .then(() => {
+          startFadeIn(audioRef.current!);
+          removeListeners(); // Only remove on SUCCESS
+        })
+        .catch(err => {
+          console.debug("Autoplay blocked, will retry on next interaction:", err);
+          // Do NOT remove listeners on failure — retry on next interaction
+        });
     };
 
     document.addEventListener('click', startAudioOnInteraction);
@@ -336,6 +347,7 @@ const App: React.FC = () => {
     document.addEventListener('keydown', startAudioOnInteraction);
 
     return () => {
+      transitionTimersRef.current.forEach(id => clearTimeout(id));
       audio.pause();
       document.removeEventListener('click', startAudioOnInteraction);
       document.removeEventListener('touchstart', startAudioOnInteraction);
@@ -420,7 +432,7 @@ const App: React.FC = () => {
       {/* Divine Assistant Chatbot */}
       <Chatbot lang={lang} navigate={navigate} />
 
-      {isPetalsOn && <FloatingPetals />}
+      {isPetalsOn && currentPath === 'home' && <FloatingPetals />}
       <PageTransition isVisible={isTransitioning} />
     </div>
   );
