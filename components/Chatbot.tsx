@@ -72,7 +72,12 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("Gemini API Key is missing. Please set it in the environment.");
+      }
+
+      const ai = new GoogleGenAI({ apiKey });
       const systemInstruction = `
         You are a divine, holy, and respectful assistant for the KM Periyava Sannadhi temple in Kandhamangalam. 
         Your tone is peaceful, brief, and deeply respectful (Satvic). You serve the devotees of Sri Kanchi Mahaperiyava.
@@ -107,7 +112,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
       `;
  
       const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-3-flash-preview',
         contents: [
           ...messages.slice(-6).map(m => ({ role: m.role, parts: [{ text: m.text }] })),
           { role: 'user', parts: [{ text: userMessage }] }
