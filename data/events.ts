@@ -129,7 +129,7 @@ export const getProcessedEvents = () => {
   
   return eventsData.map(event => ({
     ...event,
-    isUpcoming: new Date(event.date) >= today
+    isUpcoming: new Date(event.date + ' 00:00:00') >= today
   })).sort((a, b) => {
     // Upcoming first
     if (a.isUpcoming && !b.isUpcoming) return -1;

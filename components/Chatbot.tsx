@@ -176,7 +176,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
       `;
  
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-2.0-flash',
         contents: [
           ...messages.slice(-6).map(m => ({ role: m.role, parts: [{ text: m.text }] })),
           { role: 'user', parts: [{ text: userMessage }] }
@@ -227,8 +227,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
                 </p>
               </div>
             )}
-            {messages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            {messages.map((msg, idx) => (
+              <div key={`msg-${idx}-${msg.role}`} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] px-5 py-3 rounded-2xl text-sm md:text-base leading-relaxed shadow-sm ${
                   msg.role === 'user' 
                     ? 'bg-primary text-white rounded-tr-none font-bold' 

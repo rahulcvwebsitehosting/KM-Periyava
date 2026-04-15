@@ -44,6 +44,7 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
   const [formData, setFormData] = useState({ name: '', title: '', text: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   const toggleExpand = (id: number) => {
     setExpandedIds(prev => 
@@ -56,6 +57,7 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
     if (!formData.name || !formData.title || !formData.text) return;
 
     setIsSubmitting(true);
+    setSubmitError(false);
     
     try {
       const response = await fetch('https://formspree.io/f/xreydlyv', {
@@ -76,10 +78,10 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
           setIsModalOpen(false);
         }, 5000);
       } else {
-        alert('Oops! There was a problem submitting your story. Please try again.');
+        setSubmitError(true);
       }
     } catch (error) {
-      alert('Oops! There was a problem submitting your story. Please check your connection and try again.');
+      setSubmitError(true);
     } finally {
       setIsSubmitting(false);
     }
@@ -206,6 +208,11 @@ const DevoteeExperience: React.FC<DevoteeExperienceProps> = ({ lang }) => {
                 </div>
                 
                 <form onSubmit={handleSubmission} className="p-6 md:p-10 space-y-8">
+                  {submitError && (
+                    <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold">
+                      {lang === 'ta' ? 'முயற்சி தோல்வி. மீண்டும் முயற்சிக்கவும்.' : 'Submission failed. Please try again.'}
+                    </div>
+                  )}
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
                       <label className="block text-[10px] font-bold text-accent uppercase tracking-widest mb-3 ml-2">Your Name *</label>

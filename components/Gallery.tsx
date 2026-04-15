@@ -76,6 +76,9 @@ const Gallery: React.FC<GalleryProps> = ({ lang, navigate, fullMode = false }) =
           animation: none !important;
         }
       }
+      .columns-1 > div, .md\:columns-2 > div, .lg\:columns-3 > div {
+        margin-bottom: 1rem;
+      }
     `;
     document.head.appendChild(style);
     return () => { document.head.removeChild(style); };
@@ -222,7 +225,7 @@ const Gallery: React.FC<GalleryProps> = ({ lang, navigate, fullMode = false }) =
         {activeTemple === 'ganapathi' ? (
           <>
             {/* Responsive Masonry Grid - Single column on mobile (<768px), multi-column on md+ */}
-            <div className="columns-1 md:columns-2 lg:columns-3 gap-4 md:gap-8 space-y-4 md:space-y-8 animate-in fade-in duration-700">
+            <div className="columns-1 md:columns-2 lg:columns-3 gap-4 md:gap-8 animate-in fade-in duration-700">
               {visibleItems.map((item, index) => (
                 <div 
                   key={item.id} 

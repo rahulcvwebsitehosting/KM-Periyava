@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Language } from './types';
 import { translations } from './translations';
 import { wisdomQuotes } from './data/wisdom';
@@ -138,28 +138,30 @@ const FloatingPetals: React.FC = () => {
   const petalsRef = useRef<any[]>([]);
   const styleRef = useRef<HTMLStyleElement | null>(null);
 
-  if (petalsRef.current.length === 0) {
-    const colors = [
-      'rgba(255,150,100,0.5)',
-      'rgba(255,180,120,0.4)',
-      'rgba(255,200,150,0.5)',
-      'rgba(255,120,80,0.4)'
-    ];
+  useMemo(() => {
+    if (petalsRef.current.length === 0) {
+      const colors = [
+        'rgba(255,150,100,0.5)',
+        'rgba(255,180,120,0.4)',
+        'rgba(255,200,150,0.5)',
+        'rgba(255,120,80,0.4)'
+      ];
 
-    for (let i = 0; i < 18; i++) {
-      petalsRef.current.push({
-        id: i,
-        left: Math.random() * 100,
-        duration: 8 + Math.random() * 10,
-        delay: Math.random() * -15,
-        drift: -80 + Math.random() * 160,
-        rotation: Math.random() * 360,
-        width: 10 + Math.random() * 10,
-        height: 14 + Math.random() * 10,
-        color: colors[Math.floor(Math.random() * colors.length)]
-      });
+      for (let i = 0; i < 18; i++) {
+        petalsRef.current.push({
+          id: i,
+          left: Math.random() * 100,
+          duration: 8 + Math.random() * 10,
+          delay: Math.random() * -15,
+          drift: -80 + Math.random() * 160,
+          rotation: Math.random() * 360,
+          width: 10 + Math.random() * 10,
+          height: 14 + Math.random() * 10,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        });
+      }
     }
-  }
+  }, []);
 
   useEffect(() => {
     const style = document.createElement('style');
@@ -288,7 +290,7 @@ const App: React.FC = () => {
     const t1 = window.setTimeout(() => {
       window.location.hash = '#/' + path;
       setCurrentPath(path);
-      window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }, 200);
     
     const t2 = window.setTimeout(() => {
@@ -299,7 +301,9 @@ const App: React.FC = () => {
   };
 
   const startFadeIn = (audio: HTMLAudioElement) => {
-    if (fadeIntervalRef.current) clearInterval(fadeIntervalRef.current);
+    if (fadeIntervalRef.current) {
+      clearInterval(fadeIntervalRef.current);
+    }
     audio.volume = 0;
     let vol = 0;
     fadeIntervalRef.current = window.setInterval(() => {
