@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { getProcessedMergedEvents } from '../data/events';
+import React, { useEffect, useState } from 'react';
+import { getProcessedMergedEvents, Event } from '../data/events';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { TiltCard } from '../hooks/use3DTilt';
 
@@ -12,13 +12,18 @@ interface EventsPageProps {
 
 const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
   const [activeTemple, setActiveTemple] = React.useState<'ganapathi' | 'sivan'>('ganapathi');
+  const [ganapathiEvents, setGanapathiEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
   const gridRef = useScrollReveal({ threshold: 0.1 });
 
-  // Filter events based on temple. 
-  // For now, we assume all current events belong to Ganapathi temple as per user request,
-  // even if some descriptions mention Sivan temple, the user wants a separate empty section for Sivan.
-  const ganapathiEvents = getProcessedMergedEvents(); 
-  const sivanEvents: any[] = []; // Empty for now as requested
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    getProcessedMergedEvents()
+      .then(events => { if (mounted) { setGanapathiEvents(events); setLoading(false); } })
+      .catch(() => { if (mounted) setLoading(false); });
+    return () => { mounted = false; };
+  }, []);
 
   return (
     <section className="py-24 bg-white duration-500 sacred-bold">
@@ -37,13 +42,13 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
 
         {/* Temple Selector */}
         <div className="flex flex-col md:flex-row justify-center gap-4 mb-16">
-          <button 
+          <button
             onClick={() => setActiveTemple('ganapathi')}
             className={`px-4 md:px-8 py-3 md:py-4 rounded-2xl font-bold transition-all text-xs md:text-sm uppercase tracking-widest border-2 ${activeTemple === 'ganapathi' ? 'bg-primary text-white border-primary shadow-lg' : 'bg-white text-gray-400 border-gray-100 hover:border-primary/30'}`}
           >
             Sri Prasanna Maha Ganapathi Temple
           </button>
-          <button 
+          <button
             onClick={() => setActiveTemple('sivan')}
             className={`px-4 md:px-8 py-3 md:py-4 rounded-2xl font-bold transition-all text-xs md:text-sm uppercase tracking-widest border-2 ${activeTemple === 'sivan' ? 'bg-primary text-white border-primary shadow-lg' : 'bg-white text-gray-400 border-gray-100 hover:border-primary/30'}`}
           >
@@ -52,10 +57,19 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
         </div>
 
         {activeTemple === 'ganapathi' ? (
+          loading ? (
+            <div className="text-center py-32 text-gray-400 font-bold uppercase tracking-widest text-sm">
+              Loading events...
+            </div>
+          ) : ganapathiEvents.length === 0 ? (
+            <div className="text-center py-32 px-10 bg-gray-50/50 rounded-[3rem] border-2 border-dashed border-gray-200">
+              <p className="text-gray-500 italic font-bold">No events yet. Check back soon.</p>
+            </div>
+          ) : (
           <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 sr-hidden sr-stagger">
             {ganapathiEvents.map((event) => (
-              <TiltCard 
-                key={event.id} 
+              <TiltCard
+                key={event.id}
                 className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] hover:shadow-xl transition-all duration-500 group flex flex-col relative overflow-hidden cursor-pointer md:backdrop-blur-md"
                 onClick={() => navigate(`events/${event.id}`)}
                 style={{
@@ -85,16 +99,16 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
                     {event.date}
                   </span>
                 </div>
-                
+
                 <h3 className="text-2xl font-bold text-primary heading-font mb-4 flex-1">
                   {event.title}
                 </h3>
-                
+
                 <p className="text-gray-600 line-clamp-3 text-sm mb-8 leading-relaxed font-bold">
                   {event.description}
                 </p>
-                
-                <button 
+
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     navigate(`events/${event.id}`);
@@ -106,6 +120,7 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
               </TiltCard>
             ))}
           </div>
+          )
         ) : (
           <div className="text-center py-32 px-10 bg-gray-50/50 rounded-[3rem] border-2 border-dashed border-gray-200">
             <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-sm border border-gray-100">

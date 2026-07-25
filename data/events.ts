@@ -1,3 +1,8 @@
+import {
+  fetchAnushamEvents,
+  isAppsScriptConfigured,
+  AnushamEvent,
+} from '../admin/auth';
 
 export interface Event {
   id: string;
@@ -9,7 +14,7 @@ export interface Event {
   mediaUrl: string;
 }
 
-export const eventsData: Event[] = [
+const hardcodedAnushamEvents: Event[] = [
   {
     id: "anusham-jul-2026",
     title: "ANUSHAM POOJA",
@@ -86,14 +91,6 @@ export const eventsData: Event[] = [
     mediaUrl: "https://photos.app.goo.gl/n1i8rNowxitoN3UW8"
   },
   {
-    id: "bhairavar-feb-2025",
-    title: "ASHTAMI BHAIRAVAR POOJA",
-    date: "February 20, 2025",
-    description: "Theipirai Ashtami pooja for Bhairavar was done on 20th February, 2025 in Sri Soundaranayagi sametha Sri Kailasanathar temple, Kandhamangalam.",
-    donors: ["Mr. Ramalingam (Chennai)", "Mrs. Lakshmi Priya (Chennai)", "Mrs. Poongodi Senthilkumar (Finland)"],
-    mediaUrl: "https://photos.app.goo.gl/h6CGfLYwP5fKHZSP9"
-  },
-  {
     id: "anusham-oct-2024",
     title: "ANUSHAM POOJA",
     date: "October 7, 2024",
@@ -101,20 +98,6 @@ export const eventsData: Event[] = [
     programs: ["Avahanthi Homam", "Periyava Panchalogha Vighragham & Padhukha Purappadu along with Uthagashanthi parayanam", "Annadhanam"],
     donors: ["Mr. T.S. Subramaniyam (Chennai)"],
     mediaUrl: "https://photos.app.goo.gl/cczwUqfUmxd4jKkQ7"
-  },
-  {
-    id: "vinayagar-2024",
-    title: "VINAYAGAR CHATHURTHI",
-    date: "September 7, 2024",
-    description: "Vinayagar chathurthi was celebrated in Kandhamangalam Sri Prasanna Maha Ganapathi temple on 7th September, 2024 in a grand manner.",
-    mediaUrl: "https://photos.app.goo.gl/2dP1KdMKSyQxeNvK9"
-  },
-  {
-    id: "shivaratri-2024",
-    title: "MAHA SIVARATHRI",
-    date: "March 8, 2024",
-    description: "Maha Shivaratri is a Hindu festival that honours God Shiva, also called 'The Night of Shiva'. In Sri Soundaranayagi samedha Sri Kailasanathar temple, Kandhamangalam, Maha Sivarathri was celebrated throughout the night.",
-    mediaUrl: "https://photos.app.goo.gl/w9bsKYktqJeRHZhTA"
   },
   {
     id: "anusham-mar-2024",
@@ -134,55 +117,120 @@ export const eventsData: Event[] = [
     donors: ["Mr. Thyagarajan (Chennai)"],
     mediaUrl: "https://photos.app.goo.gl/dPLXQy3nCkQ83RqcA"
   }
-].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+];
 
-export const getProcessedEvents = () => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+const hardcodedOtherEvents: Event[] = [
+  {
+    id: "bhairavar-feb-2025",
+    title: "ASHTAMI BHAIRAVAR POOJA",
+    date: "February 20, 2025",
+    description: "Theipirai Ashtami pooja for Bhairavar was done on 20th February, 2025 in Sri Soundaranayagi sametha Sri Kailasanathar temple, Kandhamangalam.",
+    donors: ["Mr. Ramalingam (Chennai)", "Mrs. Lakshmi Priya (Chennai)", "Mrs. Poongodi Senthilkumar (Finland)"],
+    mediaUrl: "https://photos.app.goo.gl/h6CGfLYwP5fKHZSP9"
+  },
+  {
+    id: "vinayagar-2024",
+    title: "VINAYAGAR CHATHURTHI",
+    date: "September 7, 2024",
+    description: "Vinayagar chathurthi was celebrated in Kandhamangalam Sri Prasanna Maha Ganapathi temple on 7th September, 2024 in a grand manner.",
+    mediaUrl: "https://photos.app.goo.gl/2dP1KdMKSyQxeNvK9"
+  },
+  {
+    id: "shivaratri-2024",
+    title: "MAHA SIVARATHRI",
+    date: "March 8, 2024",
+    description: "Maha Shivaratri is a Hindu festival that honours God Shiva, also called 'The Night of Shiva'. In Sri Soundaranayagi samedha Sri Kailasanathar temple, Kandhamangalam, Maha Sivarathri was celebrated throughout the night.",
+    mediaUrl: "https://photos.app.goo.gl/w9bsKYktqJeRHZhTA"
+  }
+];
 
-  return eventsData.map(event => ({
-    ...event,
-    isUpcoming: new Date(event.date + ' 00:00:00') > today
-  })).sort((a, b) => {
-    if (a.isUpcoming && !b.isUpcoming) return -1;
-    if (!a.isUpcoming && b.isUpcoming) return 1;
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
-};
+export const eventsData: Event[] = [...hardcodedAnushamEvents, ...hardcodedOtherEvents]
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-import { getAdminEdits } from '../admin/auth';
+let remoteCache: { events: Event[]; fetchedAt: number } | null = null;
+const REMOTE_TTL_MS = 60_000;
+let inflightFetch: Promise<Event[]> | null = null;
 
-export { getAdminEdits };
-
-export const mergeEditableEvents = (edits: Record<string, { description?: string; programs?: string[]; donors?: string[] }>) => {
-  return eventsData.map(event => {
-    const edit = edits[event.id];
-    if (!edit) return event;
+const mergeRemoteAnusham = (remote: AnushamEvent[]): Event[] => {
+  const anushamRemote = remote.filter(e => (e.title || '').toUpperCase().includes('ANUSHAM'));
+  const anushamMap = new Map(anushamRemote.map(e => [e.id, e]));
+  const mergedAnusham = hardcodedAnushamEvents.map(local => {
+    const r = anushamMap.get(local.id);
+    if (!r) return local;
     return {
-      ...event,
-      ...(edit.description !== undefined ? { description: edit.description } : {}),
-      ...(edit.programs !== undefined ? { programs: edit.programs } : {}),
-      ...(edit.donors !== undefined ? { donors: edit.donors } : {}),
-    };
+      ...local,
+      ...(r.date ? { date: r.date } : {}),
+      ...(r.description !== undefined ? { description: r.description } : {}),
+      ...(r.programs !== undefined ? { programs: r.programs } : {}),
+      ...(r.donors !== undefined ? { donors: r.donors } : {}),
+      ...(r.mediaUrl ? { mediaUrl: r.mediaUrl } : {}),
+    } as Event;
   });
+  const remoteOnly = anushamRemote.filter(r => !hardcodedAnushamEvents.some(l => l.id === r.id));
+  return [...mergedAnusham, ...remoteOnly];
 };
 
-export const getMergedEvents = () => {
-  const edits = getAdminEdits();
-  return mergeEditableEvents(edits);
+export const loadRemoteEvents = async (force = false): Promise<Event[]> => {
+  if (!isAppsScriptConfigured()) {
+    remoteCache = { events: [], fetchedAt: Date.now() };
+    return [];
+  }
+  if (!force && remoteCache && Date.now() - remoteCache.fetchedAt < REMOTE_TTL_MS) {
+    return remoteCache.events;
+  }
+  if (inflightFetch) return inflightFetch;
+  inflightFetch = (async () => {
+    try {
+      const remote = await fetchAnushamEvents();
+      const merged = mergeRemoteAnusham(remote);
+      remoteCache = { events: merged, fetchedAt: Date.now() };
+      return merged;
+    } catch (err) {
+      console.warn('Failed to load remote events, using fallback:', err);
+      remoteCache = { events: [], fetchedAt: Date.now() };
+      return [];
+    } finally {
+      inflightFetch = null;
+    }
+  })();
+  return inflightFetch;
 };
 
-export const getProcessedMergedEvents = () => {
-  const events = getMergedEvents();
+export const invalidateRemoteCache = () => {
+  remoteCache = null;
+};
+
+export const getAllEvents = async (): Promise<Event[]> => {
+  const remote = await loadRemoteEvents();
+  if (remote.length === 0) return eventsData;
+  const remoteIds = new Set(remote.map(e => e.id));
+  const others = eventsData.filter(e => !remoteIds.has(e.id));
+  return [...remote, ...others].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+};
+
+export const getEventById = async (id: string): Promise<Event | undefined> => {
+  const all = await getAllEvents();
+  return all.find(e => e.id === id);
+};
+
+export const getAnushamEvents = async (): Promise<Event[]> => {
+  const all = await getAllEvents();
+  return all.filter(e => (e.title || '').toUpperCase().includes('ANUSHAM'));
+};
+
+const processEvents = (events: Event[]) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-
-  return events.map(event => ({
-    ...event,
-    isUpcoming: new Date(event.date + ' 00:00:00') > today
-  })).sort((a, b) => {
-    if (a.isUpcoming && !b.isUpcoming) return -1;
-    if (!a.isUpcoming && b.isUpcoming) return 1;
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
+  return events
+    .map(event => ({ ...event, isUpcoming: new Date(event.date + ' 00:00:00') > today }))
+    .sort((a, b) => {
+      if (a.isUpcoming && !b.isUpcoming) return -1;
+      if (!a.isUpcoming && b.isUpcoming) return 1;
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
 };
+
+export const getProcessedEvents = () => processEvents(eventsData);
+export const getProcessedMergedEvents = async () => processEvents(await getAllEvents());

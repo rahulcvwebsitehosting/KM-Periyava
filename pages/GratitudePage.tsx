@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { getMergedEvents } from '../data/events';
+import React, { useEffect, useState } from 'react';
+import { getAllEvents } from '../data/events';
 import { Language } from '../types';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import SacredWord from '../components/SacredWord';
@@ -21,35 +21,39 @@ interface DonorStats {
 const GratitudePage: React.FC<GratitudePageProps> = ({ lang, navigate }) => {
   const gridRef = useScrollReveal({ threshold: 0.1 });
   const cleanName = (name: string) => name.replace(/\s*\([^)]*\)/g, '').trim();
+  const [sortedDonors, setSortedDonors] = useState<DonorStats[]>([]);
 
-  // Extract and process donors
-  const donorsMap = new Map<string, DonorStats>();
-
-  getMergedEvents().forEach(event => {
-    event.donors?.forEach(donorName => {
-      // Extract location from parentheses
-      const locationMatch = donorName.match(/\(([^)]+)\)/);
-      const location = locationMatch ? locationMatch[1] : "";
-      
-      if (donorsMap.has(donorName)) {
-        const stats = donorsMap.get(donorName)!;
-        stats.count += 1;
-        stats.events.push(event.title);
-      } else {
-        donorsMap.set(donorName, {
-          name: donorName,
-          location: location,
-          count: 1,
-          events: [event.title]
+  useEffect(() => {
+    let mounted = true;
+    getAllEvents().then(events => {
+      if (!mounted) return;
+      const donorsMap = new Map<string, DonorStats>();
+      events.forEach(event => {
+        event.donors?.forEach(donorName => {
+          const locationMatch = donorName.match(/\(([^)]+)\)/);
+          const location = locationMatch ? locationMatch[1] : "";
+          if (donorsMap.has(donorName)) {
+            const stats = donorsMap.get(donorName)!;
+            stats.count += 1;
+            stats.events.push(event.title);
+          } else {
+            donorsMap.set(donorName, {
+              name: donorName,
+              location,
+              count: 1,
+              events: [event.title]
+            });
+          }
         });
-      }
+      });
+      const sorted = Array.from(donorsMap.values()).sort((a, b) => {
+        if (b.count !== a.count) return b.count - a.count;
+        return a.name.localeCompare(b.name);
+      });
+      setSortedDonors(sorted);
     });
-  });
-
-  const sortedDonors = Array.from(donorsMap.values()).sort((a, b) => {
-    if (b.count !== a.count) return b.count - a.count;
-    return a.name.localeCompare(b.name);
-  });
+    return () => { mounted = false; };
+  }, []);
 
   const getInitial = (name: string) => {
     const cleaned = cleanName(name).replace(/^(Mr\.|Mrs\.|Ms\.|Dr\.|Shri|Smt\.|Sri)\s+/i, '');

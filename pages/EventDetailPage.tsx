@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { getMergedEvents } from '../data/events';
+import React, { useEffect, useState } from 'react';
+import { getEventById, Event } from '../data/events';
 import { Language } from '../types';
 
 interface EventDetailPageProps {
@@ -10,9 +10,23 @@ interface EventDetailPageProps {
 }
 
 const EventDetailPage: React.FC<EventDetailPageProps> = ({ id, lang, navigate }) => {
-  const event = getMergedEvents().find(e => e.id === id);
+  const [event, setEvent] = useState<Event | null | undefined>(undefined);
 
-  if (!event) {
+  useEffect(() => {
+    let mounted = true;
+    getEventById(id).then(e => { if (mounted) setEvent(e ?? null); });
+    return () => { mounted = false; };
+  }, [id]);
+
+  if (event === undefined) {
+    return (
+      <div className="py-32 text-center container mx-auto">
+        <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Loading event...</p>
+      </div>
+    );
+  }
+
+  if (event === null) {
     return (
       <div className="py-32 text-center container mx-auto">
         <h2 className="text-4xl font-bold heading-font text-text-dark mb-4">Event Not Found</h2>
