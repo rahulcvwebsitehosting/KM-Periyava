@@ -1,0 +1,329 @@
+
+import React, { useEffect, useRef } from 'react';
+import { HeroTranslations, Language } from '../types';
+import LazyImage from './LazyImage';
+import SacredWord from './SacredWord';
+
+interface HeroProps {
+  lang: Language;
+  t: HeroTranslations;
+  navigate: (path: string) => void;
+}
+
+interface Particle {
+  x: number;
+  y: number;
+  size: number;
+  speedY: number;
+  speedX: number;
+  opacity: number;
+  life: number;
+  maxLife: number;
+  color: string;
+}
+
+const Hero: React.FC<HeroProps> = ({ lang, t, navigate }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationFrameId = useRef<number>(0);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Resize canvas to match its displayed size
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    const particles: Particle[] = [];
+    const colors = ['#FFD700', '#FFA500', '#FFFACD', '#FFE87C'];
+
+    const createParticle = (isInitial = false): Particle => {
+      const life = isInitial ? Math.random() : 0;
+      return {
+        x: Math.random() * canvas.width,
+        y: canvas.height * (0.4 + Math.random() * 0.5),
+        size: 1 + Math.random() * 2,
+        speedY: -0.3 - Math.random() * 0.9,
+        speedX: -0.3 + Math.random() * 0.6,
+        opacity: 0,
+        life: life,
+        maxLife: 0.6 + Math.random() * 0.4,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      };
+    };
+
+    // Initialize particles
+    for (let i = 0; i < 60; i++) {
+      particles.push(createParticle(true));
+    }
+
+    const isPaused = { current: false };
+
+    const animate = () => {
+      if (!isPaused.current) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach((p, index) => {
+          p.life += 0.003;
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.opacity = Math.sin(p.life * Math.PI);
+
+          ctx.globalAlpha = Math.max(0, p.opacity);
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+
+          if (p.life >= p.maxLife) {
+            particles[index] = createParticle();
+            // Randomize starting position to be near portrait center area as requested
+            particles[index].x = canvas.width * (0.2 + Math.random() * 0.6);
+            particles[index].y = canvas.height * (0.4 + Math.random() * 0.5);
+          }
+        });
+      }
+
+      animationFrameId.current = requestAnimationFrame(animate);
+    };
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isPaused.current = !entry.isIntersecting;
+      },
+      { threshold: 0.1 }
+    );
+
+    if (canvas) observer.observe(canvas);
+
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId.current);
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .deepam-outer-flame {
+        position: absolute;
+        bottom: 0; left: 50%;
+        transform: translateX(-50%);
+        width: 24px; height: 44px;
+        background: linear-gradient(180deg, 
+          rgba(255,100,0,0) 0%, 
+          rgba(255,140,0,0.8) 40%, 
+          rgba(255,200,0,1) 100%);
+        border-radius: 50% 50% 20% 20%;
+        animation: flicker 0.8s ease-in-out infinite alternate,
+                   sway 1.2s ease-in-out infinite alternate;
+        transform-origin: bottom center;
+        filter: blur(1px);
+      }
+
+      .deepam-inner-flame {
+        position: absolute;
+        bottom: 0; left: 50%;
+        transform: translateX(-50%);
+        width: 12px; height: 28px;
+        background: linear-gradient(180deg, 
+          rgba(255,255,255,0) 0%, 
+          rgba(255,255,200,0.9) 50%, 
+          rgba(255,230,100,1) 100%);
+        border-radius: 50% 50% 20% 20%;
+        animation: flicker 0.6s ease-in-out infinite alternate-reverse,
+                   sway 1.2s ease-in-out infinite alternate;
+        transform-origin: bottom center;
+      }
+
+      .deepam-glow {
+        position: absolute;
+        bottom: -8px; left: 50%;
+        transform: translateX(-50%);
+        width: 60px; height: 20px;
+        background: radial-gradient(ellipse, 
+          rgba(255,180,0,0.4) 0%, 
+          rgba(255,180,0,0) 70%);
+        animation: glowPulse 1s ease-in-out infinite alternate;
+      }
+
+      @keyframes flicker {
+        0%   { transform: translateX(-50%) scaleX(1) scaleY(1); }
+        25%  { transform: translateX(-50%) scaleX(0.95) scaleY(1.05); }
+        50%  { transform: translateX(-50%) scaleX(1.05) scaleY(0.97); }
+        75%  { transform: translateX(-50%) scaleX(0.97) scaleY(1.03); }
+        100% { transform: translateX(-50%) scaleX(1.02) scaleY(0.98); }
+      }
+
+      @keyframes sway {
+        0%   { margin-left: -2px; }
+        100% { margin-left: 2px; }
+      }
+
+      @keyframes glowPulse {
+        0%   { opacity: 0.4; transform: translateX(-50%) scaleX(0.8); }
+        100% { opacity: 0.8; transform: translateX(-50%) scaleX(1.2); }
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+
+  return (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#FFFAF3] py-20">
+      {/* Subtle Pattern Overlay */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#8B4513 1px, transparent 1px)', backgroundSize: '60px 60px' }}></div>
+      
+      <div className="container mx-auto px-6 max-w-[1200px] text-center relative z-10 py-8 md:py-24">
+        {/* Top Sacred Chants */}
+        <div className="mb-12 space-y-4 animate-in fade-in slide-in-from-top-4 duration-1000">
+          <p className="text-xl md:text-5xl font-bold text-primary heading-font tracking-[0.3em] uppercase drop-shadow-sm">
+            {t.chant1}
+          </p>
+          <div className="flex flex-col md:flex-row gap-2 md:gap-6 justify-center items-center text-secondary font-bold text-sm md:text-lg opacity-80">
+            <span className="flex items-center gap-2">
+              <span className="text-xl">ॐ</span> श्री गुरவே நமஃ
+            </span>
+            <span className="hidden md:inline text-accent/40">|</span>
+            <span className="tracking-wide">Hara Hara Shankara Jaya Jaya Shankara</span>
+          </div>
+        </div>
+
+        {/* Custom Arched Portrait Section */}
+        <div className="relative inline-block mb-4 animate-in zoom-in duration-1000 delay-300">
+          <div className="relative mx-auto group">
+            
+            {/* The Arched Container */}
+            <div 
+              className="relative w-[280px] sm:w-[300px] md:w-[480px] h-[370px] sm:h-[400px] md:h-[640px] overflow-hidden"
+              style={{ 
+                filter: 'drop-shadow(0 0 25px rgba(201, 162, 39, 0.45))',
+              }}
+            >
+              {/* Manual Arch Masking with border-radius */}
+              <div className="absolute inset-0 z-0 rounded-t-[50%] rounded-b-2xl overflow-hidden">
+                <LazyImage 
+                  src="https://raw.githubusercontent.com/rahulcvwebsitehosting/Image-storage/main/KM-Periyava/Main/Periyava%20Main.jpg" 
+                  alt="Sri Kanchi Maha Periyava"
+                  className="w-full h-full"
+                  imgClassName="object-cover object-center transition-transform duration-[8s] group-hover:scale-105"
+                />
+                
+                {/* Divine Soft Inner Glow */}
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/10 via-transparent to-transparent pointer-events-none"></div>
+
+                {/* Particle Aura Canvas */}
+                <canvas 
+                  ref={canvasRef}
+                  className="absolute inset-0 z-[3] pointer-events-none w-full h-full"
+                />
+              </div>
+
+              {/* Arched Gold Frame Overlay (CSS Simulated) */}
+              <div className="absolute inset-0 z-10 border-[6px] md:border-[12px] border-accent/60 rounded-t-[50%] rounded-b-2xl pointer-events-none"></div>
+              
+              {/* Inner thin highlight border */}
+              <div className="absolute inset-[3px] md:inset-[6px] z-10 border border-white/30 rounded-t-[50%] rounded-b-xl pointer-events-none"></div>
+              
+              {/* Outer very thin gold border */}
+              <div className="absolute inset-[-2px] z-10 border border-accent/20 rounded-t-[50%] rounded-b-[2.5rem] pointer-events-none"></div>
+            </div>
+            
+            {/* Pulsing Backlight for Divine Aura - Follows the Arch shape */}
+            <div 
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-accent/15 blur-[100px] -z-10 animate-pulse opacity-50"
+              style={{ borderRadius: '50% 50% 20% 20%' }}
+            ></div>
+          </div>
+        </div>
+
+        {/* Flickering Deepam */}
+        <div aria-hidden="true" className="text-center mb-12">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem' }}>
+            {/* Flame */}
+            <div className="deepam-flame-wrapper" style={{ position: 'relative', width: '32px', height: '48px', marginBottom: '-4px' }}>
+              {/* Outer flame */}
+              <div className="deepam-outer-flame" />
+              {/* Inner flame */}
+              <div className="deepam-inner-flame" />
+              {/* Glow beneath flame */}
+              <div className="deepam-glow" />
+            </div>
+            
+            {/* Wick */}
+            <div style={{ width: '2px', height: '8px', background: '#555', borderRadius: '1px', zIndex: 2 }} />
+            
+            {/* Lamp bowl */}
+            <div style={{ 
+              width: '48px', height: '16px',
+              background: 'linear-gradient(180deg, #C9A227, #8B6914)',
+              borderRadius: '0 0 50% 50%',
+              boxShadow: '0 4px 12px rgba(201,162,39,0.4)',
+              marginTop: '-2px'
+            }} />
+            
+            {/* Lamp stand */}
+            <div style={{
+              width: '4px', height: '20px',
+              background: 'linear-gradient(180deg, #C9A227, #8B6914)',
+              margin: '0 auto'
+            }} />
+            
+            {/* Base */}
+            <div style={{
+              width: '32px', height: '6px',
+              background: 'linear-gradient(180deg, #C9A227, #8B6914)',
+              borderRadius: '50%'
+            }} />
+          </div>
+        </div>
+        
+        {/* Temple Branding Title */}
+        <div className="space-y-6 mb-16 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-500">
+          <h1 className={`font-bold text-text-dark heading-font leading-[1.1] tracking-tight ${lang === 'ta' ? 'text-3xl md:text-6xl' : 'text-4xl md:text-7xl'}`}>
+            {lang === 'ta' ? t.title : <SacredWord>{t.title}</SacredWord>} <br className="hidden md:block"/> 
+            <span className="text-secondary font-bold">{t.sannadhi}</span>
+          </h1>
+          
+          <div className="flex items-center justify-center gap-4 md:gap-8 overflow-hidden">
+            <span className="h-px w-16 md:w-32 bg-gradient-to-r from-transparent to-accent/40"></span>
+            <p className={`text-secondary font-bold uppercase truncate ${lang === 'ta' ? 'text-[10px] sm:text-sm md:text-xl tracking-[0.2em] md:tracking-[0.3em]' : 'text-[10px] sm:text-base md:text-2xl tracking-[0.2em] md:tracking-[0.5em]'}`}>
+              K A N D H A M A N G A L A M
+            </p>
+            <span className="h-px w-16 md:w-32 bg-gradient-to-l from-transparent to-accent/40"></span>
+          </div>
+          
+          <div className="flex justify-center pt-4">
+             <span className="text-2xl text-primary font-bold opacity-30 select-none">———— ॐ ————</span>
+          </div>
+        </div>
+
+        {/* Hero Actions */}
+        <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 md:gap-8 w-full px-4 sm:px-0 animate-in fade-in duration-1000 delay-700">
+          <button 
+            onClick={() => navigate('about')} 
+            className={`w-full sm:w-auto flex items-center justify-center gap-3 bg-gradient-to-br from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white rounded-full shadow-[0_15px_40px_rgba(210,105,30,0.3)] transition-all font-bold transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest ${lang === 'ta' ? 'px-8 md:px-12 py-4 md:py-5 text-xs md:text-lg' : 'px-10 md:px-14 py-4 md:py-6 text-sm md:text-xl'}`}
+          >
+            🙏 {t.planVisit}
+          </button>
+          
+          <button 
+            onClick={() => navigate('donate')} 
+            className={`w-full sm:w-auto flex items-center justify-center gap-3 bg-white border-2 border-primary text-primary hover:bg-orange-50 rounded-full shadow-lg transition-all font-bold transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest ${lang === 'ta' ? 'px-8 md:px-12 py-4 md:py-5 text-xs md:text-lg' : 'px-10 md:px-14 py-4 md:py-6 text-sm md:text-xl'}`}
+          >
+            🌸 {lang === 'ta' ? 'அன்னதான சேவை' : 'Seva & Donation'}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Hero;

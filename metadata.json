@@ -1,0 +1,7 @@
+{
+  "name": "KM Periyava Sannadhi",
+  "description": "A modern, accessible, bilingual (Tamil/English) temple website for Sri Kanchi Mahaperiyava Sannadhi in Kandhamangalam.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
