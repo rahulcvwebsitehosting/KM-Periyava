@@ -1,96 +1,84 @@
-# KM Periyava Sannadhi — Admin Panel & Google Sheets Backend
+# Admin Panel — Supabase Setup
 
-The admin panel lets you **add, edit, and delete Anusham Pooja events** and have those changes
-visible to every visitor of the site. Behind the scenes it uses a **Google Sheet** as a tiny
-database, exposed through a **Google Apps Script web app** — no servers, no accounts to create
-beyond Google.
+The admin panel uses **Supabase** (free Postgres + Storage) so admin edits, new events, and image uploads are instantly visible to every visitor. No servers to run.
 
-## How it works
+## One-time setup (about 5 minutes)
+
+### 1. Run the SQL schema
+
+1. Open your Supabase dashboard → **SQL Editor** → **New query**.
+2. Open the file `admin/schema.sql` from this repo, copy its entire contents, paste into the editor.
+3. Click **Run**. This creates:
+   - `public.events` table (with all your existing anusham events pre-seeded)
+   - `event-images` storage bucket (public, for image uploads)
+   - Row-Level Security policies allowing public read + write
+
+> If you'd rather start with an empty events table, delete the `INSERT INTO ... VALUES (...)` block before running.
+
+### 2. Set the env vars
+
+In your Vercel project (or local `.env`):
 
 ```
-[admin browser] --HTTP--> [Google Apps Script web app] <--> [Google Sheet]
-                              |
-                              v
-                      public site readers
-                      (read same data on next page load)
+VITE_SUPABASE_URL=https://pavycvvocbmmybmkkhub.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...   # your anon key
 ```
 
-- Public visitors see the **hardcoded fallback data** in `data/events.ts` *plus* whatever the
-  sheet returns (sheet entries win on id collision; new sheet-only events are also shown).
-- When the admin logs in and creates/edits/deletes an event, it is written to the Google Sheet
-  through the Apps Script web app.
-- The cache on the public site refreshes every 60 seconds (or on hard reload).
+> The URL is already in `.env.example`. Just paste your anon key (the one starting with `eyJ...`).
 
-## One-time setup (you only do this once)
+### 3. Redeploy the site
 
-### 1. Create a Google Sheet
+Vercel will pick up the new env vars and the build will bundle the Supabase URL.
 
-1. Go to <https://sheets.new> to create a new blank Google Sheet.
-2. Rename it to something like `KM Periyava Events`.
-3. The first tab is fine — name it `Anusham` (or change `SHEET_NAME` in `admin/apps-script.gs`).
-4. In row 1, add these exact column headers:
-   ```
-   id | title | date | description | programs | donors | mediaUrl
-   ```
-5. (Optional) Pre-fill the existing events as rows. `programs` and `donors` are pipe-separated,
-   e.g. `Avahanthi Homam|Annadhanam`.
+## Daily usage
 
-### 2. Deploy the Apps Script web app
+1. Open the site → scroll to footer → click **Admin**.
+2. Enter the password: `JayaJayaSankara123` (change in `admin/auth.ts` to customize).
+3. Click an existing event to edit, or **+ New Anusham Event** to create one.
+4. Fill the form:
+   - **Date** (date picker)
+   - **Description** (defaults to "Anusham pooja for Sri Mahaperiyava held on [date].")
+   - **Media URL** (your existing Google Photos album link)
+   - **Cover Image** (upload from your computer — stored in Supabase Storage)
+   - **Programs Scheduled** (add / edit / remove the 3 default programs)
+   - **Donor Names** (add / edit / remove donors)
+   - **Gallery Images** (upload multiple — appears on the event detail page)
+5. Click **Save Changes** (or **Create Event** for new ones). **Delete** removes an event.
 
-1. Open <https://script.google.com/home> and click **New Project**.
-2. Delete the placeholder `Code.gs` content and paste the entire contents of
-   `admin/apps-script.gs` from this repo.
-3. (Optional) Change `ADMIN_TOKEN` in that file to match the password you want for the admin
-   panel (the frontend default is `JayaJayaSankara123` — change both sides if you change it).
-4. Click **Deploy** → **New deployment**.
-   - Click the gear icon → **Web app**.
-   - **Execute as:** Me (your Google account).
-   - **Who has access:** Anyone.
-5. Click **Deploy** and copy the **Web app URL** (it looks like
-   `https://script.google.com/macros/s/AKfycb.../exec`).
-6. If asked, authorize the script to access the sheet.
+All visitors see your changes on their next page load (cached for 60s max).
 
-### 3. Wire the URL into the frontend
+## Image uploads
 
-1. Copy `.env.example` to `.env` in the project root.
-2. Set `VITE_APPS_SCRIPT_URL` to the Web app URL from step 2:
-   ```
-   VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfycb.../exec
-   ```
-3. Run `npm run build` (or redeploy) so the URL gets baked into the production bundle.
-4. Commit `.env` privately — for Vercel, add it as a project environment variable instead
-   (do **not** commit `.env`).
-
-## Daily use
-
-1. Open the deployed site.
-2. Scroll to the footer → click the small **Admin** link.
-3. Enter the password (`JayaJayaSankara123` by default — change in `admin/auth.ts` and
-   `admin/apps-script.gs`).
-4. Either click an existing event to edit, or click **+ New Anusham Event**.
-5. Fill the form (date picker, description, programs, donors, media URL) and click
-   **Create Event** or **Save Changes**.
-6. All public visitors will see the new/updated event on their next page load (cache
-   expires after 60s, or sooner on hard reload).
+- Images are uploaded to the `event-images` bucket in your Supabase Storage.
+- Public URLs are stored on the event row (`cover_image`, `gallery[]`).
+- Deleting an event also deletes its images from storage.
+- Supported types: any image format (`image/*`). Max ~50 MB per file.
 
 ## Changing the admin password
 
-The password is set in **two** places — they must match:
+Edit `admin/auth.ts` → `ADMIN_PASSWORD` (line 9). Rebuild and redeploy.
 
-- `admin/auth.ts` → `ADMIN_PASSWORD`
-- `admin/apps-script.gs` → `ADMIN_TOKEN`
-
-After changing, redeploy the Apps Script (`Deploy` → **Manage deployments** → pencil icon →
-**New version**) and rebuild the frontend.
+> For stronger security, switch from a hardcoded password to **Supabase Auth**
+> (email + password login handled by Supabase) — see the Supabase docs. The
+> current setup is fine for a small site where only a few trusted people know
+> the password.
 
 ## Troubleshooting
 
-- **"VITE_APPS_SCRIPT_URL is not set"** in the admin panel → set the env var and rebuild.
-- **"Unauthorized"** in the admin panel → password mismatch between the frontend and the
-  Apps Script.
-- **"Event not found"** when editing → the sheet was edited manually and the id is wrong.
-  Stick to editing through the admin panel.
-- **CORS errors** → Apps Script redirects through Google's CORS endpoint. Make sure
-  "Who has access" is set to **Anyone** in the deployment, and re-deploy if you change it.
-- **Changes don't appear for visitors** → hard-refresh (Ctrl+Shift+R); the in-memory cache
-  expires every 60 seconds.
+- **"Setup Required" message on admin page** → `VITE_SUPABASE_URL` or
+  `VITE_SUPABASE_ANON_KEY` is missing. Set them on Vercel and redeploy.
+- **"permission denied" / RLS error on save** → re-run the SQL schema; the RLS
+  policies might have been reset.
+- **Image upload fails with 403** → make sure the `event-images` bucket is set
+  to **public** (the SQL schema does this; if you skipped it, toggle it in
+  Storage → Buckets → `event-images` → **Public**).
+- **Changes don't appear on the public site** → hard refresh (Ctrl+Shift+R);
+  in-memory cache expires after 60 seconds.
+
+## Files
+
+- `admin/schema.sql` — run this in the Supabase SQL editor (one time)
+- `admin/auth.ts` — Supabase client + admin password + CRUD functions
+- `pages/AdminPage.tsx` — admin dashboard UI
+- `pages/AdminLoginPage.tsx` — password gate
+- `data/events.ts` — fetches live data from Supabase, falls back to hardcoded

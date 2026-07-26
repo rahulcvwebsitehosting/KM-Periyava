@@ -1,5 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { adminLogout, AnushamEvent, createAnushamEvent, updateAnushamEvent, deleteAnushamEvent, isAppsScriptConfigured } from '../admin/auth';
+import {
+  adminLogout,
+  AnushamEvent,
+  createAnushamEvent,
+  updateAnushamEvent,
+  deleteAnushamEvent,
+  uploadEventImage,
+  deleteEventImage,
+  isSupabaseConfigured,
+} from '../admin/auth';
 import { getAnushamEvents, invalidateRemoteCache, Event } from '../data/events';
 
 interface AdminPageProps {
@@ -31,6 +40,12 @@ const todayDateInputValue = () => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
+const slugify = (s: string) =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+const uniqueId = (date: string) =>
+  `anusham-${slugify(date) || Date.now().toString()}`;
+
 interface FormState {
   id: string;
   title: string;
@@ -40,6 +55,8 @@ interface FormState {
   programs: string[];
   donors: string[];
   mediaUrl: string;
+  coverImage: string | null;
+  gallery: string[];
 }
 
 const eventToForm = (e: Event): FormState => ({
@@ -51,6 +68,8 @@ const eventToForm = (e: Event): FormState => ({
   programs: e.programs ? [...e.programs] : [...defaultPrograms],
   donors: e.donors ? [...e.donors] : [],
   mediaUrl: e.mediaUrl || '',
+  coverImage: e.coverImage ?? null,
+  gallery: e.gallery ?? [],
 });
 
 const newEventForm = (): FormState => {
@@ -65,6 +84,8 @@ const newEventForm = (): FormState => {
     programs: [...defaultPrograms],
     donors: [],
     mediaUrl: '',
+    coverImage: null,
+    gallery: [],
   };
 };
 
@@ -78,6 +99,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
   const [newProgram, setNewProgram] = useState('');
   const [newDonor, setNewDonor] = useState('');
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
 
   const refresh = useCallback(async () => {
@@ -114,26 +136,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
     }
   }, [selectedId, events, isCreating]);
 
-  const onChangeDateInput = (value: string) => {
-    if (!form) return;
-    const formatted = formatDateInput(value);
-    setForm({ ...form, dateInput: value, date: formatted });
-  };
-
-  const onChangeDescription = (value: string) => {
-    if (!form) return;
-    setForm({ ...form, description: value });
-  };
-
-  const setPrograms = (programs: string[]) => {
-    if (!form) return;
-    setForm({ ...form, programs });
-  };
-
-  const setDonors = (donors: string[]) => {
-    if (!form) return;
-    setForm({ ...form, donors });
-  };
+  const setPrograms = (programs: string[]) => form && setForm({ ...form, programs });
+  const setDonors = (donors: string[]) => form && setForm({ ...form, donors });
 
   const addProgram = () => {
     if (!form) return;
@@ -143,11 +147,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
       setNewProgram('');
     }
   };
-
-  const removeProgram = (i: number) => {
-    if (!form) return;
-    setPrograms(form.programs.filter((_, idx) => idx !== i));
-  };
+  const removeProgram = (i: number) => form && setPrograms(form.programs.filter((_, idx) => idx !== i));
 
   const addDonor = () => {
     if (!form) return;
@@ -157,10 +157,58 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
       setNewDonor('');
     }
   };
+  const removeDonor = (i: number) => form && setDonors(form.donors.filter((_, idx) => idx !== i));
 
-  const removeDonor = (i: number) => {
+  const handleCoverUpload = async (file: File) => {
     if (!form) return;
-    setDonors(form.donors.filter((_, idx) => idx !== i));
+    setUploading(true);
+    setMessage('');
+    try {
+      const tempId = form.id || uniqueId(form.date);
+      const publicUrl = await uploadEventImage(file, tempId);
+      if (form.coverImage) await deleteEventImage(form.coverImage);
+      setForm({ ...form, coverImage: publicUrl });
+      setMessage('Cover image uploaded. Click Save to confirm.');
+    } catch (err: any) {
+      setMessage('Image upload failed: ' + (err?.message || ''));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleGalleryUpload = async (files: FileList) => {
+    if (!form) return;
+    setUploading(true);
+    setMessage('');
+    try {
+      const tempId = form.id || uniqueId(form.date);
+      const urls: string[] = [];
+      for (const file of Array.from(files)) {
+        const url = await uploadEventImage(file, tempId);
+        urls.push(url);
+      }
+      setForm({ ...form, gallery: [...form.gallery, ...urls] });
+      setMessage(`Uploaded ${urls.length} image(s). Click Save to confirm.`);
+    } catch (err: any) {
+      setMessage('Image upload failed: ' + (err?.message || ''));
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeGalleryImage = async (index: number) => {
+    if (!form) return;
+    const url = form.gallery[index];
+    const updated = form.gallery.filter((_, i) => i !== index);
+    setForm({ ...form, gallery: updated });
+    try { await deleteEventImage(url); } catch {}
+  };
+
+  const clearCoverImage = async () => {
+    if (!form || !form.coverImage) return;
+    const url = form.coverImage;
+    setForm({ ...form, coverImage: null });
+    try { await deleteEventImage(url); } catch {}
   };
 
   const handleSave = async () => {
@@ -168,14 +216,17 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
     setSaving(true);
     setMessage('');
     try {
+      const finalId = form.id || uniqueId(form.date);
       const payload: AnushamEvent = {
-        id: form.id,
+        id: finalId,
         title: form.title || 'ANUSHAM POOJA',
         date: form.date,
         description: form.description,
         programs: form.programs,
         donors: form.donors,
         mediaUrl: form.mediaUrl,
+        coverImage: form.coverImage,
+        gallery: form.gallery,
       };
       if (isCreating) {
         const created = await createAnushamEvent(payload);
@@ -201,6 +252,8 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
     setSaving(true);
     setMessage('');
     try {
+      if (form.coverImage) await deleteEventImage(form.coverImage).catch(() => {});
+      for (const url of form.gallery) await deleteEventImage(url).catch(() => {});
       await deleteAnushamEvent(form.id);
       setMessage('Event deleted.');
       setSelectedId('');
@@ -214,8 +267,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
   };
 
   const handleViewEvent = () => {
-    if (!form) return;
-    if (isCreating) return;
+    if (!form || isCreating) return;
     navigate(`events/${form.id}`);
   };
 
@@ -229,7 +281,7 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
     setSelectedId(id);
   };
 
-  if (!isAppsScriptConfigured()) {
+  if (!isSupabaseConfigured()) {
     return (
       <div className="py-24 bg-[#FFFCF7] min-h-screen">
         <div className="container mx-auto px-6 max-w-2xl">
@@ -252,13 +304,14 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
           >
             <h2 className="text-xl font-bold heading-font text-text-dark mb-4">Setup Required</h2>
             <p className="text-gray-600 font-medium mb-6 leading-relaxed">
-              The admin panel needs a Google Sheet + Apps Script backend so changes are visible to all users.
-              Follow the setup guide in <code>admin/apps-script.gs</code>, then add the web app URL to your
-              <code> .env </code> file as <code>VITE_APPS_SCRIPT_URL</code> and redeploy.
+              The admin panel needs Supabase configured so changes are visible to all users.
+              Run the SQL script in <code>admin/schema.sql</code> in the Supabase SQL editor,
+              then add the following env vars and redeploy:
             </p>
             <pre className="bg-orange-50/40 border border-orange-100/50 rounded-2xl p-4 text-xs text-text-dark overflow-x-auto font-mono">
-{`# .env
-VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfy.../exec`}
+{`# .env (or Vercel env vars)
+VITE_SUPABASE_URL=https://pavycvvocbmmybmkkhub.supabase.co
+VITE_SUPABASE_ANON_KEY=<your anon key>`}
             </pre>
           </div>
         </div>
@@ -332,9 +385,8 @@ VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfy.../exec`}
                         : 'bg-white/50 border-orange-100/30 hover:bg-orange-50 text-text-dark'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span>{event.date}</span>
-                    </div>
+                    {event.date}
+                    {event.coverImage && <span className="ml-2 text-[10px]">🖼️</span>}
                   </button>
                 ))}
               </div>
@@ -379,7 +431,10 @@ VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfy.../exec`}
                   <input
                     type="date"
                     value={form.dateInput}
-                    onChange={(e) => onChangeDateInput(e.target.value)}
+                    onChange={(e) => {
+                      const formatted = formatDateInput(e.target.value);
+                      setForm({ ...form, dateInput: e.target.value, date: formatted });
+                    }}
                     className="w-full px-5 py-3 bg-orange-50/30 border border-orange-100/50 rounded-2xl text-text-dark font-bold focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                 </div>
@@ -402,14 +457,39 @@ VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfy.../exec`}
                 </label>
                 <textarea
                   value={form.description}
-                  onChange={(e) => onChangeDescription(e.target.value)}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
                   rows={3}
                   className="w-full px-5 py-4 bg-orange-50/30 border border-orange-100/50 rounded-2xl text-text-dark font-bold text-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none"
                 />
-                {!isCreating && (
-                  <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest">
-                    Editable. Default: "Anusham pooja for Sri Mahaperiyava held on [date]."
-                  </p>
+              </div>
+
+              {/* Cover Image */}
+              <div className="space-y-4 mb-8">
+                <label className="text-xs font-bold uppercase tracking-[0.3em] text-primary block">
+                  Cover Image
+                </label>
+                {form.coverImage ? (
+                  <div className="relative inline-block">
+                    <img
+                      src={form.coverImage}
+                      alt="Cover"
+                      className="rounded-2xl max-h-48 object-cover border border-orange-100/50"
+                    />
+                    <button
+                      onClick={clearCoverImage}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center font-bold shadow-md hover:bg-red-600"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ) : (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    disabled={uploading}
+                    onChange={(e) => e.target.files?.[0] && handleCoverUpload(e.target.files[0])}
+                    className="block text-sm text-gray-500 file:mr-4 file:py-3 file:px-5 file:rounded-full file:border-0 file:bg-primary file:text-white file:font-bold file:uppercase file:tracking-widest file:text-xs hover:file:bg-primary-dark"
+                  />
                 )}
               </div>
 
@@ -430,12 +510,7 @@ VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfy.../exec`}
                         }}
                         className="flex-1 bg-transparent text-text-dark font-bold outline-none border-b border-transparent focus:border-primary/30 transition-colors"
                       />
-                      <button
-                        onClick={() => removeProgram(i)}
-                        className="text-gray-300 hover:text-red-400 transition-colors"
-                      >
-                        ✕
-                      </button>
+                      <button onClick={() => removeProgram(i)} className="text-gray-300 hover:text-red-400 transition-colors">✕</button>
                     </li>
                   ))}
                 </ul>
@@ -447,12 +522,7 @@ VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfy.../exec`}
                     placeholder="Add new program..."
                     className="flex-1 px-4 py-3 bg-orange-50/30 border border-orange-100/50 rounded-2xl text-text-dark font-bold text-sm focus:outline-none focus:border-primary transition-all"
                   />
-                  <button
-                    onClick={addProgram}
-                    className="bg-primary text-white px-5 py-3 rounded-2xl font-bold text-sm hover:bg-primary-dark transition-colors"
-                  >
-                    + Add
-                  </button>
+                  <button onClick={addProgram} className="bg-primary text-white px-5 py-3 rounded-2xl font-bold text-sm hover:bg-primary-dark transition-colors">+ Add</button>
                 </div>
               </div>
 
@@ -476,12 +546,7 @@ VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfy.../exec`}
                         }}
                         className="flex-1 bg-transparent text-text-dark font-bold text-sm outline-none border-b border-transparent focus:border-primary/30 transition-colors"
                       />
-                      <button
-                        onClick={() => removeDonor(i)}
-                        className="text-gray-300 hover:text-red-400 transition-colors"
-                      >
-                        ✕
-                      </button>
+                      <button onClick={() => removeDonor(i)} className="text-gray-300 hover:text-red-400 transition-colors">✕</button>
                     </div>
                   ))}
                 </div>
@@ -493,18 +558,49 @@ VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfy.../exec`}
                     placeholder="Add donor (e.g. Mr. Name (Chennai))..."
                     className="flex-1 px-4 py-3 bg-orange-50/30 border border-orange-100/50 rounded-2xl text-text-dark font-bold text-sm focus:outline-none focus:border-primary transition-all"
                   />
-                  <button
-                    onClick={addDonor}
-                    className="bg-primary text-white px-5 py-3 rounded-2xl font-bold text-sm hover:bg-primary-dark transition-colors"
-                  >
-                    + Add
-                  </button>
+                  <button onClick={addDonor} className="bg-primary text-white px-5 py-3 rounded-2xl font-bold text-sm hover:bg-primary-dark transition-colors">+ Add</button>
                 </div>
               </div>
 
+              {/* Gallery */}
+              <div className="space-y-4 mb-8">
+                <label className="text-xs font-bold uppercase tracking-[0.3em] text-primary block">
+                  Gallery Images
+                </label>
+                {form.gallery.length > 0 && (
+                  <div className="grid grid-cols-3 md:grid-cols-4 gap-3 mb-3">
+                    {form.gallery.map((url, i) => (
+                      <div key={i} className="relative">
+                        <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-24 object-cover rounded-xl border border-orange-100/50" />
+                        <button
+                          onClick={() => removeGalleryImage(i)}
+                          className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-md hover:bg-red-600"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  disabled={uploading}
+                  onChange={(e) => e.target.files && handleGalleryUpload(e.target.files)}
+                  className="block text-sm text-gray-500 file:mr-4 file:py-3 file:px-5 file:rounded-full file:border-0 file:bg-primary file:text-white file:font-bold file:uppercase file:tracking-widest file:text-xs hover:file:bg-primary-dark"
+                />
+              </div>
+
+              {uploading && (
+                <div className="mb-6 px-5 py-3 rounded-2xl font-bold text-sm text-center bg-blue-50 text-blue-700 border border-blue-100">
+                  Uploading image(s)...
+                </div>
+              )}
+
               {message && (
                 <div className={`mb-6 px-5 py-3 rounded-2xl font-bold text-sm text-center ${
-                  message.toLowerCase().includes('error')
+                  message.toLowerCase().includes('error') || message.toLowerCase().includes('failed')
                     ? 'bg-red-50 text-red-600 border border-red-100'
                     : 'bg-green-50 text-green-700 border border-green-100'
                 }`}>
@@ -515,7 +611,7 @@ VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfy.../exec`}
               <div className="flex gap-4 pt-4 border-t border-orange-50">
                 <button
                   onClick={handleSave}
-                  disabled={saving}
+                  disabled={saving || uploading}
                   className="flex-1 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white px-8 py-4 rounded-full font-bold shadow-lg shadow-primary/20 transition-all uppercase tracking-widest text-sm disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : isCreating ? 'Create Event' : 'Save Changes'}
@@ -542,30 +638,17 @@ VITE_APPS_SCRIPT_URL=https://script.google.com/macros/s/AKfy.../exec`}
           ) : loading ? (
             <div
               className="rounded-3xl p-12 text-center flex items-center justify-center"
-              style={{
-                background: 'rgba(255, 252, 247, 0.75)',
-                border: '1px solid rgba(255, 200, 150, 0.25)',
-                boxShadow: '0 8px 32px rgba(139, 69, 19, 0.08)'
-              }}
+              style={{ background: 'rgba(255, 252, 247, 0.75)', border: '1px solid rgba(255, 200, 150, 0.25)', boxShadow: '0 8px 32px rgba(139, 69, 19, 0.08)' }}
             >
               <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Loading events...</p>
             </div>
           ) : (
             <div
               className="rounded-3xl p-12 text-center flex flex-col items-center justify-center gap-4"
-              style={{
-                background: 'rgba(255, 252, 247, 0.75)',
-                border: '1px solid rgba(255, 200, 150, 0.25)',
-                boxShadow: '0 8px 32px rgba(139, 69, 19, 0.08)'
-              }}
+              style={{ background: 'rgba(255, 252, 247, 0.75)', border: '1px solid rgba(255, 200, 150, 0.25)', boxShadow: '0 8px 32px rgba(139, 69, 19, 0.08)' }}
             >
-              <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">
-                No events yet
-              </p>
-              <button
-                onClick={handleNewEvent}
-                className="bg-primary text-white px-6 py-3 rounded-full font-bold uppercase tracking-widest text-xs"
-              >
+              <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">No events yet</p>
+              <button onClick={handleNewEvent} className="bg-primary text-white px-6 py-3 rounded-full font-bold uppercase tracking-widest text-xs">
                 + Create your first Anusham event
               </button>
             </div>

@@ -1,6 +1,6 @@
 import {
-  fetchAnushamEvents,
-  isAppsScriptConfigured,
+  fetchAllEvents,
+  isSupabaseConfigured,
   AnushamEvent,
 } from '../admin/auth';
 
@@ -12,6 +12,8 @@ export interface Event {
   programs?: string[];
   donors?: string[];
   mediaUrl: string;
+  coverImage?: string | null;
+  gallery?: string[];
 }
 
 const hardcodedAnushamEvents: Event[] = [
@@ -151,27 +153,20 @@ let remoteCache: { events: Event[]; fetchedAt: number } | null = null;
 const REMOTE_TTL_MS = 60_000;
 let inflightFetch: Promise<Event[]> | null = null;
 
-const mergeRemoteAnusham = (remote: AnushamEvent[]): Event[] => {
-  const anushamRemote = remote.filter(e => (e.title || '').toUpperCase().includes('ANUSHAM'));
-  const anushamMap = new Map(anushamRemote.map(e => [e.id, e]));
-  const mergedAnusham = hardcodedAnushamEvents.map(local => {
-    const r = anushamMap.get(local.id);
-    if (!r) return local;
-    return {
-      ...local,
-      ...(r.date ? { date: r.date } : {}),
-      ...(r.description !== undefined ? { description: r.description } : {}),
-      ...(r.programs !== undefined ? { programs: r.programs } : {}),
-      ...(r.donors !== undefined ? { donors: r.donors } : {}),
-      ...(r.mediaUrl ? { mediaUrl: r.mediaUrl } : {}),
-    } as Event;
-  });
-  const remoteOnly = anushamRemote.filter(r => !hardcodedAnushamEvents.some(l => l.id === r.id));
-  return [...mergedAnusham, ...remoteOnly];
-};
+const remoteToLocal = (r: AnushamEvent): Event => ({
+  id: r.id,
+  title: r.title,
+  date: r.date,
+  description: r.description,
+  programs: r.programs && r.programs.length > 0 ? r.programs : undefined,
+  donors: r.donors && r.donors.length > 0 ? r.donors : undefined,
+  mediaUrl: r.mediaUrl,
+  coverImage: r.coverImage ?? undefined,
+  gallery: r.gallery && r.gallery.length > 0 ? r.gallery : undefined,
+});
 
 export const loadRemoteEvents = async (force = false): Promise<Event[]> => {
-  if (!isAppsScriptConfigured()) {
+  if (!isSupabaseConfigured()) {
     remoteCache = { events: [], fetchedAt: Date.now() };
     return [];
   }
@@ -181,10 +176,10 @@ export const loadRemoteEvents = async (force = false): Promise<Event[]> => {
   if (inflightFetch) return inflightFetch;
   inflightFetch = (async () => {
     try {
-      const remote = await fetchAnushamEvents();
-      const merged = mergeRemoteAnusham(remote);
-      remoteCache = { events: merged, fetchedAt: Date.now() };
-      return merged;
+      const remote = await fetchAllEvents();
+      const converted = remote.map(remoteToLocal);
+      remoteCache = { events: converted, fetchedAt: Date.now() };
+      return converted;
     } catch (err) {
       console.warn('Failed to load remote events, using fallback:', err);
       remoteCache = { events: [], fetchedAt: Date.now() };
@@ -203,8 +198,9 @@ export const invalidateRemoteCache = () => {
 export const getAllEvents = async (): Promise<Event[]> => {
   const remote = await loadRemoteEvents();
   if (remote.length === 0) return eventsData;
-  const remoteIds = new Set(remote.map(e => e.id));
-  const others = eventsData.filter(e => !remoteIds.has(e.id));
+  const others = hardcodedOtherEvents.filter(
+    e => !remote.some(r => r.id === e.id)
+  );
   return [...remote, ...others].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );

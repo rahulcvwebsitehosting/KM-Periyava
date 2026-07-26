@@ -78,6 +78,17 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
                   boxShadow: '0 8px 32px rgba(139, 69, 19, 0.08), inset 0 1px 0 rgba(255,255,255,0.5)'
                 }}
               >
+                {/* Cover image */}
+                {event.coverImage && (
+                  <div className="-mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-6 h-40 overflow-hidden rounded-t-[1.5rem] md:rounded-t-[2.5rem]">
+                    <img
+                      src={event.coverImage}
+                      alt={event.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                )}
+
                 {/* Status Badge */}
                 <div className="absolute top-6 right-6">
                   {event.isUpcoming ? (
