@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { getProcessedMergedEvents, Event } from '../data/events';
-import { useScrollReveal } from '../hooks/useScrollReveal';
 import { TiltCard } from '../hooks/use3DTilt';
 
 interface EventsPageProps {
@@ -14,7 +13,6 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
   const [activeTemple, setActiveTemple] = React.useState<'ganapathi' | 'sivan'>('ganapathi');
   const [ganapathiEvents, setGanapathiEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const gridRef = useScrollReveal({ threshold: 0.1 });
 
   useEffect(() => {
     let mounted = true;
@@ -66,7 +64,7 @@ const EventsPage: React.FC<EventsPageProps> = ({ lang, t, navigate }) => {
               <p className="text-gray-500 italic font-bold">No events yet. Check back soon.</p>
             </div>
           ) : (
-          <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10 sr-hidden sr-stagger">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
             {ganapathiEvents.map((event) => (
               <TiltCard
                 key={event.id}
