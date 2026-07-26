@@ -12,8 +12,6 @@ export interface Event {
   programs?: string[];
   donors?: string[];
   mediaUrl: string;
-  coverImage?: string | null;
-  gallery?: string[];
 }
 
 const hardcodedAnushamEvents: Event[] = [
@@ -161,8 +159,6 @@ const remoteToLocal = (r: AnushamEvent): Event => ({
   programs: r.programs && r.programs.length > 0 ? r.programs : undefined,
   donors: r.donors && r.donors.length > 0 ? r.donors : undefined,
   mediaUrl: r.mediaUrl,
-  coverImage: r.coverImage ?? undefined,
-  gallery: r.gallery && r.gallery.length > 0 ? r.gallery : undefined,
 });
 
 export const loadRemoteEvents = async (force = false): Promise<Event[]> => {

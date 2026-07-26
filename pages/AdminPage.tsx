@@ -5,8 +5,6 @@ import {
   createAnushamEvent,
   updateAnushamEvent,
   deleteAnushamEvent,
-  uploadEventImage,
-  deleteEventImage,
   isSupabaseConfigured,
 } from '../admin/auth';
 import { getAnushamEvents, invalidateRemoteCache, Event } from '../data/events';
@@ -55,8 +53,6 @@ interface FormState {
   programs: string[];
   donors: string[];
   mediaUrl: string;
-  coverImage: string | null;
-  gallery: string[];
 }
 
 const eventToForm = (e: Event): FormState => ({
@@ -68,8 +64,6 @@ const eventToForm = (e: Event): FormState => ({
   programs: e.programs ? [...e.programs] : [...defaultPrograms],
   donors: e.donors ? [...e.donors] : [],
   mediaUrl: e.mediaUrl || '',
-  coverImage: e.coverImage ?? null,
-  gallery: e.gallery ?? [],
 });
 
 const newEventForm = (): FormState => {
@@ -84,8 +78,6 @@ const newEventForm = (): FormState => {
     programs: [...defaultPrograms],
     donors: [],
     mediaUrl: '',
-    coverImage: null,
-    gallery: [],
   };
 };
 
@@ -99,7 +91,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
   const [newProgram, setNewProgram] = useState('');
   const [newDonor, setNewDonor] = useState('');
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
 
   const refresh = useCallback(async () => {
@@ -159,58 +150,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
   };
   const removeDonor = (i: number) => form && setDonors(form.donors.filter((_, idx) => idx !== i));
 
-  const handleCoverUpload = async (file: File) => {
-    if (!form) return;
-    setUploading(true);
-    setMessage('');
-    try {
-      const tempId = form.id || uniqueId(form.date);
-      const publicUrl = await uploadEventImage(file, tempId);
-      if (form.coverImage) await deleteEventImage(form.coverImage);
-      setForm({ ...form, coverImage: publicUrl });
-      setMessage('Cover image uploaded. Click Save to confirm.');
-    } catch (err: any) {
-      setMessage('Image upload failed: ' + (err?.message || ''));
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleGalleryUpload = async (files: FileList) => {
-    if (!form) return;
-    setUploading(true);
-    setMessage('');
-    try {
-      const tempId = form.id || uniqueId(form.date);
-      const urls: string[] = [];
-      for (const file of Array.from(files)) {
-        const url = await uploadEventImage(file, tempId);
-        urls.push(url);
-      }
-      setForm({ ...form, gallery: [...form.gallery, ...urls] });
-      setMessage(`Uploaded ${urls.length} image(s). Click Save to confirm.`);
-    } catch (err: any) {
-      setMessage('Image upload failed: ' + (err?.message || ''));
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const removeGalleryImage = async (index: number) => {
-    if (!form) return;
-    const url = form.gallery[index];
-    const updated = form.gallery.filter((_, i) => i !== index);
-    setForm({ ...form, gallery: updated });
-    try { await deleteEventImage(url); } catch {}
-  };
-
-  const clearCoverImage = async () => {
-    if (!form || !form.coverImage) return;
-    const url = form.coverImage;
-    setForm({ ...form, coverImage: null });
-    try { await deleteEventImage(url); } catch {}
-  };
-
   const handleSave = async () => {
     if (!form) return;
     setSaving(true);
@@ -225,8 +164,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
         programs: form.programs,
         donors: form.donors,
         mediaUrl: form.mediaUrl,
-        coverImage: form.coverImage,
-        gallery: form.gallery,
       };
       if (isCreating) {
         const created = await createAnushamEvent(payload);
@@ -252,8 +189,6 @@ const AdminPage: React.FC<AdminPageProps> = ({ onLogout, navigate }) => {
     setSaving(true);
     setMessage('');
     try {
-      if (form.coverImage) await deleteEventImage(form.coverImage).catch(() => {});
-      for (const url of form.gallery) await deleteEventImage(url).catch(() => {});
       await deleteAnushamEvent(form.id);
       setMessage('Event deleted.');
       setSelectedId('');
@@ -386,7 +321,6 @@ VITE_SUPABASE_ANON_KEY=<your anon key>`}
                     }`}
                   >
                     {event.date}
-                    {event.coverImage && <span className="ml-2 text-[10px]">🖼️</span>}
                   </button>
                 ))}
               </div>
@@ -463,36 +397,6 @@ VITE_SUPABASE_ANON_KEY=<your anon key>`}
                 />
               </div>
 
-              {/* Cover Image */}
-              <div className="space-y-4 mb-8">
-                <label className="text-xs font-bold uppercase tracking-[0.3em] text-primary block">
-                  Cover Image
-                </label>
-                {form.coverImage ? (
-                  <div className="relative inline-block">
-                    <img
-                      src={form.coverImage}
-                      alt="Cover"
-                      className="rounded-2xl max-h-48 object-cover border border-orange-100/50"
-                    />
-                    <button
-                      onClick={clearCoverImage}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-7 h-7 flex items-center justify-center font-bold shadow-md hover:bg-red-600"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ) : (
-                  <input
-                    type="file"
-                    accept="image/*"
-                    disabled={uploading}
-                    onChange={(e) => e.target.files?.[0] && handleCoverUpload(e.target.files[0])}
-                    className="block text-sm text-gray-500 file:mr-4 file:py-3 file:px-5 file:rounded-full file:border-0 file:bg-primary file:text-white file:font-bold file:uppercase file:tracking-widest file:text-xs hover:file:bg-primary-dark"
-                  />
-                )}
-              </div>
-
               {/* Programs */}
               <div className="space-y-4 mb-8">
                 <label className="text-xs font-bold uppercase tracking-[0.3em] text-primary block">
@@ -562,42 +466,6 @@ VITE_SUPABASE_ANON_KEY=<your anon key>`}
                 </div>
               </div>
 
-              {/* Gallery */}
-              <div className="space-y-4 mb-8">
-                <label className="text-xs font-bold uppercase tracking-[0.3em] text-primary block">
-                  Gallery Images
-                </label>
-                {form.gallery.length > 0 && (
-                  <div className="grid grid-cols-3 md:grid-cols-4 gap-3 mb-3">
-                    {form.gallery.map((url, i) => (
-                      <div key={i} className="relative">
-                        <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-24 object-cover rounded-xl border border-orange-100/50" />
-                        <button
-                          onClick={() => removeGalleryImage(i)}
-                          className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shadow-md hover:bg-red-600"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  disabled={uploading}
-                  onChange={(e) => e.target.files && handleGalleryUpload(e.target.files)}
-                  className="block text-sm text-gray-500 file:mr-4 file:py-3 file:px-5 file:rounded-full file:border-0 file:bg-primary file:text-white file:font-bold file:uppercase file:tracking-widest file:text-xs hover:file:bg-primary-dark"
-                />
-              </div>
-
-              {uploading && (
-                <div className="mb-6 px-5 py-3 rounded-2xl font-bold text-sm text-center bg-blue-50 text-blue-700 border border-blue-100">
-                  Uploading image(s)...
-                </div>
-              )}
-
               {message && (
                 <div className={`mb-6 px-5 py-3 rounded-2xl font-bold text-sm text-center ${
                   message.toLowerCase().includes('error') || message.toLowerCase().includes('failed')
@@ -611,7 +479,7 @@ VITE_SUPABASE_ANON_KEY=<your anon key>`}
               <div className="flex gap-4 pt-4 border-t border-orange-50">
                 <button
                   onClick={handleSave}
-                  disabled={saving || uploading}
+                  disabled={saving}
                   className="flex-1 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white px-8 py-4 rounded-full font-bold shadow-lg shadow-primary/20 transition-all uppercase tracking-widest text-sm disabled:opacity-50"
                 >
                   {saving ? 'Saving...' : isCreating ? 'Create Event' : 'Save Changes'}

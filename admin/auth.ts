@@ -7,7 +7,6 @@ const SUPABASE_ANON_KEY =
 
 export const ADMIN_PASSWORD = 'JayaJayaSankara123';
 const ADMIN_SESSION_KEY = 'km_periyava_admin_auth';
-const STORAGE_BUCKET = 'event-images';
 
 export interface AnushamEvent {
   id: string;
@@ -17,8 +16,6 @@ export interface AnushamEvent {
   programs?: string[];
   donors?: string[];
   mediaUrl: string;
-  coverImage?: string | null;
-  gallery?: string[];
 }
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -49,8 +46,6 @@ const dbRowToEvent = (row: any): AnushamEvent => ({
   programs: row.programs ?? [],
   donors: row.donors ?? [],
   mediaUrl: row.media_url ?? '',
-  coverImage: row.cover_image ?? null,
-  gallery: row.gallery ?? [],
 });
 
 const eventToDbRow = (event: AnushamEvent) => ({
@@ -61,8 +56,6 @@ const eventToDbRow = (event: AnushamEvent) => ({
   programs: event.programs ?? [],
   donors: event.donors ?? [],
   media_url: event.mediaUrl ?? '',
-  cover_image: event.coverImage ?? null,
-  gallery: event.gallery ?? [],
 });
 
 export const fetchAllEvents = async (): Promise<AnushamEvent[]> => {
@@ -115,27 +108,4 @@ export const updateAnushamEvent = async (event: AnushamEvent): Promise<AnushamEv
 export const deleteAnushamEvent = async (id: string): Promise<void> => {
   const { error } = await supabase.from('events').delete().eq('id', id);
   if (error) throw new Error(error.message);
-};
-
-export const uploadEventImage = async (file: File, eventId: string): Promise<string> => {
-  const ext = file.name.split('.').pop() || 'jpg';
-  const path = `${eventId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-  const { error } = await supabase
-    .storage
-    .from(STORAGE_BUCKET)
-    .upload(path, file, { cacheControl: '3600', upsert: false });
-  if (error) throw new Error(error.message);
-  const { data } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path);
-  return data.publicUrl;
-};
-
-export const deleteEventImage = async (publicUrl: string): Promise<void> => {
-  try {
-    const parts = publicUrl.split(`/object/public/${STORAGE_BUCKET}/`);
-    if (parts.length < 2) return;
-    const path = parts[1];
-    await supabase.storage.from(STORAGE_BUCKET).remove([path]);
-  } catch {
-    // ignore - URL might be from elsewhere
-  }
 };

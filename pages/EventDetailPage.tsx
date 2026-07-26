@@ -58,12 +58,6 @@ const EventDetailPage: React.FC<EventDetailPageProps> = ({ id, lang, navigate })
           }}
         >
           <div className="bg-gradient-to-br from-primary to-primary-dark p-12 md:p-16 text-white text-center">
-            {event.coverImage && (
-              <div className="relative -mx-12 md:-mx-16 -mt-12 md:-mt-16 mb-8 h-48 md:h-64 overflow-hidden">
-                <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent" />
-              </div>
-            )}
             <span className="text-xs font-bold uppercase tracking-[0.4em] text-white/70 block mb-4">
               {event.date}
             </span>
@@ -121,32 +115,6 @@ const EventDetailPage: React.FC<EventDetailPageProps> = ({ id, lang, navigate })
                       </div>
                     );
                   })}
-                </div>
-              </div>
-            )}
-
-            {/* Gallery */}
-            {event.gallery && event.gallery.length > 0 && (
-              <div className="space-y-6">
-                <h2 className="text-xs font-bold uppercase tracking-[0.3em] text-primary">
-                  {lang === 'ta' ? 'புகைப்படங்கள்' : 'Gallery'}
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {event.gallery.map((url, i) => (
-                    <a
-                      key={i}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block overflow-hidden rounded-2xl border border-orange-100/50 group"
-                    >
-                      <img
-                        src={url}
-                        alt={`Photo ${i + 1}`}
-                        className="w-full h-32 md:h-40 object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </a>
-                  ))}
                 </div>
               </div>
             )}
