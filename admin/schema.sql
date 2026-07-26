@@ -12,8 +12,6 @@ create table if not exists public.events (
   programs    text[] not null default '{}',
   donors      text[] not null default '{}',
   media_url   text not null default '',
-  cover_image text,
-  gallery     text[] not null default '{}',
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
 );
@@ -77,18 +75,11 @@ insert into public.events (id, title, date, description, programs, donors, media
     array['Mr. Thyagarajan (Chennai)'],'https://photos.app.goo.gl/dPLXQy3nCkQ83RqcA')
 on conflict (id) do nothing;
 
--- 3. STORAGE BUCKET for images -------------------------------------------
--- The admin panel uploads images to this bucket and serves them via public URLs.
-insert into storage.buckets (id, name, public)
-values ('event-images', 'event-images', true)
-on conflict (id) do nothing;
+-- 3. ROW LEVEL SECURITY (RLS) --------------------------------------------
+-- Public can read events. We gate writes via the admin password on the
+-- frontend, which is sufficient for this small site. For production,
+-- consider enabling Supabase Auth.
 
--- 4. ROW LEVEL SECURITY (RLS) --------------------------------------------
--- Public can read events and images. We gate writes via the admin password on
--- the frontend, which is lock-step enough for this small site. For real prod,
--- consider enabling Supabase Auth (see note at the bottom of this file).
-
--- events: public read
 alter table public.events enable row level security;
 drop policy if exists "events_public_read" on public.events;
 create policy "events_public_read"
@@ -96,39 +87,11 @@ create policy "events_public_read"
   to anon, authenticated
   using (true);
 
--- events: write via anon (the admin password gate lives in the frontend; for a more
--- secure setup, switch to Supabase Auth and replace 'to anon' with 'to authenticated').
 drop policy if exists "events_anon_write" on public.events;
 create policy "events_anon_write"
   on public.events for all
   to anon, authenticated
   using (true) with check (true);
-
--- storage: public read of event-images
-drop policy if exists "event_images_public_read" on storage.objects;
-create policy "event_images_public_read"
-  on storage.objects for select
-  to anon, authenticated
-  using (bucket_id = 'event-images');
-
--- storage: write uploads
-drop policy if exists "event_images_anon_upload" on storage.objects;
-create policy "event_images_anon_upload"
-  on storage.objects for insert
-  to anon, authenticated
-  with check (bucket_id = 'event-images');
-
-drop policy if exists "event_images_anon_update" on storage.objects;
-create policy "event_images_anon_update"
-  on storage.objects for update
-  to anon, authenticated
-  using (bucket_id = 'event-images');
-
-drop policy if exists "event_images_anon_delete" on storage.objects;
-create policy "event_images_anon_delete"
-  on storage.objects for delete
-  to anon, authenticated
-  using (bucket_id = 'event-images');
 
 -- =========================================================================
 -- DONE. After running this, your Supabase project is ready.
