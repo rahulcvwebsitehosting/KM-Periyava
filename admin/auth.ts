@@ -16,6 +16,7 @@ export interface AnushamEvent {
   programs?: string[];
   donors?: string[];
   mediaUrl: string;
+  status?: string;
 }
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -46,6 +47,7 @@ const dbRowToEvent = (row: any): AnushamEvent => ({
   programs: row.programs ?? [],
   donors: row.donors ?? [],
   mediaUrl: row.media_url ?? '',
+  status: row.status ?? null,
 });
 
 const eventToDbRow = (event: AnushamEvent) => ({
@@ -56,6 +58,7 @@ const eventToDbRow = (event: AnushamEvent) => ({
   programs: event.programs ?? [],
   donors: event.donors ?? [],
   media_url: event.mediaUrl ?? '',
+  status: event.status ?? null,
 });
 
 export const fetchAllEvents = async (): Promise<AnushamEvent[]> => {

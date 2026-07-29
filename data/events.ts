@@ -12,6 +12,7 @@ export interface Event {
   programs?: string[];
   donors?: string[];
   mediaUrl: string;
+  status?: string;
 }
 
 const hardcodedAnushamEvents: Event[] = [
@@ -159,6 +160,7 @@ const remoteToLocal = (r: AnushamEvent): Event => ({
   programs: r.programs && r.programs.length > 0 ? r.programs : undefined,
   donors: r.donors && r.donors.length > 0 ? r.donors : undefined,
   mediaUrl: r.mediaUrl,
+  status: r.status ?? undefined,
 });
 
 export const loadRemoteEvents = async (force = false): Promise<Event[]> => {
@@ -216,7 +218,13 @@ const processEvents = (events: Event[]) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   return events
-    .map(event => ({ ...event, isUpcoming: new Date(event.date + ' 00:00:00') > today }))
+    .map(event => {
+      let isUpcoming: boolean;
+      if (event.status === 'upcoming') isUpcoming = true;
+      else if (event.status === 'completed') isUpcoming = false;
+      else isUpcoming = new Date(event.date + ' 00:00:00') > today;
+      return { ...event, isUpcoming };
+    })
     .sort((a, b) => {
       if (a.isUpcoming && !b.isUpcoming) return -1;
       if (!a.isUpcoming && b.isUpcoming) return 1;

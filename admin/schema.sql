@@ -11,6 +11,7 @@ create table if not exists public.events (
   description text not null default '',
   programs    text[] not null default '{}',
   donors      text[] not null default '{}',
+  status      text,
   media_url   text not null default '',
   created_at  timestamptz not null default now(),
   updated_at  timestamptz not null default now()
@@ -92,6 +93,11 @@ create policy "events_anon_write"
   on public.events for all
   to anon, authenticated
   using (true) with check (true);
+
+-- =========================================================================
+-- For existing tables: add status column if missing
+-- =========================================================================
+alter table public.events add column if not exists status text;
 
 -- =========================================================================
 -- DONE. After running this, your Supabase project is ready.
