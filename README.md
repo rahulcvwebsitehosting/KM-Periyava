@@ -4,7 +4,7 @@
 [![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4+-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Gemini AI](https://img.shields.io/badge/Gemini_AI-3.0_Flash-4285F4?style=for-the-badge&logo=google-gemini&logoColor=white)](https://ai.google.dev/)
+[![NVIDIA NIM](https://img.shields.io/badge/NVIDIA_NIM-Nemotron_70B-76B900?style=for-the-badge&logo=nvidia&logoColor=white)](https://build.nvidia.com/)
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.0-ff0055?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 
 > **A high-fidelity digital portal for Sri Kanchi Maha Periyava Sannadhi, Kandhamangalam. Bridging ancient wisdom with cutting-edge AI architecture.**
@@ -19,7 +19,7 @@ Traditional temple websites often suffer from static, non-engaging interfaces th
 ### The Blueprint Solution
 **KM Periyava Sannadhi** is engineered as a **Digital Sanctuary**. It’s not just a website; it’s an immersive experience.
 - **Bilingual Core**: Seamless real-time switching between Tamil and English.
-- **AI Divine Assistant**: A context-aware chatbot powered by Gemini 3.0 for instant guidance on temple history and rituals.
+- **AI Divine Assistant**: A context-aware chatbot powered by NVIDIA NIM Nemotron 70B for instant guidance on temple history and rituals.
 - **Multisensory Engagement**: Integrated sacred chants, falling flower petals, and "Read Aloud" capabilities for divine teachings.
 
 ---
@@ -33,7 +33,7 @@ The system follows a modern SPA (Single Page Application) architecture with a fo
 ```mermaid
 graph TD
     User((Devotee)) --> Frontend[Vite + React 19 SPA]
-    Frontend --> AI[Gemini 3.0 Flash API]
+    Frontend --> AI[NVIDIA NIM API - Nemotron 70B]
     Frontend --> Speech[Web Speech API - Read Aloud]
     Frontend --> Audio[HTML5 Audio - Sacred Chants]
     Frontend --> Analytics[Google Analytics 4]
@@ -53,7 +53,7 @@ graph TD
 ### Key Technical Pillars
 | Feature | Implementation |
 | :--- | :--- |
-| **AI Chatbot** | `GoogleGenAI` SDK integration with `gemini-3-flash-preview` for Satvic-toned responses. |
+| **AI Chatbot** | NVIDIA NIM API integration with `nvidia/llama-3.1-nemotron-70b-instruct` for Satvic-toned responses. |
 | **Animation Engine** | `motion/react` for fluid page transitions, scrolling lyrics, and interactive petals. |
 | **Accessibility** | Web Speech API for "Read Aloud" teachings, ensuring inclusivity for all age groups. |
 | **Performance** | Custom `LazyImage` component and Vite-optimized build pipeline for sub-second load times. |
@@ -67,7 +67,7 @@ Follow these steps to deploy your own instance of the sanctuary.
 ### Prerequisites
 - Node.js (v18+)
 - NPM or Yarn
-- A Google Gemini API Key
+- A NVIDIA NIM API Key (get it at https://build.nvidia.com)
 
 ### 1. Clone & Install
 ```bash
@@ -80,7 +80,7 @@ npm install
 Create a `.env` file in the root directory:
 ```env
 VITE_GA_ID=G-SST437CJCD
-GEMINI_API_KEY=your_gemini_api_key_here
+VITE_NVIDIA_NIM_API_KEY=your_nvidia_nim_api_key_here
 ```
 
 ### 3. Development & Build

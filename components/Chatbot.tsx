@@ -1,6 +1,5 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { GoogleGenAI } from "@google/genai";
 import { Language } from '../types';
 
 interface Message {
@@ -136,12 +135,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
     setIsLoading(true);
 
     try {
-      const apiKey = process.env.GEMINI_API_KEY;
+      const apiKey = import.meta.env.VITE_NVIDIA_NIM_API_KEY;
       if (!apiKey) {
-        throw new Error("Gemini API Key is missing. Please set it in the environment.");
+        throw new Error("NVIDIA NIM API Key is missing. Please set VITE_NVIDIA_NIM_API_KEY in the environment.");
       }
 
-      const ai = new GoogleGenAI({ apiKey });
       const systemInstruction = `
         You are a divine, holy, and respectful assistant for the KM Periyava Sannadhi temple in Kandhamangalam. 
         Your tone is peaceful, brief, and deeply respectful (Satvic). You serve the devotees of Sri Kanchi Mahaperiyava.
@@ -174,21 +172,36 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
         - Always start or end with a holy greeting like 'Pranam' or 'Jaya Jaya Shankara'.
         - If the user speaks Tamil, respond in Tamil but keep the [[NAV:page_id|Label]] format in English for the page_id part.
       `;
- 
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.0-flash',
-        contents: [
-          ...messages.slice(-6).map(m => ({ role: m.role, parts: [{ text: m.text }] })),
-          { role: 'user', parts: [{ text: userMessage }] }
-        ],
-        config: {
-          systemInstruction,
-          temperature: 0.8,
-          topP: 0.95,
+
+      const apiMessages = [
+        { role: 'system', content: systemInstruction },
+        ...messages.slice(-6).map(m => ({ role: m.role, content: m.text })),
+        { role: 'user', content: userMessage }
+      ];
+
+      const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
         },
+        body: JSON.stringify({
+          model: 'nvidia/llama-3.1-nemotron-70b-instruct',
+          messages: apiMessages,
+          temperature: 0.8,
+          top_p: 0.95,
+          max_tokens: 1024
+        })
       });
 
-      const modelText = response.text || (lang === 'ta' ? 'மன்னிக்கவும், என்னால் பதிலளிக்க முடியவில்லை.' : 'I apologize, I could not process your request.');
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error?.message || `API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const modelText = data.choices?.[0]?.message?.content
+        || (lang === 'ta' ? 'மன்னிக்கவும், என்னால் பதிலளிக்க முடியவில்லை.' : 'I apologize, I could not process your request.');
       setMessages(prev => [...prev, { role: 'model', text: modelText }]);
     } catch (error) {
       console.error("Chat Error:", error);

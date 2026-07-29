@@ -74,11 +74,21 @@ const computeAutoStatus = (date: string) => {
   return new Date(date + ' 00:00:00') > new Date() ? 'upcoming' : 'completed';
 };
 
+const parseDateToInput = (date: string) => {
+  if (!date) return '';
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '';
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+};
+
 const eventToForm = (e: Event): FormState => ({
   id: e.id,
   title: e.title,
   date: e.date,
-  dateInput: '',
+  dateInput: parseDateToInput(e.date),
   description: e.description || '',
   programs: e.programs ? [...e.programs] : [...defaultPrograms],
   donors: parseDonors(e.donors),
