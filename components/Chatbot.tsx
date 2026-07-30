@@ -168,6 +168,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
     setIsLoading(true);
 
     const apiKey = import.meta.env.VITE_NVIDIA_NIM_API_KEY;
+    if (!apiKey) {
+      setMessages(prev => [...prev, { role: 'model', text: lang === 'ta' ? 'AI சேவை தற்காலிகமாக கிடைக்கவில்லை. தயவுசெய்து பின்னர் முயற்சிக்கவும்.' : 'AI service is temporarily unavailable. Please try again later.' }]);
+      setIsLoading(false);
+      return;
+    }
 
     const callNvidia = async (retries = 2): Promise<string> => {
       const now = Date.now();
@@ -180,17 +185,17 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
 
       const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}) },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
         body: JSON.stringify({
-          model: 'nvidia/llama-3.1-nemotron-70b-instruct',
+          model: 'meta/llama-3.1-70b-instruct',
           messages: [
             { role: 'system', content: systemInstruction },
             ...messages.slice(-6).map(m => ({ role: m.role, content: m.text })),
             { role: 'user', content: userMessage }
           ],
-          temperature: 0.8,
-          top_p: 0.95,
-          max_tokens: 1024
+          temperature: 0.7,
+          top_p: 0.9,
+          max_tokens: 512
         })
       });
 
@@ -201,7 +206,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.error?.message || `API error: ${response.status}`);
+        throw new Error(`[${response.status}] ${errData.error?.message || response.statusText}`);
       }
 
       const data = await response.json();
@@ -213,12 +218,14 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
       const modelText = await callNvidia();
       setMessages(prev => [...prev, { role: 'model', text: modelText }]);
     } catch (error: any) {
-      console.error("Chat Error:", error);
-      const msg = error?.message || '';
-      if (msg.includes('429') || msg.includes('rate') || msg.includes('Too Many')) {
+      console.error("Chat Error:", error?.message || error);
+      const msg = String(error?.message || '');
+      if (msg.includes('429') || msg.includes('Too Many Requests')) {
         setRateLimited(true);
         setMessages(prev => [...prev, { role: 'model', text: lang === 'ta' ? 'ஐயோ, இப்போது அதிகமான பக்தர்கள் கேள்வி கேட்கிறார்கள். சிறிது நேரம் கழித்து முயற்சிக்கவும்.' : 'Many devotees are seeking blessings right now. Please try again in a moment.' }]);
         setTimeout(() => setRateLimited(false), 10000);
+      } else if (msg.includes('401') || msg.includes('403')) {
+        setMessages(prev => [...prev, { role: 'model', text: lang === 'ta' ? 'AI சேவையில் அங்கீகார சிக்கல் உள்ளது.' : 'AI service authorization issue. Please contact the admin.' }]);
       } else {
         setMessages(prev => [...prev, { role: 'model', text: lang === 'ta' ? 'புனித தொடர்பில் ஒரு சிறு தடங்கல். மீண்டும் முயற்சிக்கவும்.' : 'A small disturbance in the divine connection. Please try again.' }]);
       }
