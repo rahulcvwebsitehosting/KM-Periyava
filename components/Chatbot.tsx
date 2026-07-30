@@ -12,11 +12,44 @@ interface ChatbotProps {
   navigate: (path: string) => void;
 }
 
+const systemInstruction = `You are a divine, holy, and respectful assistant for the KM Periyava Sannadhi temple in Kandhamangalam. 
+Your tone is peaceful, brief, and deeply respectful (Satvic). You serve the devotees of Sri Kanchi Mahaperiyava.
+
+WEBSITE STRUCTURE & NAVIGATION:
+You MUST guide users to different parts of our website. When a user asks about a topic, provide information and then offer a navigation button using this EXACT format: [[NAV:page_id|Button Label]]
+Available pages:
+- home: General overview and daily wisdom.
+- about: History of the temple and Sri Kanchi Mahaperiyava.
+- events: Upcoming poojas, festivals, and Anusham dates.
+- gallery: Visual darshan of the temple and events.
+- experience: Read and share devotee experiences.
+- wisdom: Daily quotes and teachings of Periyava.
+- donate: Support Annadhanam and Pidi Arisi Thittam.
+- contact: Location, directions, and contact details.
+
+TOPICS & CONTENT:
+- Temple: Located in Kandhamangalam, Kuttalam Taluk. It's a sacred place dedicated to Sri Kanchi Mahaperiyava.
+- Pidi Arisi Thittam: A unique initiative where devotees set aside a handful of rice daily for Annadhanam.
+- Anusham Pooja: Special pooja performed on the Anusham star day every month.
+- Annadhanam: Daily feeding of devotees and the needy.
+
+FORMATTING RULES:
+- Use **bold** for ALL sacred terms and key nouns.
+- Use bullet points (using -) for all lists.
+- Keep responses concise (max 3-4 sentences).
+- ALWAYS include a relevant navigation button if applicable to the user's query.
+
+Rules:
+- Always start or end with a holy greeting like 'Pranam' or 'Jaya Jaya Shankara'.
+- If the user speaks Tamil, respond in Tamil but keep the [[NAV:page_id|Label]] format in English for the page_id part.`;
+
 const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [rateLimited, setRateLimited] = useState(false);
+  const lastRequestRef = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -127,72 +160,44 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
   };
 
   const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || isLoading || rateLimited) return;
 
     const userMessage = input.trim();
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
     setIsLoading(true);
 
-    try {
-      const apiKey = import.meta.env.VITE_NVIDIA_NIM_API_KEY;
-      if (!apiKey) {
-        throw new Error("NVIDIA NIM API Key is missing. Please set VITE_NVIDIA_NIM_API_KEY in the environment.");
+    const apiKey = import.meta.env.VITE_NVIDIA_NIM_API_KEY;
+
+    const callNvidia = async (retries = 2): Promise<string> => {
+      const now = Date.now();
+      const elapsed = now - lastRequestRef.current;
+      const minGap = 2000;
+      if (elapsed < minGap) {
+        await new Promise(r => setTimeout(r, minGap - elapsed));
       }
-
-      const systemInstruction = `
-        You are a divine, holy, and respectful assistant for the KM Periyava Sannadhi temple in Kandhamangalam. 
-        Your tone is peaceful, brief, and deeply respectful (Satvic). You serve the devotees of Sri Kanchi Mahaperiyava.
-        
-        WEBSITE STRUCTURE & NAVIGATION:
-        You MUST guide users to different parts of our website. When a user asks about a topic, provide information and then offer a navigation button using this EXACT format: [[NAV:page_id|Button Label]]
-        Available pages:
-        - home: General overview and daily wisdom.
-        - about: History of the temple and Sri Kanchi Mahaperiyava.
-        - events: Upcoming poojas, festivals, and Anusham dates.
-        - gallery: Visual darshan of the temple and events.
-        - experience: Read and share devotee experiences.
-        - wisdom: Daily quotes and teachings of Periyava.
-        - donate: Support Annadhanam and Pidi Arisi Thittam.
-        - contact: Location, directions, and contact details.
- 
-        TOPICS & CONTENT:
-        - Temple: Located in Kandhamangalam, Kuttalam Taluk. It's a sacred place dedicated to Sri Kanchi Mahaperiyava.
-        - Pidi Arisi Thittam: A unique initiative where devotees set aside a handful of rice daily for Annadhanam.
-        - Anusham Pooja: Special pooja performed on the Anusham star day every month.
-        - Annadhanam: Daily feeding of devotees and the needy.
- 
-        FORMATTING RULES:
-        - Use **bold** for ALL sacred terms and key nouns.
-        - Use bullet points (using -) for all lists.
-        - Keep responses concise (max 3-4 sentences).
-        - ALWAYS include a relevant navigation button if applicable to the user's query.
-        
-        Rules:
-        - Always start or end with a holy greeting like 'Pranam' or 'Jaya Jaya Shankara'.
-        - If the user speaks Tamil, respond in Tamil but keep the [[NAV:page_id|Label]] format in English for the page_id part.
-      `;
-
-      const apiMessages = [
-        { role: 'system', content: systemInstruction },
-        ...messages.slice(-6).map(m => ({ role: m.role, content: m.text })),
-        { role: 'user', content: userMessage }
-      ];
+      lastRequestRef.current = Date.now();
 
       const response = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
+        headers: { 'Content-Type': 'application/json', ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}) },
         body: JSON.stringify({
           model: 'nvidia/llama-3.1-nemotron-70b-instruct',
-          messages: apiMessages,
+          messages: [
+            { role: 'system', content: systemInstruction },
+            ...messages.slice(-6).map(m => ({ role: m.role, content: m.text })),
+            { role: 'user', content: userMessage }
+          ],
           temperature: 0.8,
           top_p: 0.95,
           max_tokens: 1024
         })
       });
+
+      if (response.status === 429 && retries > 0) {
+        await new Promise(r => setTimeout(r, 3000));
+        return callNvidia(retries - 1);
+      }
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
@@ -200,12 +205,23 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
       }
 
       const data = await response.json();
-      const modelText = data.choices?.[0]?.message?.content
+      return data.choices?.[0]?.message?.content
         || (lang === 'ta' ? 'மன்னிக்கவும், என்னால் பதிலளிக்க முடியவில்லை.' : 'I apologize, I could not process your request.');
+    };
+
+    try {
+      const modelText = await callNvidia();
       setMessages(prev => [...prev, { role: 'model', text: modelText }]);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Chat Error:", error);
-      setMessages(prev => [...prev, { role: 'model', text: lang === 'ta' ? 'புனித தொடர்பில் ஒரு சிறு தடங்கல். மீண்டும் முயற்சிக்கவும்.' : 'A small disturbance in the divine connection. Please try again.' }]);
+      const msg = error?.message || '';
+      if (msg.includes('429') || msg.includes('rate') || msg.includes('Too Many')) {
+        setRateLimited(true);
+        setMessages(prev => [...prev, { role: 'model', text: lang === 'ta' ? 'ஐயோ, இப்போது அதிகமான பக்தர்கள் கேள்வி கேட்கிறார்கள். சிறிது நேரம் கழித்து முயற்சிக்கவும்.' : 'Many devotees are seeking blessings right now. Please try again in a moment.' }]);
+        setTimeout(() => setRateLimited(false), 10000);
+      } else {
+        setMessages(prev => [...prev, { role: 'model', text: lang === 'ta' ? 'புனித தொடர்பில் ஒரு சிறு தடங்கல். மீண்டும் முயற்சிக்கவும்.' : 'A small disturbance in the divine connection. Please try again.' }]);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -271,13 +287,14 @@ const Chatbot: React.FC<ChatbotProps> = ({ lang, navigate }) => {
                 type="text" 
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                placeholder={lang === 'ta' ? 'உங்கள் கேள்வியை கேட்கவும்...' : 'Ask your question...'}
-                className="w-full pl-6 pr-14 py-4 bg-gray-50 border border-gray-200 rounded-full text-sm md:text-base focus:outline-none focus:border-primary transition-all font-bold text-text-dark"
+                onKeyPress={(e) => e.key === 'Enter' && !rateLimited && handleSend()}
+                placeholder={rateLimited ? (lang === 'ta' ? 'சிறிது நேரம் கழித்து முயற்சிக்கவும்...' : 'Please wait a moment...') : (lang === 'ta' ? 'உங்கள் கேள்வியை கேட்கவும்...' : 'Ask your question...')}
+                disabled={rateLimited}
+                className="w-full pl-6 pr-14 py-4 bg-gray-50 border border-gray-200 rounded-full text-sm md:text-base focus:outline-none focus:border-primary transition-all font-bold text-text-dark disabled:opacity-40"
               />
               <button 
                 onClick={handleSend}
-                disabled={isLoading}
+                disabled={isLoading || rateLimited}
                 className="absolute right-2 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center shadow-lg hover:bg-primary-dark transition-all disabled:opacity-50"
               >
                 <span className="font-bold">↑</span>
